@@ -2,8 +2,8 @@
 var express = require('express')
 var app = express()
 
-app.get('/api/', function (req, res) {
-  var a = {x:"a"};
+app.post('/login', function (req, res) {
+  var a = {name:"Vojtech Udrzal",roles:["admin","user"]};
   res.send(a)
 })
 
