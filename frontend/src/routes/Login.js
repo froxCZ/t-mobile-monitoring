@@ -2,63 +2,37 @@ import React, {Component} from 'react';
 import {bindActionCreators} from 'redux';
 import {connect} from 'react-redux';
 import * as ActionTypes from '../const/ActionTypes';
-
+import {Actions as UserActions} from '../actions/User';
 function mapStateToProps(state) {
   return {user: state.user};
 }
 function mapDispatchToProps(dispatch) {
-  return {
-    login: (user)=> {
-      dispatch({
-        type: ActionTypes.LOGIN,
-        user: user
-      })
-    }
-  }
+  return bindActionCreators(UserActions, dispatch);
 }
 
 
-class Login extends Component {
+export class Login extends Component {
 
-  constructor() {
-    super()
-  }
-
-  componentWillMount() {
-    this.routeToLoginIfNeeded();
-  }
-
-  componentDidUpdate(prevProps, prevState) {
-    this.routeToLoginIfNeeded();
-  }
-
-  routeToLoginIfNeeded(){
-    const router = this.props.router;
-    if (this.props.user == null) {
-      if(!router.isActive("/login")){
-        router.push("/login");
-      }
-    } else {
-      if(!router.isActive("/push")){
-        router.push("/app");
-      }
-    }
+  constructor(props) {
+    super(props);
+    console.log(props);
   }
 
   login(e) {
     e.preventDefault();
-    var body = {
-      username: this._username.value,
-      password: this._password.value,
-    };
-    fetch("/login", {
-      method: "POST",
-      body: body
-    }).then((response) => {
-      return response.json()
-    }).then((bodyJSON) => {
-      this.props.login(bodyJSON);
-    })
+    this.props.login(this._username.value, this._password.value);
+    /*    var body = {
+     username: this._username.value,
+     password: this._password.value,
+     };
+     fetch("/login", {
+     method: "POST",
+     body: body
+     }).then((response) => {
+     return response.json()
+     }).then((bodyJSON) => {
+     this.props.login(bodyJSON);
+     })*/
   }
 
   render() {
@@ -74,5 +48,5 @@ class Login extends Component {
   }
 }
 
-Login = connect(mapStateToProps, mapDispatchToProps)(Login);
+Login = connect(mapStateToProps,mapDispatchToProps)(Login);
 export default Login

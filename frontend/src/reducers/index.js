@@ -1,5 +1,4 @@
 import {combineReducers} from 'redux'
-import user from './user'
 
 const apps = (state = {}, action) => {
   console.log(action);
@@ -10,10 +9,14 @@ const apps = (state = {}, action) => {
       return state;
   }
 }
+const debugReducer = (state = {}, action) => {
+  console.log(action);
 
+  return state;
+}
 const myApp = combineReducers({
-  user,
-  apps
+  apps,
+  debugReducer
 })
 
 export default myApp

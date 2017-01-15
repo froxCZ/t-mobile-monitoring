@@ -3,6 +3,7 @@ import {bindActionCreators} from 'redux';
 import {connect} from 'react-redux';
 import * as ActionTypes from '../const/ActionTypes';
 import logo from '../logo.svg';
+import {Actions as UserActions} from '../actions/User';
 import {
   Nav,
   NavItem,
@@ -16,14 +17,7 @@ function mapStateToProps(state) {
     return {};
 }
 function mapDispatchToProps(dispatch) {
-    return {
-        defaultAction: (user)=> {
-            dispatch({
-                type: ActionTypes.LOGIN,
-                user: user
-            })
-        }
-    }
+  return bindActionCreators(UserActions, dispatch);
 }
 
 class MyNavigation extends Component {
@@ -33,6 +27,7 @@ class MyNavigation extends Component {
     }
 
     render() {
+      console.log(this.props);
       return <div id="wrapper" className="content">
         <Navbar fluid={true}  style={ {margin: 0} }>
           <Brand>
@@ -152,7 +147,7 @@ class MyNavigation extends Component {
                 <span> <i className = "fa fa-eye fa-fw" /> Premium React Themes </span>
               </MenuItem>
               <MenuItem divider />
-              <MenuItem eventKey = "4" onClick = {(event) => { history.push('/login');}}>
+              <MenuItem eventKey = "4" onClick = {(event) => { event.preventDefault();this.props.logout()}}>
                 <span> <i className = "fa fa-sign-out fa-fw" /> Logout </span>
               </MenuItem>
             </NavDropdown>

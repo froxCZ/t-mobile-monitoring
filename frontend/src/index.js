@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom';
 import App from './App';
 import './index.css';
 import {createStore, compose} from 'redux'
-import reducer from './reducers'
+import {Reducers} from './actions'
 import {Provider} from 'react-redux';
 import {Router, Route, Link, IndexRoute, IndexRedirect, hashHistory, browserHistory} from 'react-router'
 
@@ -12,12 +12,12 @@ import BasePage from './routes/BasePage'
 
 // Don't do this! You’re bringing DevTools into the production bundle.
 import DevTools from './DevTools';
-const initialState = {user: null, apps: null};
+const initialState = {};
 const enhancer = compose(
   // Required! Enable Redux DevTools with the monitors you chose
   DevTools.instrument()
 );
-const store = createStore(reducer, initialState, enhancer);
+const store = createStore(Reducers, initialState, enhancer);
 
 const Home = () => <h1>Hello from Home!</h1>
 const NotFound = () => (

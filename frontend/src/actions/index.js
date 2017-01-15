@@ -1,16 +1,7 @@
 let nextTodoId = 0
-export const addTodo = (text) => ({
-  type: 'ADD_TODO',
-  id: nextTodoId++,
-  text
-})
+import {combineReducers} from 'redux';
+import {UserReducer} from './User'
 
-export const setVisibilityFilter = (filter) => ({
-  type: 'SET_VISIBILITY_FILTER',
-  filter
-})
-
-export const toggleTodo = (id) => ({
-  type: 'TOGGLE_TODO',
-  id
-})
+export const Reducers = combineReducers(
+  {user: UserReducer}
+);
