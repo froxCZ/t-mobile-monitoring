@@ -1,10 +1,9 @@
 import React, {Component} from 'react';
 import {bindActionCreators} from 'redux';
 import {connect} from 'react-redux';
-import {bindActionCreators} from 'redux';
 
 function mapStateToProps(state) {
-    return {};
+    return {user:state.user};
 }
 function mapDispatchToProps(dispatch) {
     return bindActionCreators({}, dispatch);
@@ -17,7 +16,7 @@ class Home extends Component {
     }
 
     render() {
-        return <div>Home</div>
+        return <div>Welcome {this.props.user.name}</div>
     }
 }
 Home = connect(mapStateToProps, mapDispatchToProps)(Home)

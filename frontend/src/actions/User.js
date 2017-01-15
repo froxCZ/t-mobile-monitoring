@@ -1,5 +1,7 @@
-import {take, put} from "redux-saga/effects";
+import {take, put, fork} from "redux-saga/effects";
+import {performFetch} from './ApiRequest'
 export const LOGIN = 'LOGIN';
+export const LOGGED_IN = 'LOGGED_IN';
 export const LOGOUT = 'LOGOUT';
 
 export function login(username, password) {
@@ -7,6 +9,12 @@ export function login(username, password) {
     type: LOGIN,
     username: username,
     password: password
+  }
+}
+export function loggedIn(response) {
+  return {
+    type: LOGGED_IN,
+    ...response
   }
 }
 export function logout() {
@@ -19,13 +27,40 @@ export function logout() {
 export function UserReducer(state = null, action) {
   console.log(action);
   switch (action.type) {
-    case LOGIN:
-      return {name: "asd"};
+    case LOGGED_IN:
+      return {...action};
     case LOGOUT:
       return null;
     default:
       return state;
   }
+}
+
+export function* LoginSaga() {
+  while (true) {
+    const action = yield take(LOGIN)
+    var myInit = {
+      method: 'POST',
+      body: {
+        username: action.username,
+        password: action.password,
+      }
+    }
+    var request = new Request('/login', myInit);
+    var response = yield performFetch(request)
+    yield put(loggedIn(response))
+  }
+}
+
+export const UserSagas = [
+  LoginSaga,
+];
+
+
+export function* root() {
+  console.log("asd");
+  yield take(LOGIN)
+  console.log("asd");
 }
 
 export const Actions = {
