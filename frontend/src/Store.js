@@ -1,9 +1,10 @@
 import DevTools from './DevTools';
-import {AuthReducer, AuthSagas, root, TestIt} from './actions/Auth';
+import {AuthReducer,AuthListener, AuthSagas} from './actions/Auth';
 import {createStore, combineReducers, compose, applyMiddleware} from 'redux'
 import createSagaMiddleware from "redux-saga";
+export const AUTH = "auth";
 export const Reducers = combineReducers(
-  {auth: AuthReducer}
+  {[AUTH]: AuthReducer}
 );
 const initialState = {};
 const sagaMiddleware = createSagaMiddleware();
@@ -21,4 +22,11 @@ sagaMiddleware.run(function*() {
   });
 });
 
+Store.subscribe(function () {
+  AuthListener(state(AUTH));
+});
+
+export function state(key) {
+  return Store.getState()[key];
+}
 

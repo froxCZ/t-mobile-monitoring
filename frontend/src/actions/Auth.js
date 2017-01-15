@@ -1,5 +1,6 @@
 import {take, put, fork} from "redux-saga/effects";
 import {performFetch} from './ApiRequest'
+const AUTH_LOCAL_STORAGE_KEY = 'AUTH_LOCAL_STORAGE_KEY';
 export const LOGIN = 'LOGIN';
 export const LOGGED_IN = 'LOGGED_IN';
 export const LOGIN_FAILED = 'LOGIN_FAILED';
@@ -29,8 +30,9 @@ export function logout() {
     type: LOGOUT
   }
 }
-
-export function AuthReducer(state = {}, action) {
+const initialState = JSON.parse(localStorage.getItem(AUTH_LOCAL_STORAGE_KEY) || "{}");
+console.log(initialState)
+export function AuthReducer(state = initialState, action) {
   console.log(action);
   switch (action.type) {
     case LOGIN:
@@ -80,3 +82,9 @@ export const Actions = {
   login: login,
   logout: logout
 };
+
+export function AuthListener(state) {
+  if (!state.error && !state.loading) {
+    localStorage.setItem(AUTH_LOCAL_STORAGE_KEY, JSON.stringify(state));
+  }
+}
