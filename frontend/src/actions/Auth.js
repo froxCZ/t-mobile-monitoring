@@ -2,6 +2,7 @@ import {take, put, fork} from "redux-saga/effects";
 import {performFetch} from './ApiRequest'
 export const LOGIN = 'LOGIN';
 export const LOGGED_IN = 'LOGGED_IN';
+export const LOGIN_FAILED = 'LOGIN_FAILED';
 export const LOGOUT = 'LOGOUT';
 
 export function login(username, password) {
@@ -14,7 +15,12 @@ export function login(username, password) {
 export function loggedIn(response) {
   return {
     type: LOGGED_IN,
-    ...response
+    user: response
+  }
+}
+export function loginFailed() {
+  return {
+    type: LOGIN_FAILED,
   }
 }
 export function logout() {
@@ -24,13 +30,15 @@ export function logout() {
   }
 }
 
-export function UserReducer(state = null, action) {
+export function AuthReducer(state = {}, action) {
   console.log(action);
   switch (action.type) {
     case LOGGED_IN:
       return {...action};
+    case LOGIN_FAILED:
+      return {loginFailed: true}
     case LOGOUT:
-      return null;
+      return {};
     default:
       return state;
   }
@@ -38,21 +46,24 @@ export function UserReducer(state = null, action) {
 
 export function* LoginSaga() {
   while (true) {
-    const action = yield take(LOGIN)
-    var myInit = {
-      method: 'POST',
-      body: {
-        username: action.username,
-        password: action.password,
+    try {
+      const action = yield take(LOGIN)
+      var myInit = {
+        method: 'POST',
+        body: JSON.stringify({
+          username: action.username,
+          password: action.password,
+        })
       }
+      var response = yield performFetch("/login", myInit)
+      yield put(loggedIn(response))
+    } catch (error) {
+      yield put(loginFailed());
     }
-    var request = new Request('/login', myInit);
-    var response = yield performFetch(request)
-    yield put(loggedIn(response))
   }
 }
 
-export const UserSagas = [
+export const AuthSagas = [
   LoginSaga,
 ];
 

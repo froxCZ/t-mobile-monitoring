@@ -3,7 +3,7 @@ import {bindActionCreators} from 'redux';
 import {connect} from 'react-redux';
 
 function mapStateToProps(state) {
-    return {user:state.user};
+    return {auth:state.auth};
 }
 function mapDispatchToProps(dispatch) {
     return bindActionCreators({}, dispatch);
@@ -16,7 +16,7 @@ class Home extends Component {
     }
 
     render() {
-        return <div>Welcome {this.props.user.name}</div>
+        return <div>Welcome {this.props.auth.user.name}</div>
     }
 }
 Home = connect(mapStateToProps, mapDispatchToProps)(Home)

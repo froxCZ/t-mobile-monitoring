@@ -1,9 +1,9 @@
 import DevTools from './DevTools';
-import {UserReducer, UserSagas, root, TestIt} from './actions/User';
+import {AuthReducer, AuthSagas, root, TestIt} from './actions/Auth';
 import {createStore, combineReducers, compose, applyMiddleware} from 'redux'
 import createSagaMiddleware from "redux-saga";
 export const Reducers = combineReducers(
-  {user: UserReducer}
+  {auth: AuthReducer}
 );
 const initialState = {};
 const sagaMiddleware = createSagaMiddleware();
@@ -15,7 +15,7 @@ const enhancer = compose(
 export const Store = createStore(Reducers, initialState, enhancer);
 sagaMiddleware.run(function*() {
   yield [
-    ...UserSagas
+    ...AuthSagas
   ].map(s=> {
     return s();
   });

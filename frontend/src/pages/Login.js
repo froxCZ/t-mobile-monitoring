@@ -1,13 +1,16 @@
 import React, {Component} from 'react';
+import ReactDOM from 'react-dom';
 import {bindActionCreators} from 'redux';
 import {connect} from 'react-redux';
-import * as ActionTypes from '../const/ActionTypes';
-import {Actions as UserActions} from '../actions/User';
+import Button from 'react-bootstrap/lib/Button';
+import Panel from 'react-bootstrap/lib/Panel';
+import {FormControl, Checkbox} from 'react-bootstrap';
+import {Actions as AuthActions} from '../actions/Auth';
 function mapStateToProps(state) {
-  return {user: state.user};
+  return {auth: state.auth};
 }
 function mapDispatchToProps(dispatch) {
-  return bindActionCreators(UserActions, dispatch);
+  return bindActionCreators(AuthActions, dispatch);
 }
 
 
@@ -15,38 +18,60 @@ export class Login extends Component {
 
   constructor(props) {
     super(props);
-    console.log(props);
   }
 
   login(e) {
     e.preventDefault();
-    this.props.login(this._username.value, this._password.value);
-    /*    var body = {
-     username: this._username.value,
-     password: this._password.value,
-     };
-     fetch("/login", {
-     method: "POST",
-     body: body
-     }).then((response) => {
-     return response.json()
-     }).then((bodyJSON) => {
-     this.props.login(bodyJSON);
-     })*/
+    this.props.login(this.getValueOfRef(this._username), this.getValueOfRef(this._password));
+  }
+
+  getValueOfRef(ref) {
+    return ReactDOM.findDOMNode(ref).value;
   }
 
   render() {
-    // if (this.props.user != null) {
-    //   const router = this.props.router;
-    //   router.push('/');
-    // }
-    return <form>
-      <input ref={e =>this._username = e}/>
-      <input ref={e =>this._password = e}/>
-      <button onClick={this.login.bind(this)}></button>
-    </form>
+    return <div className="col-md-4 col-md-offset-4">
+      <div className="text-center">
+        <h1 className="login-brand-text">Monitoring Tool</h1>
+      </div>
+
+      <Panel header={<h3>Please Sign In</h3>} className="login-panel">
+
+        <form role="form" onSubmit={this.login.bind(this)}>
+          <fieldset>
+            {this.props.auth.loginFailed && <div className="has-error">
+              <label className="control-label">Login failed, try again.</label>
+            </div>
+            }
+            <div className="form-group">
+              <FormControl
+                type="text"
+                className="form-control"
+                placeholder="Username"
+                name="name"
+                ref={e =>this._username = e}
+              />
+            </div>
+
+            <div className="form-group">
+              <FormControl
+                className="form-control"
+                placeholder="Password"
+                type="password"
+                name="password"
+                ref={e =>this._password = e}
+              />
+            </div>
+            <Checkbox label="Remember Me"> Remember Me </Checkbox>
+            <Button type="submit" bsSize="large" bsStyle="success" block>Login</Button>
+          </fieldset>
+        </form>
+
+      </Panel>
+
+    </div>
   }
 }
 
-Login = connect(mapStateToProps,mapDispatchToProps)(Login);
+Login = connect(mapStateToProps, mapDispatchToProps)(Login);
 export default Login

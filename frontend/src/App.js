@@ -4,7 +4,7 @@ import './App.css';
 import {connect} from 'react-redux';
 
 function mapStateToProps(state) {
-  return {user: state.user};
+  return {auth: state.auth};
 }
 class App extends Component {
   componentWillMount() {
@@ -17,7 +17,7 @@ class App extends Component {
 
   routeToLoginIfNeeded() {
     const router = this.props.router;
-    if (this.props.user == null) {
+    if (this.props.auth.user == null) {
       if (!router.isActive("/login")) {
         router.push("/login");
       }
