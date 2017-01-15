@@ -3,17 +3,18 @@ import ReactDOM from 'react-dom';
 import {bindActionCreators} from 'redux';
 import {connect} from 'react-redux';
 import Button from 'react-bootstrap/lib/Button';
+import LoadingButton from '../components/LoadingButton'
 import Panel from 'react-bootstrap/lib/Panel';
 import {FormControl, Checkbox} from 'react-bootstrap';
 import {Actions as AuthActions} from '../actions/Auth';
+
+
 function mapStateToProps(state) {
   return {auth: state.auth};
 }
 function mapDispatchToProps(dispatch) {
   return bindActionCreators(AuthActions, dispatch);
 }
-
-
 export class Login extends Component {
 
   constructor(props) {
@@ -22,7 +23,9 @@ export class Login extends Component {
 
   login(e) {
     e.preventDefault();
+
     this.props.login(this.getValueOfRef(this._username), this.getValueOfRef(this._password));
+
   }
 
   getValueOfRef(ref) {
@@ -30,6 +33,7 @@ export class Login extends Component {
   }
 
   render() {
+    console.log(this.props.auth.isLoading);
     return <div className="col-md-4 col-md-offset-4">
       <div className="text-center">
         <h1 className="login-brand-text">Monitoring Tool</h1>
@@ -63,7 +67,7 @@ export class Login extends Component {
               />
             </div>
             <Checkbox label="Remember Me"> Remember Me </Checkbox>
-            <Button type="submit" bsSize="large" bsStyle="success" block>Login</Button>
+            <LoadingButton isLoading={this.props.auth.isLoading} type="submit" bsSize="large" bsStyle="success" block>Login</LoadingButton>
           </fieldset>
         </form>
 

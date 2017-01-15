@@ -33,10 +33,12 @@ export function logout() {
 export function AuthReducer(state = {}, action) {
   console.log(action);
   switch (action.type) {
+    case LOGIN:
+      return {...state, isLoading: true};
     case LOGGED_IN:
-      return {...action};
+      return {...action, isLoading: false};
     case LOGIN_FAILED:
-      return {loginFailed: true}
+      return {loginFailed: true, isLoading: false}
     case LOGOUT:
       return {};
     default:

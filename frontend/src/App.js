@@ -17,18 +17,26 @@ class App extends Component {
 
   routeToLoginIfNeeded() {
     const router = this.props.router;
+    this.isRouting = false;
     if (this.props.auth.user == null) {
       if (!router.isActive("/login")) {
         router.push("/login");
+        this.isRouting = true;
       }
     } else {
       if (router.isActive("/login")) {
         router.push("/app");
+        this.isRouting = true;
       }
     }
   }
   render() {
-    return this.props.children;
+    if(!this.isRouting) {
+      return this.props.children;
+    }else{
+      return <div></div>
+    }
+
   }
 }
 

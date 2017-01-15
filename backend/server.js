@@ -8,6 +8,7 @@ var users = {
   "vojta": {name: "Vojtech Udrzal", roles: ["admin", "user"], password: "asd"}
 }
 app.post('/login', function (req, res) {
+
   console.log("body:");
   console.log(req.body);
   var user = users[req.body.username];
