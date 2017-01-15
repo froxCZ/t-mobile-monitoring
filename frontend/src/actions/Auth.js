@@ -85,6 +85,9 @@ export const Actions = {
 
 export function AuthListener(state) {
   if (!state.error && !state.loading) {
-    localStorage.setItem(AUTH_LOCAL_STORAGE_KEY, JSON.stringify(state));
+    let storedState = {...state};
+    delete storedState.isLoading;
+    delete storedState.loginFailed;
+    localStorage.setItem(AUTH_LOCAL_STORAGE_KEY, JSON.stringify(storedState));
   }
 }

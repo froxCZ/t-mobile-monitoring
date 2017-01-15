@@ -5,18 +5,13 @@ class LoadingButton extends Button {
 
   constructor() {
     super();
-    this.state = {isLoading: false}
   }
-
-  componentWillReceiveProps(nextProps) {
-    this.setState({isLoading:nextProps.isLoading});
-  }
-
 
   render() {
     var parentProps = {...this.props};
     var parentState = {...this.state};
-    let isLoading = this.state.isLoading;
+
+    let isLoading = this.props.isLoading;
     delete parentProps.isLoading;
     delete parentState.isLoading;
     console.log(isLoading);
