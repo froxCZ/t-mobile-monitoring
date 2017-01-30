@@ -2,7 +2,7 @@
 
 
 cd backend
-nodemon server.js &
+npm run-script dev &
 cd ..
 
 cd frontend

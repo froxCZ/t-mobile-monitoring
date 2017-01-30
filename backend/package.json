@@ -6,10 +6,10 @@
     "type": "git",
     "url": "git@github.com:vutran/spa-starter-kit.git"
   },
-  "main": "server.js",
+  "main": "src/server.js",
   "devDependencies": {},
   "scripts": {
-    "startDev": ""
+    "dev": "nodemon src/server.js"
   },
   "author": {
     "name": "Vu Tran",
@@ -19,6 +19,9 @@
   "license": "MIT",
   "dependencies": {
     "body-parser": "^1.15.2",
-    "express": "^4.14.0"
+    "express": "^4.14.0",
+    "mongodb": "^2.2.22",
+    "mongoose": "^4.8.0",
+    "underscore": "^1.8.3"
   }
 }

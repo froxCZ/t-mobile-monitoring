@@ -59,7 +59,7 @@ export function* LoginSaga() {
           password: action.password,
         })
       }
-      var response = yield performFetch("/login", myInit)
+      var response = yield performFetch("/user/login", myInit)
       yield put(loggedIn(response))
     } catch (error) {
       yield put(loginFailed());
