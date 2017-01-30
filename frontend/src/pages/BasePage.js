@@ -2,6 +2,7 @@ import React, {Component} from 'react';
 import {bindActionCreators} from 'redux';
 import {connect} from 'react-redux';
 import MyNavigation from '../components/MyNavigation'
+import LoadingBar from 'react-redux-loading-bar'
 
 function mapStateToProps(state) {
   return {};
@@ -18,7 +19,9 @@ class BasePage extends Component {
 
   render() {
     return (<div><MyNavigation/>
-      <div id="page-wrapper" className="page-wrapper">{this.props.children}</div>
+      <div id="page-wrapper" className="page-wrapper"><header>
+        <LoadingBar />
+      </header>{this.props.children}</div>
     </div>)
   }
 }

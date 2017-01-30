@@ -1,10 +1,14 @@
 import DevTools from './DevTools';
-import {AuthReducer,AuthListener, AuthSagas} from './actions/Auth';
+import {AuthReducer, AuthListener, AuthSagas} from './actions/Auth';
 import {createStore, combineReducers, compose, applyMiddleware} from 'redux'
 import createSagaMiddleware from "redux-saga";
 export const AUTH = "auth";
+import {loadingBarReducer} from 'react-redux-loading-bar'
 export const Reducers = combineReducers(
-  {[AUTH]: AuthReducer}
+  {
+    [AUTH]: AuthReducer,
+    loadingBar: loadingBarReducer
+  }
 );
 const initialState = {};
 const sagaMiddleware = createSagaMiddleware();

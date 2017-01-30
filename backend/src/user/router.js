@@ -2,7 +2,7 @@ var router = require('express').Router()
 var User = require('./user');
 
 function login(req, res) {
-  User.findById(req.body.username).then(user=> {
+  User.findById(req.body.login).then(user=> {
     if (user == null || user.password != req.body.password) {
       res.sendStatus(401);
     } else {
@@ -13,7 +13,7 @@ function login(req, res) {
 
 function createUser(req, res, next) {
   var user = req.body;
-  var requiredAttributes = ["username", "password"];
+  var requiredAttributes = ["login", "password"];
   Promise.resolve(user)
     .then(user => {
       for (let attribute of requiredAttributes) {
@@ -26,8 +26,8 @@ function createUser(req, res, next) {
       return user;
     })
     .then(user => {
-      user._id = user.username;
-      delete user.username;
+      user._id = user.login;
+      delete user.login;
       user.apiKey = Math.random().toString(36).replace(/[^a-z0-9]+/g, '');
       return user;
     })
@@ -41,7 +41,13 @@ function createUser(req, res, next) {
     .then(result=>res.send({_id: result}))
     .catch(err=> next(err));
 }
+function getUser(req, res) {
+  User.find({}, {apiKey: false, password: false}).then(result=> {
+    res.send(result);
+  })
+}
 
+router.get("/user", getUser);
 router.post("/user", createUser);
 router.post('/user/login', login);
 

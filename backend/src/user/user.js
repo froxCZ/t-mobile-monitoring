@@ -1,10 +1,10 @@
 var _ = require("underscore");
 
 
- setTimeout(function () {
- // UsersCollection = db.collection("users");
- // User.save("avojxta", {x: "eeee", _id: "newId"}).then(result=>console.log(result));
- }, 1000)
+setTimeout(function () {
+  // UsersCollection = db.collection("users");
+  // User.save("avojxta", {x: "eeee", _id: "newId"}).then(result=>console.log(result));
+}, 1000)
 
 var User = class User {
 
@@ -32,13 +32,18 @@ var User = class User {
       .then(result => result.result);
   }
 
-  static create(data){
+  static create(data) {
     return db.collection("users").insertOne(data).then(result =>result.insertedId);
   }
 
   static delete(userId) {
     return db.collection("users").deleteOne({_id: userId});
   }
+
+  static find(search, projection) {
+    return db.collection("users").find(search, projection).toArray();
+  }
+
 };
 
 

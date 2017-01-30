@@ -4,6 +4,7 @@ import {Router, Route, Link, IndexRoute, IndexRedirect, hashHistory, browserHist
 import Login from './pages/Login'
 import BasePage from './pages/BasePage'
 import Home from './pages/Home'
+import UserPage from './pages/UserPage'
 const NotFound = () => (
   <h1>404.. This page is not found!</h1>)
 export default class Routes extends Component {
@@ -14,7 +15,8 @@ export default class Routes extends Component {
         <IndexRedirect to="login"/>
         <Route path='/app' component={BasePage}>
           <IndexRoute component={Home}/>
-          <Route path='/' component={NotFound}/>
+          <Route path='user' component={UserPage}/>
+          <Route path='*' component={NotFound}/>
         </Route>
         <Route path='/login' component={Login}/>
       </Route>

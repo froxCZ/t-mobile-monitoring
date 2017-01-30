@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { Link } from 'react-router'
 import classNames from 'classnames';
 
 class Sidebar extends Component {
@@ -156,7 +157,7 @@ class Sidebar extends Component {
                 }}
               >
                 <i className="fa fa-sitemap fa-fw" />
-                &nbsp;Multi-Level Dropdown
+                &nbsp;Management
                 <span className="fa arrow" />
               </a>
               <ul
@@ -166,7 +167,7 @@ class Sidebar extends Component {
                   })}
               >
                 <li>
-                  <a href="" onClick={(e) => { e.preventDefault(); }}>Second Level Item</a>
+                  <Link to="/app/user">Users</Link>
                 </li>
                 <li>
                   <a href="" onClick={(e) => { e.preventDefault(); }}>Second Level Item</a>
