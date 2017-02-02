@@ -24,7 +24,7 @@ export class Login extends Component {
   login(e) {
     e.preventDefault();
 
-    this.props.login(this.getValueOfRef(this._username), this.getValueOfRef(this._password));
+    this.props.login(this.getValueOfRef(this._login), this.getValueOfRef(this._password));
 
   }
 
@@ -51,9 +51,9 @@ export class Login extends Component {
               <FormControl
                 type="text"
                 className="form-control"
-                placeholder="Username"
+                placeholder="Login"
                 name="name"
-                ref={e =>this._username = e}
+                ref={e =>this._login = e}
               />
             </div>
 

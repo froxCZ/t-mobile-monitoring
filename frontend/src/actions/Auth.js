@@ -6,10 +6,10 @@ export const LOGGED_IN = 'LOGGED_IN';
 export const LOGIN_FAILED = 'LOGIN_FAILED';
 export const LOGOUT = 'LOGOUT';
 
-export function login(username, password) {
+export function login(login, password) {
   return {
     type: LOGIN,
-    username: username,
+    login: login,
     password: password
   }
 }
@@ -55,7 +55,7 @@ export function* LoginSaga() {
       var myInit = {
         method: 'POST',
         body: JSON.stringify({
-          username: action.username,
+          login: action.login,
           password: action.password,
         })
       }
