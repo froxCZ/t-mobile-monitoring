@@ -45,8 +45,9 @@ function dev(req, res, next) {
           sum: 1,
           sumx: 1,
           count: 1,
+          "a":"$sum",
           "dataCZGSMsum": 1,
-          "dataCZMMSsum": 1
+          "dataCZMMSsum": 1,
         }
       }
     ]
@@ -54,6 +55,7 @@ function dev(req, res, next) {
     .then(result => res.send(result))
 }
 function devPost(req, res, next) {
+  console.log(req.body)
   DataQuery.getData(req.body)
     .then(a => {
       res.send(a);

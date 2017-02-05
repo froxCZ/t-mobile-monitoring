@@ -5,7 +5,29 @@ var dataQuery = class DataQuery {
 
   static getData(searchParam) {
     var fullQuery = createMongoQuery(searchParam);
-    return dataDb.collection('lobs').aggregate(fullQuery).toArray();
+    return dataDb.collection('lobs').aggregate(fullQuery).toArray()
+      .then(arr => {
+        var sumParam = arr[0].searchParam.aggregation.sum || [];
+        for(let i in sumParam){
+          sumParam[i] = objectPathToValidName(sumParam[i]);
+        }
+        var minMax = {}
+        for(let param of sumParam){
+          minMax[param] = {min:arr[0][param],max:arr[0][param]}
+        }
+        for (let row of arr) {
+          delete row.searchParam
+          for(let param of sumParam){
+            minMax[param].min = Math.min(minMax[param].min,row[param]);
+            minMax[param].max = Math.max(minMax[param].max,row[param]);
+          }
+        }
+        var response = {};
+        response.metadata = minMax;
+        response.data = arr;
+        var metadata = {};
+        return response
+      })
     //return Promise.resolve(fullQuery);
   }
 };
@@ -23,6 +45,7 @@ function createMongoQuery(searchParam) {
   var dataGroupAndProjection = createDataGroupAndProjection(searchParam.aggregation);
   var group = {"$group": Object.assign(timeGroupAndProjection.group, dataGroupAndProjection.group)};
   var projection = {"$project": Object.assign(timeGroupAndProjection.project, dataGroupAndProjection.project)};
+  projection.$project.searchParam = searchParam;
   var sort = {
     "$sort": {
       "_id": 1
@@ -38,9 +61,9 @@ function createDataGroupAndProjection(aggregation) {
   var project = {};
   if (aggregation.sum) {
     for (let dataPath of aggregation.sum) {
-      var validName = dataPath.replace(/\./g, '');
+      var validName = objectPathToValidName(dataPath);
       group[validName] = {"$sum": "$" + dataPath}
-      project[validName] = 1;
+      project[validName] = "$" + validName;
     }
   }
   return {group: group, project: project};
@@ -55,7 +78,7 @@ function createTimeGroupAndProjection(timeDiff) {
     var minuteGroups = [1, 5, 15, 30];
     for (let minuteGroup of minuteGroups) {
       if (groupCount < minuteGroup) {
-        console.log("expected # of results: "+(minutes/minuteGroup));
+        console.log("expected # of results: " + (minutes / minuteGroup));
         return createMinuteGrouping(minuteGroup);
       }
     }
@@ -81,5 +104,8 @@ function createMinuteGrouping(groupByMinutes) {
   };
   var project = {_id: {$subtract: ["$anyDate", {$multiply: [1000 * 60, {"$mod": [{"$minute": "$anyDate"}, groupByMinutes]}]}]}}
   return {group: groupObject, project: project};
+}
 
+function objectPathToValidName(objectPath){
+  return objectPath.replace(/\./g, '')
 }

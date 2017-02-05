@@ -1,10 +1,11 @@
-import React, {Component} from 'react';
-import App from './App';
-import {Router, Route, Link, IndexRoute, IndexRedirect, hashHistory, browserHistory} from 'react-router'
-import Login from './pages/Login'
-import BasePage from './pages/BasePage'
-import Home from './pages/Home'
-import UserPage from './pages/UserPage'
+import React, {Component} from "react";
+import App from "./App";
+import {Router, Route, Link, IndexRoute, IndexRedirect, hashHistory, browserHistory} from "react-router";
+import Login from "./pages/Login";
+import BasePage from "./pages/BasePage";
+import Home from "./pages/Home";
+import UserPage from "./pages/UserPage";
+import DataFlow from "./pages/DataFlow";
 const NotFound = () => (
   <h1>404.. This page is not found!</h1>)
 export default class Routes extends Component {
@@ -16,6 +17,7 @@ export default class Routes extends Component {
         <Route path='/app' component={BasePage}>
           <IndexRoute component={Home}/>
           <Route path='user' component={UserPage}/>
+          <Route path='data-flow' component={DataFlow}/>
           <Route path='*' component={NotFound}/>
         </Route>
         <Route path='/login' component={Login}/>
