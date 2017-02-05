@@ -23,6 +23,7 @@ app.use('', require('./user/router'));
 app.use('', require('./data/router'));
 
 function clientErrorHandler(err, req, res, next) {
+  console.log(err.id);
   res.status(err.statusCode || 500).send({error: err.message || 'Something failed!'})
 }
 
