@@ -5,25 +5,26 @@ var dataQuery = class DataQuery {
 
   static getData(searchParam) {
     var fullQuery = createMongoQuery(searchParam);
+    console.log(fullQuery)
     return dataDb.collection('lobs').aggregate(fullQuery).toArray()
       .then(arr => {
         var sumParam = arr[0].searchParam.aggregation.sum || [];
-        for(let i in sumParam){
+        for (let i in sumParam) {
           sumParam[i] = objectPathToValidName(sumParam[i]);
         }
         var minMax = {}
-        for(let param of sumParam){
-          minMax[param] = {min:arr[0][param],max:arr[0][param]}
+        for (let param of sumParam) {
+          minMax[param] = {min: arr[0][param], max: arr[0][param]}
         }
         for (let row of arr) {
           delete row.searchParam
-          for(let param of sumParam){
-            minMax[param].min = Math.min(minMax[param].min,row[param]);
-            minMax[param].max = Math.max(minMax[param].max,row[param]);
+          for (let param of sumParam) {
+            minMax[param].min = Math.min(minMax[param].min, row[param]);
+            minMax[param].max = Math.max(minMax[param].max, row[param]);
           }
         }
         var response = {};
-        response.metadata = minMax;
+        response.metadata = {metrics: minMax, from: searchParam.from, to: searchParam.to};
         response.data = arr;
         var metadata = {};
         return response
@@ -62,7 +63,7 @@ function createDataGroupAndProjection(aggregation) {
   if (aggregation.sum) {
     for (let dataPath of aggregation.sum) {
       var validName = objectPathToValidName(dataPath);
-      group[validName] = {"$sum": "$" + dataPath}
+      group[validName] = {"$sum": "$data." + dataPath+".sum"}
       project[validName] = "$" + validName;
     }
   }
@@ -106,6 +107,6 @@ function createMinuteGrouping(groupByMinutes) {
   return {group: groupObject, project: project};
 }
 
-function objectPathToValidName(objectPath){
+function objectPathToValidName(objectPath) {
   return objectPath.replace(/\./g, '')
 }
