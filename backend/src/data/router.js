@@ -64,7 +64,52 @@ function devPost(req, res, next) {
   })
 
 }
+function getLobs(req, res, next) {
+  CZ_LOBS = ["SIS",
+    "DWA",
+    "MWB",
+    "DAR",
+    "SMS",
+    "PCF",
+    "PPC",
+    "TCF",
+    "GSM",
+    "TPP",
+    "XTC",
+    "PST",
+    "WHS",
+    "TAP",
+    "SBC",
+    "SCF",
+    "LAS",
+    "MMS",
+    "ATS",
+    "RRA",
+    "VMS",
+    "MTS",
+    "OTA",
+    "BVS",
+    "VOP",
+    "WEL",
+    "CIR",
+    "SMG",
+    "LTP",
+    "M2M",
+    "EWG",
+    "TIT",
+    "RES",
+    "KPI",
+    "EPC",
+    "MNT",
+    "TOC",
+    "EWH",
+    "ACI"];
+  const lobs = {CZ:CZ_LOBS};
+  res.send(lobs);
+}
+
 router.get("/data/dev", dev);
+router.get("/lobs", getLobs);
 router.post("/data/dev", devPost);
 
 

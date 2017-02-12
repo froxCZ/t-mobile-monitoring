@@ -5,24 +5,25 @@ var dataQuery = class DataQuery {
 
   static getData(searchParam) {
     var fullQuery = createMongoQuery(searchParam);
-    console.log(fullQuery)
     return dataDb.collection('lobs').aggregate(fullQuery).toArray()
       .then(arr => {
-        var sumParam = arr[0].searchParam.aggregation.sum || [];
+        var sumParam = searchParam.aggregation.sum || [];
         for (let i in sumParam) {
           sumParam[i] = objectPathToValidName(sumParam[i]);
         }
-        var minMax = {}
-        for (let param of sumParam) {
-          minMax[param] = {min: arr[0][param], max: arr[0][param]}
-        }
-        for (let row of arr) {
-          delete row.searchParam
+        var minMax = {};
+        if(arr.length>0) {
           for (let param of sumParam) {
-            minMax[param].min = Math.min(minMax[param].min, row[param]);
-            minMax[param].max = Math.max(minMax[param].max, row[param]);
+            minMax[param] = {min: arr[0][param], max: arr[0][param]}
+          }
+          for (let row of arr) {
+            for (let param of sumParam) {
+              minMax[param].min = Math.min(minMax[param].min, row[param]);
+              minMax[param].max = Math.max(minMax[param].max, row[param]);
+            }
           }
         }
+
         var response = {};
         response.metadata = {metrics: minMax, from: searchParam.from, to: searchParam.to};
         response.data = arr;
@@ -46,7 +47,6 @@ function createMongoQuery(searchParam) {
   var dataGroupAndProjection = createDataGroupAndProjection(searchParam.aggregation);
   var group = {"$group": Object.assign(timeGroupAndProjection.group, dataGroupAndProjection.group)};
   var projection = {"$project": Object.assign(timeGroupAndProjection.project, dataGroupAndProjection.project)};
-  projection.$project.searchParam = searchParam;
   var sort = {
     "$sort": {
       "_id": 1

@@ -6,6 +6,7 @@ import BasePage from "./pages/BasePage";
 import Home from "./pages/Home";
 import UserPage from "./pages/UserPage";
 import DataFlow from "./pages/DataFlow";
+import LobChartPage from "./pages/lob/LobChartPage";
 const NotFound = () => (
   <h1>404.. This page is not found!</h1>)
 export default class Routes extends Component {
@@ -17,6 +18,7 @@ export default class Routes extends Component {
         <Route path='/app' component={BasePage}>
           <IndexRoute component={Home}/>
           <Route path='user' component={UserPage}/>
+          <Route path='lob/chart' component={LobChartPage}/>
           <Route path='data-flow' component={DataFlow}/>
           <Route path='*' component={NotFound}/>
         </Route>

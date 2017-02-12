@@ -11,25 +11,40 @@ class MetricGraph extends Component {
   render() {
     let data = [];
     let metrics = []
-    for (let i in this.props.source.metadata.metrics) {
-      metrics.push(i);
+    if (this.props.metrics) {
+      metrics = this.props.metrics;
+    } else {
+      for (let i in this.props.source.metadata.metrics) {
+        metrics.push(i);
+      }
     }
     if (this.props.relative) {
       data = MetricGraph.createRelativeValues(this.props.source.metadata.metrics, this.props.source.data);
-      console.log(data)
     } else {
       data = MetricGraph.scaleValues(this.props.source.metadata.metrics, this.props.source.data);
     }
+    MetricGraph.adjustDate(data);
+    let lines = [];
+    let colors = ["red", "blue", "orange", "yellow"];
+    for (let i in metrics) {
+      lines.push(<Line type="basis" dataKey={metrics[i]} stroke={colors[i]} dot={false} activeDot={true}
+                       isAnimationActive={false}/>)
+    }
+
+
     return <LineChart width={600} height={300} data={data}>
       <XAxis dataKey="_id"/>
       <YAxis/>
       <Tooltip/>
       <Legend />
-      <Line type="basis" dataKey="CZGSM" stroke="red" dot={false} activeDot={true}
-            isAnimationActive={false}/>
-      <Line type="basis" dataKey="CZMMS" stroke="blue" dot={false} activeDot={true}
-            isAnimationActive={false}/>
+      {lines}
     </LineChart>
+  }
+
+  static adjustDate(data) {
+    for(let row of data){
+      row._id = row._id.split("T")[0];
+    }
   }
 
   static scaleValues(metrics, data) {

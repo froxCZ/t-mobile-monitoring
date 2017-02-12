@@ -1,12 +1,11 @@
-import React, {Component, PropTypes} from 'react';
-import {bindActionCreators} from 'redux';
-import {connect} from 'react-redux';
-import Button from 'react-bootstrap/lib/Button';
-import Panel from 'react-bootstrap/lib/Panel';
-import Pagination from 'react-bootstrap/lib/Pagination';
-import PageHeader from 'react-bootstrap/lib/PageHeader';
-import {performFetchPromise} from '../actions/ApiRequest'
-import {showLoading, hideLoading} from 'react-redux-loading-bar'
+import React, {Component, PropTypes} from "react";
+import {bindActionCreators} from "redux";
+import {connect} from "react-redux";
+import Panel from "react-bootstrap/lib/Panel";
+import Pagination from "react-bootstrap/lib/Pagination";
+import PageHeader from "react-bootstrap/lib/PageHeader";
+import {performFetchPromise} from "../actions/ApiRequest";
+import {showLoading, hideLoading} from "react-redux-loading-bar";
 
 function mapStateToProps(state) {
   return {auth: state.auth};
@@ -50,7 +49,6 @@ class UserPage extends Component {
         <td>asd</td>
       </tr>
     );
-    console.log(userRows);
     return <div>
       <div className="col-lg-12">
         <PageHeader>Users</PageHeader>

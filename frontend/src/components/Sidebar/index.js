@@ -1,6 +1,6 @@
-import React, { Component } from 'react';
-import { Link } from 'react-router'
-import classNames from 'classnames';
+import React, {Component} from "react";
+import {Link} from "react-router";
+import classNames from "classnames";
 
 class Sidebar extends Component {
 
@@ -51,7 +51,7 @@ class Sidebar extends Component {
                   return false;
                 }}
               >
-                <i className="fa fa-bar-chart-o fa-fw" /> &nbsp;Charts
+                <i className="fa fa-bar-chart-o fa-fw" /> &nbsp;Lobs monitoring
                 <span className="fa arrow" />
               </a>
               <ul
@@ -63,9 +63,7 @@ class Sidebar extends Component {
               }
               >
                 <li>
-                  <a href="" onClick={(e) => { e.preventDefault(); this.push('/flotcharts'); }} >
-                    FlotCharts
-                  </a>
+                    <Link to="/app/lob/chart">Charts</Link>
                 </li>
                 <li>
                   <a
