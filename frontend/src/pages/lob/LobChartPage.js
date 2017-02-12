@@ -12,9 +12,12 @@ import "react-bootstrap-typeahead/css/Typeahead.css";
 import "react-bootstrap-typeahead/css/ClearButton.css";
 import "react-bootstrap-typeahead/css/Loader.css";
 import "react-bootstrap-typeahead/css/Token.css";
-import DatePicker from "react-bootstrap-date-picker"; // Expects that Highcharts was loaded in the code.
+import DatePicker from "react-bootstrap-date-picker";
+import _ from "lodash"; // Expects that Highcharts was loaded in the code.
 // ES2015
 // ES2015
+
+const LOCAL_STORAGE = "lobChartPage";
 
 function mapStateToProps(state) {
   return {auth: state.auth};
@@ -27,7 +30,7 @@ class LobChartPage extends Component {
 
   constructor() {
     super();
-    this.state = {lobs: null};
+    this.state = JSON.parse(localStorage.getItem(LOCAL_STORAGE) || "{}");
   }
 
   componentWillMount() {
@@ -44,10 +47,6 @@ class LobChartPage extends Component {
     })
   }
 
-  dateChanged(a,b){
-    console.log(a)
-    console.log(b)
-  }
   loadData() {
     var myInit = {
       method: 'POST',
@@ -61,10 +60,14 @@ class LobChartPage extends Component {
     };
     var that = this;
     this.props.showLoading();
-    performFetchPromise("/data/dev", myInit).then(result=> {
+    performFetchPromise("/analyser/data_query/", myInit).then(result=> {
       that.setState({response: result});
       that.props.hideLoading();
     });
+  }
+
+  componentDidUpdate(){
+    localStorage.setItem(LOCAL_STORAGE, JSON.stringify(_.pick(this.state,['from','to','selectedLobs'])));
   }
 
 
@@ -83,7 +86,6 @@ class LobChartPage extends Component {
         metrics.push(metric);
       }
     }
-    console.log(this.state);
     return <div>
 
       <PageHeader>DataFlow</PageHeader>
@@ -97,6 +99,7 @@ class LobChartPage extends Component {
                 onChange={(selected)=>this.setState({selectedLobs: selected})}
                 //multiple={true}
                 options={lobs}
+                selected={this.state.selectedLobs}
               />
             </div>
             <div className="col-xs-3 datePicker">
@@ -110,7 +113,7 @@ class LobChartPage extends Component {
           </div>
           <div className="row">
             <div className="col-lg-3">
-              <Button onClick={this.loadData.bind(this)}>Filter</Button>
+              <Button onClick={this.loadData.bind(this)}>Apply</Button>
             </div>
           </div>
         </div>

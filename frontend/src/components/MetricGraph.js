@@ -23,7 +23,7 @@ class MetricGraph extends Component {
     } else {
       data = MetricGraph.scaleValues(this.props.source.metadata.metrics, this.props.source.data);
     }
-    MetricGraph.adjustDate(data);
+    //MetricGraph.adjustDate(data);
     let lines = [];
     let colors = ["red", "blue", "orange", "yellow"];
     for (let i in metrics) {

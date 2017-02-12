@@ -1,5 +1,5 @@
-import {take, put, fork} from "redux-saga/effects";
-import {performFetch} from './ApiRequest'
+import {take, put} from "redux-saga/effects";
+import {performFetch} from "./ApiRequest";
 const AUTH_LOCAL_STORAGE_KEY = 'AUTH_LOCAL_STORAGE_KEY';
 export const LOGIN = 'LOGIN';
 export const LOGGED_IN = 'LOGGED_IN';
@@ -31,9 +31,7 @@ export function logout() {
   }
 }
 const initialState = JSON.parse(localStorage.getItem(AUTH_LOCAL_STORAGE_KEY) || "{}");
-console.log(initialState)
 export function AuthReducer(state = initialState, action) {
-  console.log(action);
   switch (action.type) {
     case LOGIN:
       return {...state, isLoading: true};

@@ -2,6 +2,9 @@
 var express = require('express');
 var app = express();
 var bodyParser = require('body-parser');
+var proxy = require('express-http-proxy');
+
+app.use('/proxy', proxy('www.google.com'));
 const MongoClient = require('mongodb').MongoClient
 MongoClient.connect('mongodb://localhost/dev', (err, database) => {
   if (err == null) {
@@ -28,3 +31,5 @@ function clientErrorHandler(err, req, res, next) {
 }
 
 app.use(clientErrorHandler);
+
+app.use('/analyser', proxy('http://localhost:5000/'));

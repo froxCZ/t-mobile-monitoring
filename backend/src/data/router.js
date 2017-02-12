@@ -110,7 +110,7 @@ function getLobs(req, res, next) {
 
 router.get("/data/dev", dev);
 router.get("/lobs", getLobs);
-router.post("/data/dev", devPost);
+router.post("/data/lobs/raw", devPost);
 
 
 module.exports = router;
