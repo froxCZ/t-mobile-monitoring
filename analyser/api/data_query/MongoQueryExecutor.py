@@ -1,4 +1,4 @@
-import config
+from config import config
 from mongo import mongo
 
 
@@ -9,7 +9,7 @@ class MongoQueryExecutor:
     self.coll = mongo.dataDb()["lobs"]
     self.metrics = []
     self.lobName = searchParam["aggregation"]["sum"][0]
-    self.lobConfig = config.getLobByName(self.lobName)
+    self.lobConfig = config.getLobConfigByName(self.lobName)
     self.metadata = {}
 
   def prepare(self):
@@ -33,17 +33,22 @@ class MongoQueryExecutor:
     timeDiff /= 60
     minutes = max(timeDiff, 60)
     hours = minutes / 60
-    groupCount = max(minutes / 400, self.lobConfig.granularity)  # CONSTANT
+    granularity = self.lobConfig.granularity
+    maxRows = 500
+    if (int(self.searchParam["granularity"]) > 0):
+      granularity = float(self.searchParam["granularity"])
+      maxRows = 10000
+    groupCount = max(minutes / maxRows, granularity)  # CONSTANT
     minuteRange = 0
     grouping = None
     if groupCount <= 30:
-      minuteGroups = [1, 5, 15, 30]
+      minuteGroups = [1, 5, 10, 15, 30]
       for minuteGroup in minuteGroups:
         if (groupCount <= minuteGroup):
           minuteRange = minuteGroup
           grouping = self.createMinuteGrouping(minuteGroup)
           break
-    elif hours < 336:
+    elif groupCount < 4 * 60:
       minuteGroups = [60, 2 * 60, 4 * 60]
       for minuteGroup in minuteGroups:
         if (groupCount <= minuteGroup):
@@ -54,7 +59,7 @@ class MongoQueryExecutor:
       days = 1
       minuteRange = days * 24 * 60
       grouping = self.createDayGrouping(days)
-    self.metadata["minuteRange"] = minuteRange
+    self.metadata["granularity"] = minuteRange
     return grouping
 
   def createMinuteGrouping(self, groupByMinutes):
@@ -136,4 +141,4 @@ class MongoQueryExecutor:
 
 
 def validMongoAttribute(string):
-  return string.replace(".", "")
+  return string.replace(".", "_")

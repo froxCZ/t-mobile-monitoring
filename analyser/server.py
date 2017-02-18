@@ -37,6 +37,8 @@ def handle_invalid_usage(error):
 
 
 from api.data_query import data_query
+from api.lobs import lobs
 
 app.register_blueprint(data_query, url_prefix="/data_query")
+app.register_blueprint(lobs, url_prefix="/lobs")
 app.run(debug=True)

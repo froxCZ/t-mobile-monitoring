@@ -4,6 +4,9 @@ import {connect} from "react-redux";
 import PageHeader from "react-bootstrap/lib/PageHeader";
 import Button from "react-bootstrap/lib/Button";
 import Checkbox from "react-bootstrap/lib/Checkbox";
+import FormControl from "react-bootstrap/lib/FormControl";
+import ControlLabel from "react-bootstrap/lib/ControlLabel";
+import FormGroup from "react-bootstrap/lib/FormGroup";
 import {performFetchPromise} from "../../actions/ApiRequest";
 import {showLoading, hideLoading} from "react-redux-loading-bar";
 import {LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend} from "recharts";
@@ -39,16 +42,35 @@ class LobChartPage extends Component {
   }
 
   componentWillMount() {
-    this.loadLobs();
+    this.loadConfig();
   }
 
-  loadLobs() {
+  loadConfig() {
     this.props.showLoading();
     var that = this;
-    performFetchPromise("/lobs", {method: 'GET'}).then(lobs => {
-      console.log(lobs);
-      that.setState({lobs: lobs});
+    performFetchPromise("/analyser/lobs/configs", {method: 'GET'}).then(result => {
+      result.minuteRanges.unshift(0);
+      let lobs = {}
+      for (let country in result.lobs) {
+        for (let lob in result.lobs[country]) {
+          lobs[country + "." + lob] = result.lobs[country][lob];
+        }
+      }
+      that.setState({lobs: lobs, minuteRanges: result.minuteRanges});
       that.props.hideLoading();
+    })
+  }
+
+  updateLobConfig(lobName, newData) {
+    var myInit = {
+      method: 'POST',
+      body: newData
+    };
+    var that = this;
+    this.props.showLoading();
+    performFetchPromise("/analyser/lobs/config/" + lobName, myInit).finally(result => {
+      that.props.hideLoading();
+      that.loadConfig();
     })
   }
 
@@ -60,13 +82,17 @@ class LobChartPage extends Component {
         "to": this.state.to,
         "aggregation": {
           "sum": this.state.selectedLobs
-        }
+        },
+        "granularity": this.state.granularity || 0
       }
     };
     var that = this;
     this.props.showLoading();
     performFetchPromise("/analyser/data_query/", myInit).then(result => {
       that.setState({response: result});
+    }).catch(result => {
+      this.setState({response: null})
+    }).then(x => {
       that.props.hideLoading();
     });
   }
@@ -77,25 +103,30 @@ class LobChartPage extends Component {
 
 
   render() {
-    let lobs = null;
+    let lobNames = null;
+    console.log(this.state)
     if (this.state.lobs) {
-      lobs = [];
-      for (let lob of this.state.lobs.CZ) {
-        lobs.push("CZ." + lob);
+      lobNames = [];
+      for (let lobName in this.state.lobs) {
+        lobNames.push(lobName);
       }
     }
     let metrics = null;
+    let realMetricName = null
+    let usedGranularity = null
     if (this.state.response) {
       metrics = [];
       for (let metric in this.state.response.metadata.metrics) {
         metrics.push(metric);
       }
+      realMetricName = metrics[0].replace("_", ".");
+      usedGranularity = this.state.response.metadata.granularity;
     }
     return <div>
 
       <PageHeader>DataFlow</PageHeader>
       {
-        lobs &&
+        lobNames &&
         <div>
           <div className="row">
             <div className="col-xs-3">
@@ -103,7 +134,7 @@ class LobChartPage extends Component {
               <Typeahead
                 onChange={(selected) => this.setState({selectedLobs: selected})}
                 //multiple={true}
-                options={lobs}
+                options={lobNames}
                 selected={this.state.selectedLobs}
               />
             </div>
@@ -120,8 +151,22 @@ class LobChartPage extends Component {
               <label>Interpolate:</label>
               <Checkbox onChange={(e) => this.setState({interpolate: e.target.checked})}
                         checked={this.state.interpolate}>
-                Checkbox
               </Checkbox>
+            </div>
+          </div>
+          <div className="row">
+            <div className="col-xs-1">
+              <FormGroup controlId="formControlsSelect">
+                <ControlLabel>Granularity</ControlLabel>
+                <FormControl bsSize="xsmall" componentClass="select" placeholder="select"
+                             onChange={e => this.setState({granularity: e.target.value})}
+                             value={this.state.granularity}>
+                  {
+                    this.state.minuteRanges.map((a) => <option value={a}>{a}</option>)
+                  }
+                </FormControl>
+              </FormGroup>
+
             </div>
           </div>
           <div className="row">
@@ -134,9 +179,22 @@ class LobChartPage extends Component {
 
 
       <div className="col-lg-6">
-        <h2>asdasd</h2>
         { this.state.response &&
-        <MetricGraph source={this.state.response} metrics={metrics} relative={false} interpolate={this.state.interpolate}/>
+        <div>
+          <h2>{realMetricName}</h2>
+          <div className="row">
+            <div className="col-lg-6">
+              Minimal granularity: {this.state.lobs[realMetricName].granularity}
+              <br/>
+              Granularity: {usedGranularity} minutes
+              <Button bsSize="xsmall" bsStyle="warning"
+                      onClick={() => this.updateLobConfig(realMetricName, {granularity: usedGranularity})}>Set as
+                minimal</Button>
+            </div>
+          </div>
+          <MetricGraph source={this.state.response} metrics={metrics} relative={false}
+                       interpolate={this.state.interpolate}/>
+        </div>
         }
       </div>
 

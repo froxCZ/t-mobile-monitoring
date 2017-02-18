@@ -28,3 +28,6 @@ def dataQuery():
   response["data"] = data
   response["metadata"] = {**{"metrics": metrics}, **mongoQuery.metadata}
   return jsonify(response)
+
+
+
