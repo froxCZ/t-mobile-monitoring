@@ -1,7 +1,7 @@
 import React, {Component} from "react";
 import {bindActionCreators} from "redux";
 import {connect} from "react-redux";
-import {LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend} from "recharts"; // Expects that Highcharts was loaded in the code.
+import {LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer} from "recharts"; // Expects that Highcharts was loaded in the code.
 class MetricGraph extends Component {
 
   constructor() {
@@ -18,6 +18,12 @@ class MetricGraph extends Component {
         metrics.push(i);
       }
     }
+    let lineType = "basis";
+    if (this.props.interpolate) {
+      lineType = "basis"
+    } else {
+      lineType = "linear"
+    }
     if (this.props.relative) {
       data = MetricGraph.createRelativeValues(this.props.source.metadata.metrics, this.props.source.data);
     } else {
@@ -27,22 +33,24 @@ class MetricGraph extends Component {
     let lines = [];
     let colors = ["red", "blue", "orange", "yellow"];
     for (let i in metrics) {
-      lines.push(<Line type="basis" dataKey={metrics[i]} stroke={colors[i]} dot={false} activeDot={true}
+      lines.push(<Line type={lineType} dataKey={metrics[i]} stroke={colors[i]} dot={false} activeDot={true}
                        isAnimationActive={false}/>)
     }
 
 
-    return <LineChart width={600} height={300} data={data}>
+    return <ResponsiveContainer height='100%' width='100%'  aspect={4.0/1.5}>
+      <LineChart data={data}>
       <XAxis dataKey="_id"/>
       <YAxis/>
       <Tooltip/>
       <Legend />
       {lines}
     </LineChart>
+    </ResponsiveContainer>
   }
 
   static adjustDate(data) {
-    for(let row of data){
+    for (let row of data) {
       row._id = row._id.split("T")[0];
     }
   }

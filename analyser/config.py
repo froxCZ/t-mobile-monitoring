@@ -1,47 +1,4 @@
-import os
-
 # large files: "FOX",        "RTB",
-CZ_LOBS = {"SIS": 1,
-           "DWA": 1,
-           "MWB": 1,
-           "DAR": 1,
-           "SMS": 1,
-           "PCF": 1,
-           "PPC": 1,
-           "TCF": 1,
-           "GSM": 1,
-           "TPP": 1,
-           "XTC": 1,
-           "PST": 1,
-           "WHS": 1,
-           "TAP": 1,
-           "SBC": 1,
-           "SCF": 1,
-           "LAS": 1,
-           "MMS": 1,
-           "ATS": 1,
-           "RRA": 1,
-           "VMS": 1,
-           "MTS": 1,
-           "OTA": 1,
-           "BVS": 1,
-           "VOP": 1,
-           "WEL": 1,
-           "CIR": 1,
-           "SMG": 1,
-           "LTP": 1,
-           "M2M": 1,
-           "EWG": 1,
-           "TIT": 1,
-           "RES": 1,
-           "KPI": 1,
-           "EPC": 1,
-           "MNT": 1,
-           "TOC": 1,
-           "EWH": 1,
-           "ACI": 1}
-LOBS = {"CZ": CZ_LOBS}
-
 
 class Lob:
   def __init__(self, country, name, granularity=None, smooth=True):
@@ -50,8 +7,48 @@ class Lob:
     self.granularity = granularity
     self.smooth = smooth
 
-#
-# LOBS = [
+CZ_LOBS = {  "SIS":Lob("CZ", "SIS", 180),
+             "DWA":Lob("CZ", "DWA", 10),
+             "MWB":Lob("CZ", "MWB", 60),
+             "DAR":Lob("CZ", "DAR", 15),
+             "SMS":Lob("CZ", "SMS", 60),
+             "PCF":Lob("CZ", "PCF", 15),
+             "PPC":Lob("CZ", "PPC", 15),
+             "TCF":Lob("CZ", "TCF", 30),
+             "GSM":Lob("CZ", "GSM", 15),
+             "TPP":Lob("CZ", "TPP", 60),
+             "XTC":Lob("CZ", "XTC", 15),
+             "PST":Lob("CZ", "PST", 60),
+             "WHS":Lob("CZ", "WHS", 10),
+             "TAP":Lob("CZ", "TAP", 120),
+             "SBC":Lob("CZ", "SBC", 90),
+             "SCF":Lob("CZ", "SCF", 180),
+             "LAS":Lob("CZ", "LAS", 15),
+             "MMS":Lob("CZ", "MMS", 15),
+             "ATS":Lob("CZ", "ATS", 15),
+             "RRA":Lob("CZ", "RRA", 60),
+             "VMS":Lob("CZ", "VMS", 60),
+             "MTS":Lob("CZ", "MTS", 15),
+             "OTA":Lob("CZ", "OTA", 30),
+             "BVS":Lob("CZ", "BVS", 15),
+             "VOP":Lob("CZ", "VOP", 20),
+             "WEL":Lob("CZ", "WEL", 60),
+             "CIR":Lob("CZ", "CIR", 60),
+             "SMG":Lob("CZ", "SMG", 60),
+             "LTP":Lob("CZ", "LTP", 1440),
+             "M2M":Lob("CZ", "M2M", 1440),
+             "EWG":Lob("CZ", "EWG", 180),
+             "TIT":Lob("CZ", "TIT", 120),
+             "RES":Lob("CZ", "RES", 1440),
+             "KPI":Lob("CZ", "KPI", 1440),
+             "EPC":Lob("CZ", "EPC", 120),
+             "MNT":Lob("CZ", "MNT", 10),
+             "TOC":Lob("CZ", "TOC", 1440),
+             "EWH":Lob("CZ", "EWH", 60),
+             "ACI":Lob("CZ", "ACI", 10),
+             "ICG":Lob("CZ", "ICG", 60)}
+LOBS = {"CZ": CZ_LOBS}
+# LOBS_CZ_CONFIG = [
 #   Lob("CZ", "SIS", 180),
 #   Lob("CZ", "DWA", 10),
 #   Lob("CZ", "MWB", 10),
@@ -93,3 +90,9 @@ class Lob:
 #   Lob("CZ", "ACI", 10),
 #   Lob("CZ", "ICG", 60)
 # ]
+
+def getLobByName(fullName):
+  tmp = fullName.split(".")
+  country = tmp[0]
+  lob = tmp[1]
+  return LOBS[country][lob]

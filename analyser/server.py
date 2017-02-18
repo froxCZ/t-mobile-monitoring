@@ -1,12 +1,13 @@
+import traceback
 from datetime import datetime
 
-from flask import Flask
+from flask import Flask, jsonify
 from flask.json import JSONEncoder
 
 app = Flask(__name__)
 
-class CustomJSONEncoder(JSONEncoder):
 
+class CustomJSONEncoder(JSONEncoder):
   def default(self, obj):
     try:
       if isinstance(obj, datetime):
@@ -18,12 +19,24 @@ class CustomJSONEncoder(JSONEncoder):
       return list(iterable)
     return JSONEncoder.default(self, obj)
 
+
 app.json_encoder = CustomJSONEncoder
+
 
 @app.route("/")
 def hello():
   return "Helasdlo xWorld!"
 
+
+@app.errorhandler(Exception)
+def handle_invalid_usage(error):
+  response = jsonify({"message": str(error)})
+  response.status_code = 500
+  traceback.print_exc()
+  return response
+
+
 from api.data_query import data_query
-app.register_blueprint(data_query,url_prefix="/data_query")
+
+app.register_blueprint(data_query, url_prefix="/data_query")
 app.run(debug=True)

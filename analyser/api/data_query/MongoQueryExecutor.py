@@ -1,3 +1,4 @@
+import config
 from mongo import mongo
 
 
@@ -7,8 +8,9 @@ class MongoQueryExecutor:
     self.query = []
     self.coll = mongo.dataDb()["lobs"]
     self.metrics = []
-
-    self.prepare()
+    self.lobName = searchParam["aggregation"]["sum"][0]
+    self.lobConfig = config.getLobByName(self.lobName)
+    self.metadata = {}
 
   def prepare(self):
     fromDate = self.searchParam["from"]
@@ -25,18 +27,35 @@ class MongoQueryExecutor:
         "_id": 1
       }
     }
-    self.query = [match, group, project,sort]
+    self.query = [match, group, project, sort]
 
   def createTimeGroupAndProjection(self, timeDiff):
     timeDiff /= 60
     minutes = max(timeDiff, 60)
-    groupCount = minutes / 400  # CONSTANT
-    if groupCount < 60:
+    hours = minutes / 60
+    groupCount = max(minutes / 400, self.lobConfig.granularity)  # CONSTANT
+    minuteRange = 0
+    grouping = None
+    if groupCount <= 30:
       minuteGroups = [1, 5, 15, 30]
       for minuteGroup in minuteGroups:
-        if (groupCount < minuteGroup):
-          return self.createMinuteGrouping(minuteGroup)
-    raise Exception('too large range')
+        if (groupCount <= minuteGroup):
+          minuteRange = minuteGroup
+          grouping = self.createMinuteGrouping(minuteGroup)
+          break
+    elif hours < 336:
+      minuteGroups = [60, 4 * 60]
+      for minuteGroup in minuteGroups:
+        if (groupCount <= minuteGroup):
+          minuteRange = minuteGroup
+          grouping = self.createHourGrouping(minuteGroup / 60)
+          break
+    else:
+      days = 1
+      minuteRange = days * 24 * 60
+      grouping = self.createDayGrouping(days)
+    self.metadata["minuteRange"] = minuteRange
+    return grouping
 
   def createMinuteGrouping(self, groupByMinutes):
     print(groupByMinutes)
@@ -59,6 +78,47 @@ class MongoQueryExecutor:
       "$subtract": ["$anyDate", {"$multiply": [1000 * 60, {"$mod": [{"$minute": "$anyDate"}, groupByMinutes]}]}]}}
     return groupObject, project
 
+  def createHourGrouping(self, groupByHours):
+    print("hours: " + str(groupByHours))
+    groupObject = {
+      "_id": {
+        "year": {"$year": "$_id"},
+        "month": {"$month": "$_id"},
+        "dayOfMonth": {"$dayOfMonth": "$_id"},
+        "interval": {
+          "$subtract": [
+            {"$hour": "$_id"},
+            {"$mod": [{"$hour": "$_id"}, groupByHours]}
+          ]
+        }
+      },
+      "anyDate": {"$first": "$_id"},
+    }
+    project = {"_id": {
+      "$subtract": ["$anyDate", {"$multiply": [1000 * 60 * 60, {"$mod": [{"$hour": "$anyDate"}, groupByHours]}]}]}}
+    return groupObject, project
+
+  def createDayGrouping(self, groupByDays):
+    print("days: " + str(groupByDays))
+    groupObject = {
+      "_id": {
+        "year": {"$year": "$_id"},
+        "month": {"$month": "$_id"},
+        "dayOfMonth": {"$dayOfMonth": "$_id"},
+        "interval": {
+          "$subtract": [
+            {"$dayOfMonth": "$_id"},
+            {"$mod": [{"$dayOfMonth": "$_id"}, groupByDays]}
+          ]
+        }
+      },
+      "anyDate": {"$first": "$_id"},
+    }
+    project = {"_id": {
+      "$subtract": ["$anyDate",
+                    {"$multiply": [1000 * 60 * 60 * 24, {"$mod": [{"$dayOfMonth": "$anyDate"}, groupByDays]}]}]}}
+    return groupObject, project
+
   def createDataGroupAndProjection(self, aggregation):
     group = {}
     project = {}
@@ -70,8 +130,9 @@ class MongoQueryExecutor:
     return group, project
 
   def execute(self):
+    self.prepare();
     result = self.coll.aggregate(self.query)
-    return list(result),self.metrics
+    return list(result), self.metrics
 
 
 def validMongoAttribute(string):

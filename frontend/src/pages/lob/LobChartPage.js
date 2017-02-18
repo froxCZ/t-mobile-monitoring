@@ -3,6 +3,7 @@ import {bindActionCreators} from "redux";
 import {connect} from "react-redux";
 import PageHeader from "react-bootstrap/lib/PageHeader";
 import Button from "react-bootstrap/lib/Button";
+import Checkbox from "react-bootstrap/lib/Checkbox";
 import {performFetchPromise} from "../../actions/ApiRequest";
 import {showLoading, hideLoading} from "react-redux-loading-bar";
 import {LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend} from "recharts";
@@ -30,7 +31,11 @@ class LobChartPage extends Component {
 
   constructor() {
     super();
-    this.state = JSON.parse(localStorage.getItem(LOCAL_STORAGE) || "{}");
+    if (localStorage.getItem(LOCAL_STORAGE)) {
+      this.state = JSON.parse(localStorage.getItem(LOCAL_STORAGE) || "{}");
+    } else {
+      this.state = {interpolate: true}
+    }
   }
 
   componentWillMount() {
@@ -40,7 +45,7 @@ class LobChartPage extends Component {
   loadLobs() {
     this.props.showLoading();
     var that = this;
-    performFetchPromise("/lobs", {method: 'GET'}).then(lobs=> {
+    performFetchPromise("/lobs", {method: 'GET'}).then(lobs => {
       console.log(lobs);
       that.setState({lobs: lobs});
       that.props.hideLoading();
@@ -60,14 +65,14 @@ class LobChartPage extends Component {
     };
     var that = this;
     this.props.showLoading();
-    performFetchPromise("/analyser/data_query/", myInit).then(result=> {
+    performFetchPromise("/analyser/data_query/", myInit).then(result => {
       that.setState({response: result});
       that.props.hideLoading();
     });
   }
 
-  componentDidUpdate(){
-    localStorage.setItem(LOCAL_STORAGE, JSON.stringify(_.pick(this.state,['from','to','selectedLobs'])));
+  componentDidUpdate() {
+    localStorage.setItem(LOCAL_STORAGE, JSON.stringify(_.pick(this.state, ['from', 'to', 'selectedLobs'])));
   }
 
 
@@ -96,7 +101,7 @@ class LobChartPage extends Component {
             <div className="col-xs-3">
               <label>Lob:</label>
               <Typeahead
-                onChange={(selected)=>this.setState({selectedLobs: selected})}
+                onChange={(selected) => this.setState({selectedLobs: selected})}
                 //multiple={true}
                 options={lobs}
                 selected={this.state.selectedLobs}
@@ -104,11 +109,19 @@ class LobChartPage extends Component {
             </div>
             <div className="col-xs-3 datePicker">
               <label>From:</label>
-              <DatePicker value={this.state.from} dateFormat="DD.MM.YYYY" onChange={(val)=>this.setState({from:val})}/>
+              <DatePicker value={this.state.from} dateFormat="DD.MM.YYYY"
+                          onChange={(val) => this.setState({from: val})}/>
             </div>
             <div className="col-xs-3 datePicker">
               <label>To:</label>
-              <DatePicker value={this.state.to} dateFormat="DD.MM.YYYY" onChange={(val)=>this.setState({to:val})}/>
+              <DatePicker value={this.state.to} dateFormat="DD.MM.YYYY" onChange={(val) => this.setState({to: val})}/>
+            </div>
+            <div className="col-xs-3">
+              <label>Interpolate:</label>
+              <Checkbox onChange={(e) => this.setState({interpolate: e.target.checked})}
+                        checked={this.state.interpolate}>
+                Checkbox
+              </Checkbox>
             </div>
           </div>
           <div className="row">
@@ -120,10 +133,10 @@ class LobChartPage extends Component {
       }
 
 
-      <div className="col-lg-12">
+      <div className="col-lg-6">
         <h2>asdasd</h2>
         { this.state.response &&
-        <MetricGraph source={this.state.response} metrics={metrics} relative={false}/>
+        <MetricGraph source={this.state.response} metrics={metrics} relative={false} interpolate={this.state.interpolate}/>
         }
       </div>
 
