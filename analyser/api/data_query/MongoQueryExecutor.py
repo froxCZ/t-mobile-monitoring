@@ -44,7 +44,7 @@ class MongoQueryExecutor:
           grouping = self.createMinuteGrouping(minuteGroup)
           break
     elif hours < 336:
-      minuteGroups = [60, 4 * 60]
+      minuteGroups = [60, 2 * 60, 4 * 60]
       for minuteGroup in minuteGroups:
         if (groupCount <= minuteGroup):
           minuteRange = minuteGroup

@@ -1,5 +1,8 @@
 import datetime
 
+import dateutil.parser
+
 
 def jsStringToDate(string):
-  return datetime.datetime.strptime(string, '%Y-%m-%dT%H:%M:%S.%fZ')
+  return dateutil.parser.parse(string) \
+         - datetime.timedelta(hours=10)  # hack while dates in mongo are at 00:00Z instead of 00:00CET
