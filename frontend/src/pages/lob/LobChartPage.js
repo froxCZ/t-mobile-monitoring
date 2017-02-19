@@ -39,7 +39,7 @@ class LobChartPage extends Component {
     if (localStorage.getItem(LOCAL_STORAGE)) {
       this.state = JSON.parse(localStorage.getItem(LOCAL_STORAGE) || "{}");
     } else {
-      this.state = {interpolate: true}
+      this.state = {smooth: true}
     }
     this.state.dateRange = DATE_RANGE[1];
   }
@@ -133,7 +133,6 @@ class LobChartPage extends Component {
       for (let lobName in this.state.lobs) {
         lobNames.push(lobName);
       }
-      console.log(lobNames)
       for (let i in lobNames) {
         if (lobNames[i] == this.state.selectedLobs[0]) {
           let index = Number(i);
@@ -234,9 +233,9 @@ class LobChartPage extends Component {
               </FormGroup>
             </div>
             <div className="col-xs-3">
-              <label>Interpolate:</label>
-              <Checkbox onChange={(e) => this.setState({interpolate: e.target.checked})}
-                        checked={this.state.interpolate}>
+              <label>Smooth:</label>
+              <Checkbox onChange={(e) => this.setState({smooth: e.target.checked})}
+                        checked={this.state.smooth}>
               </Checkbox>
             </div>
           </div>
@@ -265,7 +264,7 @@ class LobChartPage extends Component {
         <div className="row">
           <div className="col-xs-8">
             <MetricGraph source={this.state.response} metrics={metrics} relative={false}
-                         interpolate={this.state.interpolate}/>
+                         smooth={this.state.smooth}/>
           </div>
         </div>
       </div>

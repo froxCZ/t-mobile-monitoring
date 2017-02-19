@@ -30,12 +30,7 @@ class MetricGraph extends Component {
         metrics.push(i);
       }
     }
-    let lineType = "basis";
-    if (this.props.interpolate) {
-      lineType = "basis"
-    } else {
-      lineType = "linear"
-    }
+    let lineType = "linear";
     if (this.props.relative) {
       data = MetricGraph.createRelativeValues(this.props.source.metadata.metrics, this.props.source.data);
     } else {
@@ -45,9 +40,17 @@ class MetricGraph extends Component {
     let lines = [];
     let colors = ["red", "blue", "orange", "yellow"];
     for (let i in metrics) {
-      lines.push(<Line type={lineType} dataKey={metrics[i]} stroke={colors[i]} dot={false}
-                       activeDot={true}
-                       isAnimationActive={false}/>)
+      if (metrics[i].includes("smoothed")) {
+        if (this.props.smooth) {
+          lines.push(<Line type={lineType} dataKey={metrics[i]} stroke={colors[i]} strokeWidth={0.5} dot={false}
+                           activeDot={true}
+                           isAnimationActive={false}/>)
+        }
+      } else {
+        lines.push(<Line type={lineType} dataKey={metrics[i]} stroke={colors[i]} dot={false}
+                         activeDot={true}
+                         isAnimationActive={false}/>)
+      }
     }
 
 
