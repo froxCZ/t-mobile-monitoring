@@ -7,6 +7,7 @@ import Checkbox from "react-bootstrap/lib/Checkbox";
 import FormControl from "react-bootstrap/lib/FormControl";
 import ControlLabel from "react-bootstrap/lib/ControlLabel";
 import FormGroup from "react-bootstrap/lib/FormGroup";
+import Pager from "react-bootstrap/lib/Pager";
 import {performFetchPromise} from "../../actions/ApiRequest";
 import {showLoading, hideLoading} from "react-redux-loading-bar";
 import {LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend} from "recharts";
@@ -30,6 +31,7 @@ function mapDispatchToProps(dispatch) {
   var actions = {showLoading: showLoading, hideLoading: hideLoading};
   return bindActionCreators(actions, dispatch);
 }
+const DATE_RANGE = [1, 7, 14, 28];
 class LobChartPage extends Component {
 
   constructor() {
@@ -39,6 +41,7 @@ class LobChartPage extends Component {
     } else {
       this.state = {interpolate: true}
     }
+    this.state.dateRange = DATE_RANGE[1];
   }
 
   componentWillMount() {
@@ -97,30 +100,47 @@ class LobChartPage extends Component {
     });
   }
 
+  loadLob(lobName) {
+    this.setState({selectedLobs: [lobName], granularity: 0});
+    this.scheduleReloadData = true;
+  }
+
   componentDidUpdate() {
     localStorage.setItem(LOCAL_STORAGE, JSON.stringify(_.pick(this.state, ['from', 'to', 'selectedLobs'])));
+    if (this.scheduleReloadData) {
+      this.loadData();
+      this.scheduleReloadData = false;
+    }
   }
 
 
   render() {
     let lobNames = null;
-    console.log(this.state)
-    if (this.state.lobs) {
-      lobNames = [];
-      for (let lobName in this.state.lobs) {
-        lobNames.push(lobName);
-      }
-    }
     let metrics = null;
-    let realMetricName = null
+    let shownLobName = null
     let usedGranularity = null
     if (this.state.response) {
       metrics = [];
       for (let metric in this.state.response.metadata.metrics) {
         metrics.push(metric);
       }
-      realMetricName = metrics[0].replace("_", ".");
+      shownLobName = metrics[0].replace("_", ".");
       usedGranularity = this.state.response.metadata.granularity;
+    }
+    let nextLobName, prevLobName;
+    if (this.state.lobs) {
+      lobNames = [];
+      for (let lobName in this.state.lobs) {
+        lobNames.push(lobName);
+      }
+      console.log(lobNames)
+      for (let i in lobNames) {
+        if (lobNames[i] == this.state.selectedLobs[0]) {
+          let index = Number(i);
+          prevLobName = lobNames[index - 1]
+          nextLobName = lobNames[index + 1]
+        }
+      }
     }
     return <div>
 
@@ -129,7 +149,21 @@ class LobChartPage extends Component {
         lobNames &&
         <div>
           <div className="row">
-            <div className="col-xs-3">
+            <div className="col-xs-12">
+              <Pager>
+                {
+                  prevLobName &&
+                  <Pager.Item previous onClick={() => this.loadLob(prevLobName)}>&larr; {prevLobName}</Pager.Item>
+                }
+                {
+                  nextLobName &&
+                  <Pager.Item next onClick={() => this.loadLob(nextLobName)}>{nextLobName}&rarr;</Pager.Item>
+                }
+              </Pager>
+            </div>
+          </div>
+          <div className="row">
+            <div className="col-xs-2">
               <label>Lob:</label>
               <Typeahead
                 onChange={(selected) => this.setState({selectedLobs: selected})}
@@ -138,35 +172,72 @@ class LobChartPage extends Component {
                 selected={this.state.selectedLobs}
               />
             </div>
-            <div className="col-xs-3 datePicker">
+            <div className="col-xs-2 datePicker">
               <label>From:</label>
               <DatePicker value={this.state.from} dateFormat="DD.MM.YYYY"
                           onChange={(val) => this.setState({from: val})}/>
             </div>
-            <div className="col-xs-3 datePicker">
+            <div className="col-xs-2 datePicker">
               <label>To:</label>
               <DatePicker value={this.state.to} dateFormat="DD.MM.YYYY" onChange={(val) => this.setState({to: val})}/>
             </div>
-            <div className="col-xs-3">
-              <label>Interpolate:</label>
-              <Checkbox onChange={(e) => this.setState({interpolate: e.target.checked})}
-                        checked={this.state.interpolate}>
-              </Checkbox>
+            <div className="col-xs-1">
+              <label>Date range:</label>
+              <FormGroup controlId="formControlsSelect">
+                <FormControl bsSize="xsmall" componentClass="select" placeholder="select"
+                             onChange={e => {
+                               let dateRange = Number(e.target.value)
+                               let newToDate = LobChartPage.shiftDateByDays(this.state.from, dateRange);
+                               this.setState({to: newToDate.toISOString(), dateRange: dateRange})
+                               this.scheduleReloadData = true;
+                             }}
+                             value={this.state.dateRange}>
+                  {
+                    DATE_RANGE.map((a) => <option value={a}>{a}</option>)
+                  }
+                </FormControl>
+              </FormGroup>
             </div>
+            <div className="col-xs-2">
+              <label>Shift:</label>
+              <Pager style={{margin: 0}}>
+                <Pager.Item previous onClick={() => {
+                  let newFrom = LobChartPage.shiftDateByDays(this.state.from, this.state.dateRange * -1)
+                  let newTo = LobChartPage.shiftDateByDays(this.state.to, this.state.dateRange * -1)
+                  this.setState({from: newFrom.toISOString(), to: newTo.toISOString()});
+                  this.scheduleReloadData = true;
+                }}>&larr; </Pager.Item>
+                <Pager.Item next onClick={() => {
+                  let newFrom = LobChartPage.shiftDateByDays(this.state.from, this.state.dateRange * 1)
+                  let newTo = LobChartPage.shiftDateByDays(this.state.to, this.state.dateRange * 1)
+                  this.setState({from: newFrom.toISOString(), to: newTo.toISOString()});
+                  this.scheduleReloadData = true;
+                }} style={{float: "left"}}>&rarr;</Pager.Item>
+              </Pager>
+            </div>
+
           </div>
           <div className="row">
-            <div className="col-xs-1">
+            <div className="col-sm-2">
               <FormGroup controlId="formControlsSelect">
                 <ControlLabel>Granularity</ControlLabel>
                 <FormControl bsSize="xsmall" componentClass="select" placeholder="select"
-                             onChange={e => this.setState({granularity: e.target.value})}
+                             onChange={e => {
+                               this.setState({granularity: e.target.value});
+                               this.scheduleReloadData = true;
+                             }}
                              value={this.state.granularity}>
                   {
                     this.state.minuteRanges.map((a) => <option value={a}>{a}</option>)
                   }
                 </FormControl>
               </FormGroup>
-
+            </div>
+            <div className="col-xs-3">
+              <label>Interpolate:</label>
+              <Checkbox onChange={(e) => this.setState({interpolate: e.target.checked})}
+                        checked={this.state.interpolate}>
+              </Checkbox>
             </div>
           </div>
           <div className="row">
@@ -178,30 +249,38 @@ class LobChartPage extends Component {
       }
 
 
-      <div className="col-lg-6">
-        { this.state.response &&
-        <div>
-          <h2>{realMetricName}</h2>
-          <div className="row">
-            <div className="col-lg-6">
-              Minimal granularity: {this.state.lobs[realMetricName].granularity}
-              <br/>
-              Granularity: {usedGranularity} minutes
-              <Button bsSize="xsmall" bsStyle="warning"
-                      onClick={() => this.updateLobConfig(realMetricName, {granularity: usedGranularity})}>Set as
-                minimal</Button>
-            </div>
+      { this.state.response &&
+      <div>
+        <h2>{shownLobName}</h2>
+        <div className="row">
+          <div className="col-xs-3">
+            Minimal granularity: {this.state.lobs[shownLobName].granularity}
+            <br/>
+            Granularity: {usedGranularity} minutes &nbsp;
+            <Button bsSize="xsmall" bsStyle="warning"
+                    onClick={() => this.updateLobConfig(shownLobName, {granularity: usedGranularity})}>Set as
+              minimal</Button>
           </div>
-          <MetricGraph source={this.state.response} metrics={metrics} relative={false}
-                       interpolate={this.state.interpolate}/>
         </div>
-        }
+        <div className="row">
+          <div className="col-xs-8">
+            <MetricGraph source={this.state.response} metrics={metrics} relative={false}
+                         interpolate={this.state.interpolate}/>
+          </div>
+        </div>
       </div>
+      }
 
       <div className="row ng-scope">
 
       </div>
     </div>
+  }
+
+  static shiftDateByDays(date, days) {
+    let newDate = new Date(date)
+    newDate.setDate(newDate.getDate() + Number(days));
+    return newDate;
   }
 }
 LobChartPage = connect(mapStateToProps, mapDispatchToProps)(LobChartPage)
