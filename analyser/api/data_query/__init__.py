@@ -11,10 +11,11 @@ data_query = Blueprint('data_query', __name__)
 @data_query.route('/', methods=["POST"])
 def dataQuery():
   searchParam = request.get_json()
-  searchParam["from"] = util.jsStringToDate(searchParam["from"])
-  searchParam["to"] = util.jsStringToDate(searchParam["to"])
+  fromDate = util.jsStringToDate(searchParam["from"])
+  toDate = util.jsStringToDate(searchParam["to"])
+  lobName = searchParam["aggregation"]["sum"][0]
   response = {}
-  mongoQuery = MongoQueryExecutor(searchParam)
+  mongoQuery = MongoQueryExecutor(fromDate,toDate,lobName,searchParam["granularity"])
   data, metricsList = mongoQuery.execute()
   metrics = {}
   metadata = mongoQuery.metadata
@@ -35,6 +36,13 @@ def dataQuery():
   response["data"] = data
   response["metadata"] = {**{"metrics": metrics}, **metadata}
   return jsonify(response)
+
+@data_query.route('/best_correlations', methods=["GET"])
+def bestCorrelations():
+  lobName = request.args.get('lobName')
+  from data_util import correlation
+  bestCorrelations = correlation.getBestCorrelations(lobName)
+  return jsonify(bestCorrelations)
 
 
 def smoothData(data, granularity, validMetricName):

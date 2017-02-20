@@ -3,21 +3,21 @@ from mongo import mongo
 
 
 class MongoQueryExecutor:
-  def __init__(self, searchParam):
-    self.searchParam = searchParam
+  def __init__(self,fromDate,toDate,lobName,granularity):
+    self.fromDate = fromDate
+    self.toDate = toDate
+    self.lobName = lobName
+    self.granularity = granularity
     self.query = []
     self.coll = mongo.dataDb()["lobs"]
     self.metrics = []
-    self.lobName = searchParam["aggregation"]["sum"][0]
     self.lobConfig = config.getLobConfigByName(self.lobName)
     self.metadata = {}
 
   def prepare(self):
-    fromDate = self.searchParam["from"]
-    toDate = self.searchParam["to"]
-    match = {"$match": {"_id": {"$gt": fromDate, "$lt": toDate}}}
-    group, project = self.createTimeGroupAndProjection(abs(fromDate.timestamp() - toDate.timestamp()))
-    group2, project2 = self.createDataGroupAndProjection(self.searchParam["aggregation"])
+    match = {"$match": {"_id": {"$gt": self.fromDate, "$lt": self.toDate}}}
+    group, project = self.createTimeGroupAndProjection(abs(self.fromDate.timestamp() - self.toDate.timestamp()))
+    group2, project2 = self.createDataGroupAndProjection([self.lobName])
     group.update(group2)
     project.update(project2)
     group = {"$group": group}
@@ -32,11 +32,10 @@ class MongoQueryExecutor:
   def createTimeGroupAndProjection(self, timeDiff):
     timeDiff /= 60
     minutes = max(timeDiff, 60)
-    hours = minutes / 60
     granularity = self.lobConfig.granularity
     maxRows = 500
-    if (int(self.searchParam["granularity"]) > 0):
-      granularity = float(self.searchParam["granularity"])
+    if (int(self.granularity) > 0):
+      granularity = float(self.granularity)
       maxRows = 10000
     groupCount = max(minutes / maxRows, granularity)  # CONSTANT
     minuteRange = 0
@@ -63,7 +62,7 @@ class MongoQueryExecutor:
     return grouping
 
   def createMinuteGrouping(self, groupByMinutes):
-    print(groupByMinutes)
+
     groupObject = {
       "_id": {
         "year": {"$year": "$_id"},
@@ -84,7 +83,6 @@ class MongoQueryExecutor:
     return groupObject, project
 
   def createHourGrouping(self, groupByHours):
-    print("hours: " + str(groupByHours))
     groupObject = {
       "_id": {
         "year": {"$year": "$_id"},
@@ -104,7 +102,6 @@ class MongoQueryExecutor:
     return groupObject, project
 
   def createDayGrouping(self, groupByDays):
-    print("days: " + str(groupByDays))
     groupObject = {
       "_id": {
         "year": {"$year": "$_id"},
@@ -124,10 +121,10 @@ class MongoQueryExecutor:
                     {"$multiply": [1000 * 60 * 60 * 24, {"$mod": [{"$dayOfMonth": "$anyDate"}, groupByDays]}]}]}}
     return groupObject, project
 
-  def createDataGroupAndProjection(self, aggregation):
+  def createDataGroupAndProjection(self, lobs):
     group = {}
     project = {}
-    for dataPath in aggregation["sum"]:
+    for dataPath in lobs:
       validName = validMongoAttribute(dataPath)
       group[validName] = {"$sum": "$data." + dataPath + ".sum"}
       project[validName] = "$" + validName
