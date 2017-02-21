@@ -40,6 +40,7 @@ class MetricGraph extends Component {
     let lines = [];
     let colors = ["red", "blue", "orange", "yellow"];
     for (let i in metrics) {
+      console.log(metrics[i])
       if (metrics[i].includes("smoothed")) {
         if (this.props.smooth) {
           lines.push(<Line type={lineType} dataKey={metrics[i]} stroke={colors[i]} strokeWidth={0.5} dot={false}
@@ -55,7 +56,7 @@ class MetricGraph extends Component {
 
 
     return <ResponsiveContainer height='100%' width='100%' aspect={4.0 / 1.5}>
-      <LineChart data={data}>
+      <LineChart data={data} syncId="anyId">
         <XAxis dataKey="_id"/>
         <YAxis/>
         <Tooltip/>

@@ -3,21 +3,26 @@ from mongo import mongo
 
 
 class MongoQueryExecutor:
-  def __init__(self,fromDate,toDate,lobName,granularity):
+  def __init__(self, fromDate, toDate, lobNames, granularity):
     self.fromDate = fromDate
     self.toDate = toDate
-    self.lobName = lobName
-    self.granularity = granularity
+    self.lobNames = lobNames
+    self.granularity = int(granularity)
     self.query = []
     self.coll = mongo.dataDb()["lobs"]
     self.metrics = []
-    self.lobConfig = config.getLobConfigByName(self.lobName)
+    self.maxTicks = 500
+    if (int(self.granularity) == 0):
+      for lobName in lobNames:
+        self.granularity = max(self.granularity, config.getLobConfigByName(lobName).granularity)
+    else:
+      self.maxTicks = 1000
     self.metadata = {}
 
   def prepare(self):
     match = {"$match": {"_id": {"$gt": self.fromDate, "$lt": self.toDate}}}
     group, project = self.createTimeGroupAndProjection(abs(self.fromDate.timestamp() - self.toDate.timestamp()))
-    group2, project2 = self.createDataGroupAndProjection([self.lobName])
+    group2, project2 = self.createDataGroupAndProjection(self.lobNames)
     group.update(group2)
     project.update(project2)
     group = {"$group": group}
@@ -32,12 +37,8 @@ class MongoQueryExecutor:
   def createTimeGroupAndProjection(self, timeDiff):
     timeDiff /= 60
     minutes = max(timeDiff, 60)
-    granularity = self.lobConfig.granularity
-    maxRows = 500
-    if (int(self.granularity) > 0):
-      granularity = float(self.granularity)
-      maxRows = 10000
-    groupCount = max(minutes / maxRows, granularity)  # CONSTANT
+    granularity = self.granularity
+    groupCount = max(minutes / self.maxTicks, granularity)
     minuteRange = 0
     grouping = None
     if groupCount <= 30:

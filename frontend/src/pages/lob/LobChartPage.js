@@ -18,6 +18,7 @@ import "react-bootstrap-typeahead/css/ClearButton.css";
 import "react-bootstrap-typeahead/css/Loader.css";
 import "react-bootstrap-typeahead/css/Token.css";
 import DatePicker from "react-bootstrap-date-picker";
+import Spinner from "react-spinkit";
 import _ from "lodash"; // Expects that Highcharts was loaded in the code.
 // ES2015
 // ES2015
@@ -90,14 +91,52 @@ class LobChartPage extends Component {
       }
     };
     var that = this;
+    this.setState({loadingLobData: true, loadingCorrelations: true})
     this.props.showLoading();
     performFetchPromise("/analyser/data_query/", myInit).then(result => {
       that.setState({response: result});
+      this.loadCorrelations();
     }).catch(result => {
       this.setState({response: null})
-    }).then(x => {
+    }).finally(x => {
       that.props.hideLoading();
+      this.setState({loadingLobData: false})
     });
+  }
+
+  loadCorrelations() {
+    var myInit = {
+      method: 'GET',
+    };
+    this.setState({correlations: null})
+    this.setState({loadingCorrelations: true})
+    let that = this;
+    performFetchPromise("/analyser/data_query/best_correlations?" +
+      "lobName=" + this.state.selectedLobs[0] +
+      "&granularity=" + that.state.response.metadata.granularity, myInit).then(result => {
+      let best4 = result.slice(0, 10);
+      //this.setState({correlations: best4})
+      let lobsToLoad = []
+      for (let obj of best4) {
+        lobsToLoad.push(obj.lobName)
+      }
+      var myInit = {
+        method: 'POST',
+        body: {
+          "from": this.state.from,
+          "to": this.state.to,
+          "aggregation": {
+            "sum": lobsToLoad
+          },
+          "granularity": that.state.response.metadata.granularity
+        }
+      };
+      return performFetchPromise("/analyser/data_query/", myInit)
+    }).then(response => {
+      this.setState({bestCorrelations: response})
+    }).finally((x) => {
+      this.setState({loadingCorrelations: false})
+    })
   }
 
   loadLob(lobName) {
@@ -113,9 +152,7 @@ class LobChartPage extends Component {
     }
   }
 
-
   render() {
-    let lobNames = null;
     let metrics = null;
     let shownLobName = null
     let usedGranularity = null
@@ -127,6 +164,86 @@ class LobChartPage extends Component {
       shownLobName = metrics[0].replace("_", ".");
       usedGranularity = this.state.response.metadata.granularity;
     }
+
+    let form = this.renderForm()
+
+    return <div>
+
+      <PageHeader>DataFlow</PageHeader>
+
+      {form}
+
+      { this.state.response &&
+      <div>
+        <div className="row">
+          <div className="col-xs-6">
+            <h2>{shownLobName}</h2>
+            Minimal granularity: {this.state.lobs[shownLobName].granularity}
+            <br/>
+            Granularity: {usedGranularity} minutes &nbsp;
+            <Button bsSize="xsmall" bsStyle="warning"
+                    onClick={() => this.updateLobConfig(shownLobName, {granularity: usedGranularity})}>Set as
+              minimal</Button>
+          </div>
+          <div className="col-xs-6">
+            <h3>Correlated lobs</h3>
+          </div>
+        </div>
+        <div className="row">
+          <div className="col-xs-6">
+            <MetricGraph source={this.state.response} metrics={metrics} relative={false}
+                         smooth={this.state.smooth}/>
+          </div>
+          {this.renderCorrelations()}
+        </div>
+      </div>
+      }
+
+      <div className="row ng-scope">
+
+      </div>
+    </div>
+  }
+
+  renderCorrelations() {
+    if (this.state.loadingCorrelations) {
+      return <Spinner spinnerName="three-bounce"/>
+    }
+    if (this.state.bestCorrelations) {
+      let metrics = null;
+      if (this.state.response) {
+        metrics = [];
+        for (let metric in this.state.bestCorrelations.metadata.metrics) {
+          if(!metric.includes("smooth")) metrics.push(metric);
+        }
+      }
+      let metricsCount = metrics.length
+      let chartRows = []
+      for (let i = 0; i < metricsCount; i += 2) {
+        let cols = [
+          <div className="col-xs-6">
+            {metricsCount >= 1 &&
+            <MetricGraph source={this.state.bestCorrelations} metrics={[metrics[i]]} relative={false}
+                         smooth={this.state.smooth}/>
+            }
+          </div>,
+          <div className="col-xs-6">
+            {metrics[i + 1] &&
+            <MetricGraph source={this.state.bestCorrelations} metrics={[metrics[i + 1]]} relative={false}
+                         smooth={this.state.smooth}/>}
+          </div>]
+        chartRows.push(<div className="row">{cols}</div>)
+
+      }
+      return <div className="col-xs-6">
+        {chartRows}
+      </div>
+    }
+    return <div>no data</div>
+  }
+
+  renderForm() {
+    let lobNames = null;
     let nextLobName, prevLobName;
     if (this.state.lobs) {
       lobNames = [];
@@ -141,26 +258,24 @@ class LobChartPage extends Component {
         }
       }
     }
-    return <div>
-
-      <PageHeader>DataFlow</PageHeader>
-      {
-        lobNames &&
-        <div>
-          <div className="row">
-            <div className="col-xs-12">
-              <Pager>
-                {
-                  prevLobName &&
-                  <Pager.Item previous onClick={() => this.loadLob(prevLobName)}>&larr; {prevLobName}</Pager.Item>
-                }
-                {
-                  nextLobName &&
-                  <Pager.Item next onClick={() => this.loadLob(nextLobName)}>{nextLobName}&rarr;</Pager.Item>
-                }
-              </Pager>
-            </div>
+    return <div>{
+      lobNames &&
+      <div>
+        <div className="row">
+          <div className="col-xs-12">
+            <Pager>
+              {
+                prevLobName &&
+                <Pager.Item previous onClick={() => this.loadLob(prevLobName)}>&larr; {prevLobName}</Pager.Item>
+              }
+              {
+                nextLobName &&
+                <Pager.Item next onClick={() => this.loadLob(nextLobName)}>{nextLobName}&rarr;</Pager.Item>
+              }
+            </Pager>
           </div>
+        </div>
+        <form>
           <div className="row">
             <div className="col-xs-2">
               <label>Lob:</label>
@@ -217,7 +332,7 @@ class LobChartPage extends Component {
 
           </div>
           <div className="row">
-            <div className="col-sm-2">
+            <div className="col-xs-2">
               <FormGroup controlId="formControlsSelect">
                 <ControlLabel>Granularity</ControlLabel>
                 <FormControl bsSize="xsmall" componentClass="select" placeholder="select"
@@ -232,48 +347,21 @@ class LobChartPage extends Component {
                 </FormControl>
               </FormGroup>
             </div>
-            <div className="col-xs-3">
-              <label>Smooth:</label>
-              <Checkbox onChange={(e) => this.setState({smooth: e.target.checked})}
-                        checked={this.state.smooth}>
-              </Checkbox>
-            </div>
           </div>
-          <div className="row">
-            <div className="col-lg-3">
-              <Button onClick={this.loadData.bind(this)}>Apply</Button>
-            </div>
-          </div>
-        </div>
-      }
+          <FormGroup>
+            <Checkbox onChange={(e) => this.setState({smooth: e.target.checked})}
+                      checked={this.state.smooth} inline>
+              Smooth
+            </Checkbox>
+            <Checkbox onChange={(e) => this.setState({showCorrelations: e.target.checked})}
+                      checked={this.state.showCorrelations} inline>Show correlations
+            </Checkbox>
+          </FormGroup>
 
-
-      { this.state.response &&
-      <div>
-        <h2>{shownLobName}</h2>
-        <div className="row">
-          <div className="col-xs-3">
-            Minimal granularity: {this.state.lobs[shownLobName].granularity}
-            <br/>
-            Granularity: {usedGranularity} minutes &nbsp;
-            <Button bsSize="xsmall" bsStyle="warning"
-                    onClick={() => this.updateLobConfig(shownLobName, {granularity: usedGranularity})}>Set as
-              minimal</Button>
-          </div>
-        </div>
-        <div className="row">
-          <div className="col-xs-8">
-            <MetricGraph source={this.state.response} metrics={metrics} relative={false}
-                         smooth={this.state.smooth}/>
-          </div>
-        </div>
+          <Button onClick={this.loadData.bind(this)}>Apply</Button>
+        </form>
       </div>
-      }
-
-      <div className="row ng-scope">
-
-      </div>
-    </div>
+    }</div>
   }
 
   static shiftDateByDays(date, days) {

@@ -13,11 +13,12 @@ def dataQuery():
   searchParam = request.get_json()
   fromDate = util.jsStringToDate(searchParam["from"])
   toDate = util.jsStringToDate(searchParam["to"])
-  lobName = searchParam["aggregation"]["sum"][0]
+  lobNames = searchParam["aggregation"]["sum"]
   response = {}
-  mongoQuery = MongoQueryExecutor(fromDate,toDate,lobName,searchParam["granularity"])
+  mongoQuery = MongoQueryExecutor(fromDate, toDate, lobNames, searchParam["granularity"])
   data, metricsList = mongoQuery.execute()
   metrics = {}
+  print(metricsList)
   metadata = mongoQuery.metadata
 
   if (len(data) > 10):
@@ -37,11 +38,13 @@ def dataQuery():
   response["metadata"] = {**{"metrics": metrics}, **metadata}
   return jsonify(response)
 
+
 @data_query.route('/best_correlations', methods=["GET"])
 def bestCorrelations():
   lobName = request.args.get('lobName')
+  granularity = int(request.args.get('granularity'))
   from data_util import correlation
-  bestCorrelations = correlation.getBestCorrelations(lobName)
+  bestCorrelations = correlation.getBestCorrelations(lobName, granularity=granularity)
   return jsonify(bestCorrelations)
 
 
