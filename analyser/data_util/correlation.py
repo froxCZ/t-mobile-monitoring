@@ -6,7 +6,7 @@ from api.data_query import MongoQueryExecutor
 from config import config
 
 
-def _correlate2Lobs(lobName1, lobName2,granularity=0):
+def _correlate2Lobs(lobName1, lobName2, granularity=0):
   lobConfig1 = config.getLobConfigByName(lobName1)
   lobConfig2 = config.getLobConfigByName(lobName2)
   if granularity is 0:
@@ -28,7 +28,7 @@ def _correlate2Lobs(lobName1, lobName2,granularity=0):
   return lin.rvalue
 
 
-def getBestCorrelations(lobName, correlationThreshold=0.9,granularity=0):
+def getBestCorrelations(lobName, correlationThreshold=0.9, granularity=0):
   lobConfig = config.getLobConfigByName(lobName)
   otherLobs = config.getLobsConfig()["lobs"][lobConfig.country]
   resArr = []
@@ -37,11 +37,12 @@ def getBestCorrelations(lobName, correlationThreshold=0.9,granularity=0):
     if lobName == fullLobName:
       continue
     try:
-      correlation = _correlate2Lobs(lobName, fullLobName,granularity)
-      resArr.append((fullLobName, correlation))
+      correlation = _correlate2Lobs(lobName, fullLobName, granularity)
+      dayCorrelation = _correlate2Lobs(lobName, fullLobName, 1440) #lobs show have same workday/weekend changes
+      resArr.append((fullLobName, correlation,dayCorrelation))
     except:
       traceback.print_exc()
       pass
-  resArr = [x for x in resArr if x[1] >= correlationThreshold]
+  resArr = [x for x in resArr if x[1] >= correlationThreshold and x[2]>=correlationThreshold]
   resSorted = sorted(resArr, key=lambda x: x[1], reverse=True)
-  return map(lambda x:{"lobName":x[0],"correlation":x[1]},resSorted)
+  return map(lambda x: {"lobName": x[0], "correlation": (x[1]+x[2])/2}, resSorted)
