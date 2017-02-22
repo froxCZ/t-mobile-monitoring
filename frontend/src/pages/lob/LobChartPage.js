@@ -43,6 +43,7 @@ class LobChartPage extends Component {
       this.state = {smooth: true}
     }
     this.state.dateRange = DATE_RANGE[1];
+    this.state.averages = null;
   }
 
   componentWillMount() {
@@ -95,13 +96,34 @@ class LobChartPage extends Component {
     this.props.showLoading();
     performFetchPromise("/analyser/data_query/", myInit).then(result => {
       that.setState({response: result});
-      this.loadCorrelations();
+      //this.loadCorrelations();
+      //this.loadAverages();
     }).catch(result => {
       this.setState({response: null})
     }).finally(x => {
       that.props.hideLoading();
       this.setState({loadingLobData: false})
     });
+  }
+
+  loadAverages() {
+    var myInit = {
+      method: 'GET',
+    };
+    this.setState({averages: null})
+    this.setState({loadingAverages: true})
+    let that = this;
+    performFetchPromise("/analyser/data_query/averages?lobName=" +
+      this.state.selectedLobs[0], myInit)
+      .then(result => {
+        that.setState({averages:result})
+        console.log(result)
+        console.log("x")
+      })
+      .finally(r => {
+        console.log("f")
+        that.setState({loadingAverages:false})
+      })
   }
 
   loadCorrelations() {
@@ -193,6 +215,13 @@ class LobChartPage extends Component {
           <div className="col-xs-6">
             <MetricGraph source={this.state.response} metrics={metrics} relative={false}
                          smooth={this.state.smooth}/>
+            <div className="row">
+              <div className="col-xs-6">
+                <h3>Day averages</h3>
+                {this.renderAverages()}
+
+              </div>
+            </div>
           </div>
           {this.renderCorrelations()}
         </div>
@@ -205,6 +234,19 @@ class LobChartPage extends Component {
     </div>
   }
 
+  renderAverages() {
+    //console.log(this.state)
+    if (this.state.loadingAverages) {
+      return <Spinner spinnerName="three-bounce"/>
+    }
+    if (this.state.averages) {
+      return <MetricGraph source={this.state.averages} metrics={this.state.averages.metrics}
+                          relative={false}/>
+    }
+
+    return <div>No data</div>
+  }
+
   renderCorrelations() {
     if (this.state.loadingCorrelations) {
       return <Spinner spinnerName="three-bounce"/>
@@ -214,7 +256,7 @@ class LobChartPage extends Component {
       if (this.state.response) {
         metrics = [];
         for (let metric in this.state.bestCorrelations.metadata.metrics) {
-          if(!metric.includes("smooth")) metrics.push(metric);
+          if (!metric.includes("smooth")) metrics.push(metric);
         }
       }
       let metricsCount = metrics.length

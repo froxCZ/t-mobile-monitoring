@@ -2,7 +2,7 @@ import traceback
 
 from scipy.stats import linregress
 
-from api.data_query import MongoQueryExecutor
+from api.data_query import DateRangeGroupQuery
 from config import config
 
 
@@ -18,15 +18,15 @@ def _correlate2Lobs(lobName1, lobName2,granularity=0):
 
   fromDate = util.jsStringToDate("2016-10-28T10:00:00.000Z")
   toDate = util.jsStringToDate("2016-10-29T10:00:00.000Z")
-  lob1Query = MongoQueryExecutor(fromDate, toDate, [lobName1], granularity)
-  lob2Query = MongoQueryExecutor(fromDate, toDate, [lobName2], granularity)
+  lob1Query = DateRangeGroupQuery(fromDate, toDate, [lobName1], granularity)
+  lob2Query = DateRangeGroupQuery(fromDate, toDate, [lobName2], granularity)
   lob1Data = lob1Query.execute()[0]
   lob2Data = lob2Query.execute()[0]
 
   fromDate = util.jsStringToDate("2016-10-25T10:00:00.000Z")
   toDate = util.jsStringToDate("2016-10-26T10:00:00.000Z")
-  lob1Query = MongoQueryExecutor(fromDate, toDate, [lobName1], granularity)
-  lob2Query = MongoQueryExecutor(fromDate, toDate, [lobName2], granularity)
+  lob1Query = DateRangeGroupQuery(fromDate, toDate, [lobName1], granularity)
+  lob2Query = DateRangeGroupQuery(fromDate, toDate, [lobName2], granularity)
   lob1Data.extend(lob1Query.execute()[0])
   lob2Data.extend(lob2Query.execute()[0])
 

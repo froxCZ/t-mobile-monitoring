@@ -31,14 +31,15 @@ class MetricGraph extends Component {
       }
     }
     let lineType = "linear";
-    if (this.props.relative) {
-      data = MetricGraph.createRelativeValues(this.props.source.metadata.metrics, this.props.source.data);
-    } else {
-      data = MetricGraph.scaleValues(this.props.source.metadata.metrics, this.props.source.data);
-    }
+    // if (this.props.relative) {
+    //   data = MetricGraph.createRelativeValues(this.props.source.metadata.metrics, this.props.source.data);
+    // } else {
+    //   data = MetricGraph.scaleValues(this.props.source.metadata.metrics, this.props.source.data);
+    // }
+    data = this.props.source.data
     MetricGraph.adjustDate(data);
     let lines = [];
-    let colors = ["red", "blue", "orange", "yellow"];
+    let colors = ["red", "blue", "orange", "green"];
     for (let i in metrics) {
       console.log(metrics[i])
       if (metrics[i].includes("smoothed")) {
