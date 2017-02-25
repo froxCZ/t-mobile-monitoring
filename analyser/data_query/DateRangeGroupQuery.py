@@ -156,7 +156,7 @@ class DateRangeGroupQuery(BaseDateQuery):
         timeSequenceResult.append({**{"_id": lastDate}, **nullMetrics})
       lastDate += timeDelta
 
-    return timeSequenceResult, self.metrics
+    return timeSequenceResult
 
 
 def validMongoAttribute(string):

@@ -19,10 +19,12 @@ def _correlate2Lobs(lobName1, lobName2, granularity=0):
 
   lob1Query = DateRangeGroupQuery(fromDate, toDate, [lobName1], granularity)
   lob2Query = DateRangeGroupQuery(fromDate, toDate, [lobName2], granularity)
-  lob1Data, metricsList = lob1Query.execute()
+  lob1Data = lob1Query.execute()
+  metricsList = lob1Query.metrics
   lob1Data = util.dateDataListToList(lob1Data, metricsList[0])
 
-  lob2Data, metricsList = lob2Query.execute()
+  lob2Data = lob2Query.execute()
+  metricsList = lob2Query.metrics
   lob2Data = util.dateDataListToList(lob2Data, metricsList[0])
   lin = linregress(lob1Data, lob2Data)
   return lin.rvalue

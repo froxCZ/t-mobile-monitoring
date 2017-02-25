@@ -17,9 +17,9 @@ def dataQuery():
   lobNames = searchParam["aggregation"]["sum"]
   response = {}
   mongoQuery = DateRangeGroupQuery(fromDate, toDate, lobNames, searchParam["granularity"])
-  data, metricsList = mongoQuery.execute()
+  data = mongoQuery.execute()
   metrics = {}
-  print(metricsList)
+  metricsList = mongoQuery.metrics
   metadata = mongoQuery.metadata
 
   if (len(data) > 10):
