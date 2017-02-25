@@ -14,6 +14,7 @@ class BaseDateQuery:
       group = i["_id"]
       date = datetime.datetime(group["year"], group["month"], group["dayOfMonth"], int(group["hour"]),
                                int(group["minute"]))
+      date.replace(tzinfo=None)
       i["_id"] = date
     result = sorted(result, key=lambda x: x["_id"])
     return result

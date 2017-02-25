@@ -1,5 +1,7 @@
 import datetime
 
+from api import util
+
 HOLIDAYS = [(1, 1),  # day, month
             (1, 1),
             (17, 4),
@@ -15,12 +17,29 @@ HOLIDAYS = [(1, 1),  # day, month
             (25, 12),
             (26, 12), ]
 
+INITIAL_DATE = util.jsStringToDate("2016-08-01T00:00:00")
+
+
+def _getPastHolidays(lobName, date, days):
+  resultDays = []
+  i = 1
+  dayToTest = date.replace(tzinfo=None)
+  while len(resultDays) <= days and dayToTest > INITIAL_DATE:
+    dayToTest -= datetime.timedelta(days=1)
+    if _isHoliday(dayToTest):
+      resultDays.append(dayToTest)
+    i += 1
+
+  return resultDays
+
 
 def getPastSimilarDays(lobName, date, days=10):
   if (_isWorkDay(date)):
     return _getPastWorkDays(lobName, date, days)
   if (_isWeekendDay(date)):
     return _getPastWeekends(lobName, date, days)
+  if (_isHoliday(date)):
+    return _getPastHolidays(lobName, date, 4)
 
 
 def _getPastWorkDays(lobName, date, days=10):

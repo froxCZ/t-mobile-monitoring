@@ -2,14 +2,17 @@ from statistics import median
 
 
 class SimilarDaysMedianQuery:
-  def __init__(self, lobName, date):
+  def __init__(self, lobName, date,granularity = 0):
     from data_util.moving_average import DayGenerator
     self.lobName = lobName
+    self.date = date
+    self.granularity = granularity
     self.dates = DayGenerator.getPastSimilarDays(self.lobName, date)
 
   def execute(self):
     from data_query.DatesQuery import DatesQuery
-    datesQuery = DatesQuery(self.dates, self.lobName, resultName="value");
+    print(self.date)
+    datesQuery = DatesQuery(self.dates, self.lobName, resultName="value",granularity=self.granularity)
     data = datesQuery.execute()
     self.metadata = datesQuery.metadata
     self.metrics = datesQuery.metrics

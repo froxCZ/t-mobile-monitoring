@@ -6,7 +6,7 @@ from mongo import mongo
 
 
 class DatesQuery(BaseDateQuery):
-  def __init__(self, dates, lobName, resultName=None):
+  def __init__(self, dates, lobName, resultName=None, granularity=0):
     super().__init__()
     roundedDates = []
     for date in dates:
@@ -20,7 +20,11 @@ class DatesQuery(BaseDateQuery):
     self.resultName = resultName
     if self.resultName is None:
       self.resultName = lobName
-    self.granularity = config.getLobConfigByName(lobName).granularity
+    if granularity == 0:
+      self.granularity = config.getLobConfigByName(lobName).granularity
+    else:
+      self.granularity = granularity
+
     self.metadata = {}
 
   def prepare(self):
@@ -135,6 +139,8 @@ class DatesQuery(BaseDateQuery):
     return group, project
 
   def execute(self):
+    if(len(self.dates)) == 0:
+      return []
     """
     some time ticks might be missing
     :return:

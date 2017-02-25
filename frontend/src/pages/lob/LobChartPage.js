@@ -98,7 +98,7 @@ class LobChartPage extends Component {
       that.setState({response: result});
       //this.loadCorrelations();
       //this.loadAverages();
-      this.loadDayMedian();
+      //this.loadDayMedian();
     }).catch(result => {
       this.setState({response: null})
     }).finally(x => {
