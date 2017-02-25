@@ -8,7 +8,7 @@ class SimilarDaysMedianQuery:
     self.dates = DayGenerator.getPastSimilarDays(self.lobName, date)
 
   def execute(self):
-    from api.data_query import DatesQuery
+    from data_query.DatesQuery import DatesQuery
     datesQuery = DatesQuery(self.dates, self.lobName, resultName="value");
     data = datesQuery.execute()
     self.metadata = datesQuery.metadata

@@ -1,34 +1,32 @@
 import datetime
 
 from config import config
+from data_query.BaseDateQuery import BaseDateQuery
 from mongo import mongo
 
 
-class DateRangeGroupQuery:
-  def __init__(self, fromDate, toDate, lobNames, granularity, dates=None):
-    self.fromDate = fromDate
-    self.toDate = toDate
-    self.lobNames = lobNames
-    self.granularity = int(granularity)
+class DatesQuery(BaseDateQuery):
+  def __init__(self, dates, lobName, resultName=None):
+    super().__init__()
+    roundedDates = []
+    for date in dates:
+      roundedDates.append(date.replace(hour=0, minute=0, second=0, microsecond=0))
+    self.dates = roundedDates
+    self.lobName = lobName
     self.query = []
     self.coll = mongo.dataDb()["lobs"]
     self.metrics = []
-    self.maxTicks = 500
-    self.dates = dates
-    if (int(self.granularity) == 0):
-      for lobName in lobNames:
-        self.granularity = max(self.granularity, config.getLobConfigByName(lobName).granularity)
-    else:
-      self.maxTicks = 1000
+    self.maxTicks = 10000
+    self.resultName = resultName
+    if self.resultName is None:
+      self.resultName = lobName
+    self.granularity = config.getLobConfigByName(lobName).granularity
     self.metadata = {}
 
   def prepare(self):
-    if (self.dates == None):
-      match = {"$match": {"_id": {"$gte": self.fromDate, "$lt": self.toDate}}}
-    else:
-      match = self.createMatchObject()
-    group, project = self.createTimeGroupAndProjection(abs(self.fromDate.timestamp() - self.toDate.timestamp()))
-    group2, project2 = self.createDataGroupAndProjection(self.lobNames)
+    match = self.createMatchObject()
+    group, project = self.createTimeGroupAndProjection()
+    group2, project2 = self.createDataGroupAndProjection()
     group.update(group2)
     project.update(project2)
     group = {"$group": group}
@@ -46,11 +44,8 @@ class DateRangeGroupQuery:
       orMatches.append({"_id": {"$gte": date, "$lt": date + datetime.timedelta(days=1)}})
     return {"$match": {"$or": orMatches}}
 
-  def createTimeGroupAndProjection(self, timeDiff):
-    timeDiff /= 60
-    minutes = max(timeDiff, 60)
-    granularity = self.granularity
-    groupCount = max(minutes / self.maxTicks, granularity)
+  def createTimeGroupAndProjection(self):
+    groupCount = self.granularity
     minuteRange = 0
     grouping = None
     if groupCount <= 30:
@@ -82,7 +77,7 @@ class DateRangeGroupQuery:
         "month": {"$month": "$_id"},
         "dayOfMonth": {"$dayOfMonth": "$_id"},
         "hour": {"$hour": "$_id"},
-        "interval": {
+        "minute": {
           "$subtract": [
             {"$minute": "$_id"},
             {"$mod": [{"$minute": "$_id"}, groupByMinutes]}
@@ -91,8 +86,7 @@ class DateRangeGroupQuery:
       },
       "anyDate": {"$first": "$_id"},
     }
-    project = {"_id": {
-      "$subtract": ["$anyDate", {"$multiply": [1000 * 60, {"$mod": [{"$minute": "$anyDate"}, groupByMinutes]}]}]}}
+    project = {"_id": "$_id"}
     return groupObject, project
 
   def createHourGrouping(self, groupByHours):
@@ -101,17 +95,17 @@ class DateRangeGroupQuery:
         "year": {"$year": "$_id"},
         "month": {"$month": "$_id"},
         "dayOfMonth": {"$dayOfMonth": "$_id"},
-        "interval": {
+        "hour": {
           "$subtract": [
             {"$hour": "$_id"},
             {"$mod": [{"$hour": "$_id"}, groupByHours]}
           ]
-        }
+        },
+        "minute": "0"
       },
       "anyDate": {"$first": "$_id"},
     }
-    project = {"_id": {
-      "$subtract": ["$anyDate", {"$multiply": [1000 * 60 * 60, {"$mod": [{"$hour": "$anyDate"}, groupByHours]}]}]}}
+    project = {"_id": "$_id"}
     return groupObject, project
 
   def createDayGrouping(self, groupByDays):
@@ -120,34 +114,32 @@ class DateRangeGroupQuery:
         "year": {"$year": "$_id"},
         "month": {"$month": "$_id"},
         "dayOfMonth": {"$dayOfMonth": "$_id"},
-        "interval": {
-          "$subtract": [
-            {"$dayOfMonth": "$_id"},
-            {"$mod": [{"$dayOfMonth": "$_id"}, groupByDays]}
-          ]
-        }
+        "hour": "0",
+        "minute": "0",
       },
       "anyDate": {"$first": "$_id"},
     }
-    project = {"_id": {
-      "$subtract": ["$anyDate",
-                    {"$multiply": [1000 * 60 * 60 * 24, {"$mod": [{"$dayOfMonth": "$anyDate"}, groupByDays]}]}]}}
+    project = {
+      "_id": "$_id"
+    }
     return groupObject, project
 
-  def createDataGroupAndProjection(self, lobs):
+  def createDataGroupAndProjection(self):
     group = {}
     project = {}
-    for dataPath in lobs:
-      validName = validMongoAttribute(dataPath)
-      group[validName] = {"$sum": "$data." + dataPath + ".sum"}
-      project[validName] = "$" + validName
-      self.metrics.append(validName)
+    validResultName = validMongoAttribute(self.resultName)
+    validName = validMongoAttribute(self.lobName)
+    group[validName] = {"$sum": "$data." + self.lobName + ".sum"}
+    project[validResultName] = "$" + validName
+    self.metrics.append(validResultName)
     return group, project
 
   def execute(self):
-    self.prepare();
-    result = self.coll.aggregate(self.query)
-    return list(result), self.metrics
+    """
+    some time ticks might be missing
+    :return:
+    """
+    return super(DatesQuery, self).execute()
 
 
 def validMongoAttribute(string):

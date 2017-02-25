@@ -5,10 +5,7 @@ from flask import request
 
 import api.util as util
 import smooth
-from api.data_query.DateRangeGroupQuery import DateRangeGroupQuery
-from api.data_query.DatesQuery import DatesQuery
-from api.data_query.DayAverageQuery import DayAverageQuery
-
+from data_query import DateRangeGroupQuery
 data_query = Blueprint('data_query', __name__)
 
 
@@ -61,7 +58,7 @@ def getDayAverages():
 
 @data_query.route('/day_medians', methods=["GET"])
 def getDayMedians():
-  from data_util.moving_average import SimilarDaysMedianQuery
+  from data_query import SimilarDaysMedianQuery
   lobName = request.args.get('lobName')
   requestDate = request.args.get('date')
   if requestDate is None:
