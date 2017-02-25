@@ -233,6 +233,7 @@ class LobChartPage extends Component {
           <div className="col-xs-6">
             <MetricGraph source={this.state.response} metrics={metrics} relative={false}
                          smooth={this.state.smooth}/>
+            <MetricGraph source={this.state.response} metrics={["relativeDifference"]}/>
             {this.state.medians &&
             <MetricGraph source={this.state.medians} metrics={["median"]}/>
             }

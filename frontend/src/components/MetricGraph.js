@@ -1,7 +1,17 @@
 import React, {Component} from "react";
 import {bindActionCreators} from "redux";
 import {connect} from "react-redux";
-import {LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer} from "recharts"; // Expects that Highcharts was loaded in the code.
+import {
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  Legend,
+  ResponsiveContainer,
+  ReferenceLine
+} from "recharts"; // Expects that Highcharts was loaded in the code.
 
 /*class CustomActiveDot extends Component {
  render() {
@@ -62,6 +72,9 @@ class MetricGraph extends Component {
         <YAxis/>
         <Tooltip/>
         <Legend />
+        <ReferenceLine y={1} label="expected" stroke="gray"/>
+        <ReferenceLine y={0.8} label="expected" stroke="yellow"/>
+        <ReferenceLine y={0.6} label="expected" stroke="red"/>
         {lines}
       </LineChart>
     </ResponsiveContainer>

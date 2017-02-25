@@ -136,7 +136,7 @@ class DateRangeGroupQuery(BaseDateQuery):
       validName = validMongoAttribute(dataPath)
       group[validName] = {"$sum": "$data." + dataPath + ".sum"}
       project[validName] = "$" + validName
-      self.metrics.append(validName)
+      self.metrics.append(dataPath)
     return group, project
 
   def execute(self):

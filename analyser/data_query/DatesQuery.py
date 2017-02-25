@@ -135,7 +135,7 @@ class DatesQuery(BaseDateQuery):
     validName = validMongoAttribute(self.lobName)
     group[validName] = {"$sum": "$data." + self.lobName + ".sum"}
     project[validResultName] = "$" + validName
-    self.metrics.append(validResultName)
+    self.metrics.append(self.resultName)
     return group, project
 
   def execute(self):
