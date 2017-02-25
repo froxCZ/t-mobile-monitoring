@@ -10,14 +10,13 @@ class OutlierDetector:
     self.dateTime = dateTime
 
   def _getMedians(self):
-    from data_util.moving_average import DayGenerator
-    pastDays = DayGenerator.getPastSimilarDays(self.lobName, self.dateTime)
-    from data_util.moving_average import DaysMedianQuery
-    return DaysMedianQuery(pastDays, self.lobName).execute()
+    from data_util.moving_average import SimilarDaysMedianQuery
+    return SimilarDaysMedianQuery(self.lobName,self.dateTime).execute()
 
   def _getCurrentData(self):
     from api.data_query import DatesQuery
-    data = DatesQuery([self.dateTime], self.lobName, resultName="value").execute()[0]
+    datesQuery = DatesQuery([self.dateTime], self.lobName, resultName="value");
+    data = datesQuery.execute()
     return util.listToDayMinutes(data)
 
   def getOutageStatus(self):

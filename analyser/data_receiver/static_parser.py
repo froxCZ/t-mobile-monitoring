@@ -1,8 +1,7 @@
 import csv
-import os
 
-import config
-import util
+import data_receiver.util as util
+from config import config
 from data_receiver import data_insertor
 
 
@@ -15,8 +14,14 @@ class StaticParser:
     with open(self.inputFile, 'r') as csvfile:
       spamreader = csv.reader(csvfile, delimiter=';', quotechar='"')
       for row in spamreader:
-        if row[1] in config.LOBS and row[2] in config.LOBS[row[1]]:
-          lobRows.append(self.createLobRow(row))
+        try:
+          if row[1] in config.LOBS and row[2] in config.LOBS[row[1]]:
+            lobRows.append(self.createLobRow(row))
+        except Exception as e:
+          print("exception:")
+          print(row)
+          print(e)
+          print("---")
         if len(lobRows) >= 50000:
           data_insertor.insertData(lobRows)
           lobRows = []

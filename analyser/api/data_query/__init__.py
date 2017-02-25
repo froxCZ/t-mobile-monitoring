@@ -1,3 +1,5 @@
+import datetime
+
 from flask import Blueprint, jsonify
 from flask import request
 
@@ -56,6 +58,28 @@ def getDayAverages():
   from data_util.moving_average import DayAverageExecutor
   return jsonify(DayAverageExecutor.getDayAverages(lobName))
 
+
+@data_query.route('/day_medians', methods=["GET"])
+def getDayMedians():
+  from data_util.moving_average import SimilarDaysMedianQuery
+  lobName = request.args.get('lobName')
+  requestDate = request.args.get('date')
+  if requestDate is None:
+    requestDate = datetime.datetime.now()
+  else:
+    requestDate = util.jsStringToDate(requestDate)
+  requestDate = util.resetDateTimeMidnight(requestDate)
+  medianQuery = SimilarDaysMedianQuery(lobName, requestDate)
+  medians = medianQuery.execute()
+  dataList = []
+  for minute, median in medians.items():
+    dataList.append({"_id": requestDate + datetime.timedelta(minutes=minute), "median": median})
+  dataList = sorted(dataList, key=lambda x: x["_id"])
+  response = {}
+  response["data"] = dataList
+  response["granularity"] = medianQuery.metadata["granularity"]
+  response["metrics"] = ["median"]
+  return jsonify(response)
 
 
 def smoothData(data, granularity, validMetricName):

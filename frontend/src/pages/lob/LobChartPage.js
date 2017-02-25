@@ -98,12 +98,30 @@ class LobChartPage extends Component {
       that.setState({response: result});
       //this.loadCorrelations();
       //this.loadAverages();
+      this.loadDayMedian();
     }).catch(result => {
       this.setState({response: null})
     }).finally(x => {
       that.props.hideLoading();
       this.setState({loadingLobData: false})
     });
+  }
+
+  loadDayMedian() {
+    var myInit = {
+      method: 'GET',
+    };
+    let that = this;
+    performFetchPromise("/analyser/data_query/day_medians?lobName=" +
+      this.state.selectedLobs[0] +
+      "&date=" + this.state.from, myInit)
+      .then(result => {
+        that.setState({medians: result})
+        console.log(result)
+      })
+      .finally(r => {
+      })
+
   }
 
   loadAverages() {
@@ -116,13 +134,13 @@ class LobChartPage extends Component {
     performFetchPromise("/analyser/data_query/averages?lobName=" +
       this.state.selectedLobs[0], myInit)
       .then(result => {
-        that.setState({averages:result})
+        that.setState({averages: result})
         console.log(result)
         console.log("x")
       })
       .finally(r => {
         console.log("f")
-        that.setState({loadingAverages:false})
+        that.setState({loadingAverages: false})
       })
   }
 
@@ -215,6 +233,9 @@ class LobChartPage extends Component {
           <div className="col-xs-6">
             <MetricGraph source={this.state.response} metrics={metrics} relative={false}
                          smooth={this.state.smooth}/>
+            {this.state.medians &&
+            <MetricGraph source={this.state.medians} metrics={["median"]}/>
+            }
             <div className="row">
               <div className="col-xs-6">
                 <h3>Day averages</h3>

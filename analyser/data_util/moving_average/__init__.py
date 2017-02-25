@@ -1,1 +1,1 @@
-from data_util.moving_average.DaysMedianQuery import DaysMedianQuery
+from data_util.moving_average.SimilarDaysMedianQuery import SimilarDaysMedianQuery

@@ -140,7 +140,7 @@ class DatesQuery:
       group = i["_id"]
       date = datetime.datetime(group["year"], group["month"], group["dayOfMonth"],int(group["hour"]),int(group["minute"]))
       i["_id"] = date
-    return resultList, self.metrics
+    return resultList
 
 
 def validMongoAttribute(string):

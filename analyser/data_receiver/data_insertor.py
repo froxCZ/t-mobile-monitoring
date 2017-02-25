@@ -1,6 +1,6 @@
 from datetime import timedelta
 
-import mongo
+from mongo import mongo
 
 
 def _createUpdateDict(row):
