@@ -233,7 +233,8 @@ class LobChartPage extends Component {
           <div className="col-xs-6">
             <MetricGraph source={this.state.response} metrics={metrics} relative={false}
                          smooth={this.state.smooth}/>
-            <MetricGraph source={this.state.response} metrics={["relativeDifference"]}/>
+            <MetricGraph source={this.state.response} metrics={["relativeDifference"]}
+                         smooth={this.state.smooth}/>
             {this.state.medians &&
             <MetricGraph source={this.state.medians} metrics={["median"]}/>
             }
@@ -353,7 +354,9 @@ class LobChartPage extends Component {
             <div className="col-xs-2 datePicker">
               <label>From:</label>
               <DatePicker value={this.state.from} dateFormat="DD.MM.YYYY"
-                          onChange={(val) => this.setState({from: val})}/>
+                          onChange={(val) => {
+                            this.setState({from: val})
+                          }}/>
             </div>
             <div className="col-xs-2 datePicker">
               <label>To:</label>

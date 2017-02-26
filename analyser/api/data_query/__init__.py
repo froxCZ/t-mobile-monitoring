@@ -29,7 +29,7 @@ def dataQuery():
   if (len(data) > 10):
     validMetricName = metricsList[0]
     smoothData(data, metadata["granularity"], validMetricName)
-    metricsList.append("smoothed")
+    metricsList.append(validMetricName + "_smoothed")
 
   for metric in metricsList:
     maxx = 0
@@ -79,8 +79,6 @@ def getDayMedians():
   return jsonify(response)
 
 
-
-
 def merge2DateLists(list1, val1, list2, val2):
   d = {}
   list1NullObject = {}
@@ -117,4 +115,4 @@ def smoothData(data, granularity, validMetricName):
     dataList.append(row[validMetricName])
   smoothedData = smooth.smoothData(granularity, dataList)
   for index, elem in enumerate(smoothedData):
-    data[index]["smoothed"] = elem
+    data[index][validMetricName + "_smoothed"] = elem

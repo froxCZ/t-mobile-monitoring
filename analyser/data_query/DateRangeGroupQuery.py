@@ -21,7 +21,7 @@ class DateRangeGroupQuery(BaseDateQuery):
       for lobName in lobNames:
         self.granularity = max(self.granularity, config.getLobConfigByName(lobName).granularity)
     else:
-      self.maxTicks = 1000
+      self.maxTicks = 2000
     self.metadata = {}
 
   def prepare(self):

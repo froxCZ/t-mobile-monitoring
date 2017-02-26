@@ -31,4 +31,4 @@ def listToDayMinutes(dataList, value="value"):
 
 
 def resetDateTimeMidnight(dateTime):
-  return dateTime.replace(minute=0, second=0, microsecond=0)
+  return dateTime.replace(hour=0, minute=0, second=0, microsecond=0)

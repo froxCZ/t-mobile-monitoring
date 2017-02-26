@@ -16,13 +16,15 @@ def medianDateRange(fromDate, toDate, lobName, granularity, data):
     for d, v in l.items():
       medianList.append(v)
     date += dayDelta
+  valueKey = lobName
+  #valueKey = "smoothed"
   if len(medianList) > 0:
-    data = merge2DateLists(medianList, ["median"], data, [lobName])
+    data = merge2DateLists(medianList, ["median"], data, [valueKey])
     for tick in data:
-      if tick[lobName] == tick["median"]:
+      if tick[valueKey] == tick["median"]:
         tick["relativeDifference"] = 1
       else:
-        tick["relativeDifference"] = min(tick[lobName] / max(tick["median"], 0.1), 3)
+        tick["relativeDifference"] = min(tick[valueKey] / max(tick["median"], 0.1), 3)
   else:
     print("SHOULD NOT HAPPEN X")
   return data
