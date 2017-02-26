@@ -99,12 +99,40 @@ class LobChartPage extends Component {
       //this.loadCorrelations();
       //this.loadAverages();
       //this.loadDayMedian();
+      this.loadOutages();
     }).catch(result => {
       this.setState({response: null})
     }).finally(x => {
       that.props.hideLoading();
       this.setState({loadingLobData: false})
     });
+  }
+
+  loadOutages() {
+    var myInit = {
+      method: 'GET',
+    };
+    let that = this;
+    performFetchPromise("/analyser/lobs/" + this.state.selectedLobs[0] + "/outages?from=" + this.state.from +
+      "&to=" + this.state.to, myInit)
+      .then(result => {
+        that.setState({outages: result})
+      })
+      .finally(r => {
+      })
+
+  }
+
+  onRangeConfirmed(rangeObj) {
+    var myInit = {
+      method: 'POST',
+      body: rangeObj
+    };
+    var that = this;
+    let lobName = this.state.selectedLobs[0]
+    performFetchPromise("/analyser/lobs/" + lobName + "/outage", myInit).then(result => {
+      that.loadOutages();
+    })
   }
 
   loadDayMedian() {
@@ -117,7 +145,6 @@ class LobChartPage extends Component {
       "&date=" + this.state.from, myInit)
       .then(result => {
         that.setState({medians: result})
-        console.log(result)
       })
       .finally(r => {
       })
@@ -135,11 +162,8 @@ class LobChartPage extends Component {
       this.state.selectedLobs[0], myInit)
       .then(result => {
         that.setState({averages: result})
-        console.log(result)
-        console.log("x")
       })
       .finally(r => {
-        console.log("f")
         that.setState({loadingAverages: false})
       })
   }
@@ -204,6 +228,7 @@ class LobChartPage extends Component {
       shownLobName = metrics[0].replace("_", ".");
       usedGranularity = this.state.response.metadata.granularity;
     }
+    console.log(this.state)
 
     let form = this.renderForm()
 
@@ -232,9 +257,12 @@ class LobChartPage extends Component {
         <div className="row">
           <div className="col-xs-6">
             <MetricGraph source={this.state.response} metrics={metrics} relative={false}
-                         smooth={this.state.smooth}/>
+                         smooth={this.state.smooth}
+                         outages={this.state.outages}/>
             <MetricGraph source={this.state.response} metrics={["relativeDifference"]}
-                         smooth={this.state.smooth}/>
+                         smooth={this.state.smooth}
+                         outages={this.state.outages}
+                         onRangeConfirmed={this.onRangeConfirmed.bind(this)}/>
             {this.state.medians &&
             <MetricGraph source={this.state.medians} metrics={["median"]}/>
             }

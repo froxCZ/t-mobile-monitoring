@@ -59,8 +59,8 @@ class DatesQuery(BaseDateQuery):
           minuteRange = minuteGroup
           grouping = self.createMinuteGrouping(minuteGroup)
           break
-    elif groupCount <= 8 * 60:
-      minuteGroups = [60, 2 * 60, 4 * 60, 8 * 60]
+    elif groupCount <= 12 * 60:
+      minuteGroups = [60, 2 * 60,3*60, 4 * 60, 8 * 60,12*60]
       for minuteGroup in minuteGroups:
         if (groupCount <= minuteGroup):
           minuteRange = minuteGroup

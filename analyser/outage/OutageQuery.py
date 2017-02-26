@@ -14,7 +14,9 @@ class OutageQuery:
     res = list(outageColl.find(
       {"_id": {"$gte": fromDate, "$lt": toDate},
        lobMongoPath: {"$exists": True}},
-      {"_id": 1}
+      {"_id": 1,
+       lobMongoPath: 1}
     ).sort("_id", 1))
+    lobs, country, lobName = lobMongoPath.split(".")
 
-    return list(map(lambda x: x["_id"], res))
+    return list(map(lambda x: {"from": x[lobs][country][lobName]["from"], "to": x[lobs][country][lobName]["to"]}, res))
