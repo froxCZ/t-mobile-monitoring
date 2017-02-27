@@ -79,37 +79,6 @@ def getDayMedians():
   response["metrics"] = ["median"]
   return jsonify(response)
 
-
-def merge2DateLists(list1, val1, list2, val2):
-  d = {}
-  list1NullObject = {}
-  for i in val1:
-    list1NullObject[i] = 0
-  list2NullObject = {}
-  for i in val2:
-    list2NullObject[i] = 0
-
-  for i in list1:
-    key = i["_id"]
-    i.update(list2NullObject)
-    d[key] = i
-  for i in list2:
-    key = i["_id"]
-    if key in d:
-      d[key].update(i)
-    else:
-      i.update(list1NullObject)
-      d[key] = i
-  return data_query.dateDictToList(d)
-
-
-def listToDateDict(l):
-  dateDict = {}
-  for i in l:
-    dateDict[i["_id"]] = i
-  return dateDict
-
-
 def smoothData(data, granularity, validMetricName):
   dataList = []
   for row in data:

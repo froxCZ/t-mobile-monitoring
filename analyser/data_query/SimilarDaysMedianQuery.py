@@ -11,7 +11,6 @@ class SimilarDaysMedianQuery:
 
   def execute(self):
     from data_query.DatesQuery import DatesQuery
-    print(self.date)
     datesQuery = DatesQuery(self.dates, self.lobName, resultName="value", granularity=self.granularity)
     data = datesQuery.execute()
     self.metadata = datesQuery.metadata
@@ -37,7 +36,6 @@ def _createMedians(data, valueName):
     if len(valueList) > 5:
       n = 2
       valueList = valueList[n:-n]
-      print(str(len(valueList)))
     if len(valueList) == 0:
       dayMedians[minute] = 0
       continue
@@ -71,7 +69,6 @@ def _weightedMean(values):
     s += x * y
 
   average = s / sum(weights)
-  print(average) # 3.38
   return average
 
 

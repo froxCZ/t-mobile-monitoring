@@ -6,11 +6,11 @@ from numpy import sum, arange
 from pylab import pcolor, show, colorbar, xticks, yticks
 from scipy.stats import linregress
 
-from api.data_query import DateRangeGroupQuery
 from config import config
+from data_query import DateRangeGroupQuery
 
-CZ_LOBS = config.getLobsConfig()["lobs"]["CZ"]
-# CZ_LOBS = ["SMS","GSM","MMS"]
+# CZ_LOBS = config.getLobsConfig()["lobs"]["CZ"]
+CZ_LOBS = ["SMS","GSM","MMS"]
 
 
 def correlate2Lobs(lobName1, lobName2):
@@ -23,13 +23,13 @@ def correlate2Lobs(lobName1, lobName2):
   fromDate = util.jsStringToDate("2016-10-03T10:00:00.000Z")
   toDate = util.jsStringToDate("2016-10-10T10:00:00.000Z")
 
-  lob1Query = DateRangeGroupQuery(fromDate, toDate, lobName1, granularity)
-  lob2Query = DateRangeGroupQuery(fromDate, toDate, lobName2, granularity)
-  lob1Data, metricsList = lob1Query.execute()
-  lob1Data = util.dateDataListToList(lob1Data, metricsList[0])
+  lob1Query = DateRangeGroupQuery(fromDate, toDate, [lobName1], granularity)
+  lob2Query = DateRangeGroupQuery(fromDate, toDate, [lobName2], granularity)
+  lob1Data = lob1Query.execute()
+  lob1Data = util.dateDataListToList(lob1Data, lobName1)
 
-  lob2Data, metricsList = lob2Query.execute()
-  lob2Data = util.dateDataListToList(lob2Data, metricsList[0])
+  lob2Data = lob2Query.execute()
+  lob2Data = util.dateDataListToList(lob2Data, lobName2)
   lin = linregress(lob1Data, lob2Data)
   # cosineSimilarity = cosine_similarity(lob1Data, lob2Data)
   return lin.rvalue, 0
