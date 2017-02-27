@@ -41,7 +41,7 @@ def saveOutage(lobName):
     date = date + dayDelta
     fromDate = date
 
-  outagesColl.update_one({"_id": date}, {"$set": {"lobs." + lobName: {"from": fromDate, "to": toDate}}}, upsert=True)
+  res = outagesColl.update_one({"_id": date}, {"$set": {"lobs." + lobName: {"from": fromDate, "to": toDate}}}, upsert=True)
 
   return jsonify({})
 

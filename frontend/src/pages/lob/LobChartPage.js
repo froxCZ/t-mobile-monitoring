@@ -259,7 +259,7 @@ class LobChartPage extends Component {
             <MetricGraph source={this.state.response} metrics={metrics} relative={false}
                          smooth={this.state.smooth}
                          outages={this.state.outages}/>
-            <MetricGraph source={this.state.response} metrics={["relativeDifference"]}
+            <MetricGraph source={this.state.response} metrics={["relativeDifference","scaledDifference"]}
                          smooth={this.state.smooth}
                          outages={this.state.outages}
                          onRangeConfirmed={this.onRangeConfirmed.bind(this)}/>

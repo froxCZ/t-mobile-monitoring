@@ -19,6 +19,8 @@ HOLIDAYS = [(1, 1),  # day, month
 
 INITIAL_DATE = util.jsStringToDate("2016-08-01T00:00:00")
 
+IGNORE_DAYS = [(24, 12), (31, 12), (1, 1)]
+
 
 def _getPastHolidays(lobName, date, days):
   resultDays = []
@@ -26,7 +28,7 @@ def _getPastHolidays(lobName, date, days):
   dayToTest = date.replace(tzinfo=None)
   while len(resultDays) <= days and dayToTest > INITIAL_DATE:
     dayToTest -= datetime.timedelta(days=1)
-    if _isHoliday(dayToTest):
+    if _isHoliday(dayToTest) and _isUsualDay(dayToTest):
       resultDays.append(dayToTest)
     i += 1
 
@@ -37,7 +39,7 @@ def getPastSimilarDays(lobName, date, days=10):
   if (_isWorkDay(date)):
     return _getPastWorkDays(lobName, date, days)
   if (_isWeekendDay(date)):
-    return _getSameWeekDay(lobName, date, days)
+    return _getSameWeekendDay(lobName, date, 3)
     # return _getPastWeekends(lobName, date, days)
   if (_isHoliday(date)):
     return _getPastHolidays(lobName, date, 4)
@@ -48,7 +50,7 @@ def _getPastWorkDays(lobName, date, days=10):
   i = 1
   while len(resultDays) <= days:
     dayToTest = date - datetime.timedelta(days=i)
-    if _isWorkDay(dayToTest):
+    if _isWorkDay(dayToTest) and _isUsualDay(dayToTest):
       resultDays.append(dayToTest)
     i += 1
   return resultDays
@@ -59,18 +61,18 @@ def _getPastWeekends(lobName, date, days=10):
   i = 1
   while len(resultDays) <= days:
     dayToTest = date - datetime.timedelta(days=i)
-    if _isWeekendDay(dayToTest):
+    if _isWeekendDay(dayToTest) and _isUsualDay(dayToTest):
       resultDays.append(dayToTest)
     i += 1
   return resultDays
 
 
-def _getSameWeekDay(lobName, date, days=10):
+def _getSameWeekendDay(lobName, date, days=10):
   resultDays = []
   i = 1
-  while len(resultDays) <= days:
+  while len(resultDays) < days:
     dayToTest = date - datetime.timedelta(days=i)
-    if date.weekday() == dayToTest.weekday():
+    if date.weekday() == dayToTest.weekday() and _isUsualDay(dayToTest):
       resultDays.append(dayToTest)
     i += 1
   return resultDays
@@ -84,6 +86,13 @@ def _isWorkDay(date):
 
 def _isWeekendDay(date):
   return date.weekday() >= 5
+
+
+def _isUsualDay(date):
+  for i in IGNORE_DAYS:
+    if date.day == i[0] and date.month == i[1]:
+      return False
+  return True
 
 
 def _isHoliday(date):

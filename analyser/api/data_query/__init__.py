@@ -24,6 +24,7 @@ def dataQuery():
   metadata = mongoQuery.metadata
   data = data_query.medianDateRange(fromDate, toDate, lobNames[0], metadata["granularity"], data)
   metricsList.append("relativeDifference")
+  metricsList.append("scaledDifference")
   metricsList.append("median")
 
   if (len(data) > 10):

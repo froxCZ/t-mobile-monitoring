@@ -16,6 +16,7 @@ class SimilarDaysMedianQuery:
     data = datesQuery.execute()
     self.metadata = datesQuery.metadata
     self.metrics = datesQuery.metrics
+    #_createWeightedMeans(data,"value")
     return _createMedians(data, "value")
 
 
@@ -33,11 +34,10 @@ def _createMedians(data, valueName):
   dayMedians = {}
   for minute, valueList in day.items():
     valueList = sorted(valueList)
-    print(str(len(valueList)))
-    n = 2
-    valueList = valueList[n:-n]
-    print(str(len(valueList)))
-    print()
+    if len(valueList) > 5:
+      n = 2
+      valueList = valueList[n:-n]
+      print(str(len(valueList)))
     if len(valueList) == 0:
       dayMedians[minute] = 0
       continue
@@ -61,8 +61,18 @@ def _createWeightedMeans(data, valueName):
   for minute, valueList in day.items():
     if len(data) == 0:
       continue
-    dayMedians[minute] = median(valueList)
+    dayMedians[minute] = _weightedMean(valueList)
   return dayMedians
+def _weightedMean(values):
+  weights = [(i+1)*(i+1) for i in range(0,len(values))]
+
+  s = 0
+  for x, y in zip(values, weights):
+    s += x * y
+
+  average = s / sum(weights)
+  print(average) # 3.38
+  return average
 
 
 def medianDeviation(data):

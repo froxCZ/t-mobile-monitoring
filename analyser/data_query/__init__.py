@@ -17,14 +17,22 @@ def medianDateRange(fromDate, toDate, lobName, granularity, data):
       medianList.append(v)
     date += dayDelta
   valueKey = lobName
-  #valueKey = "smoothed"
+  # valueKey = "smoothed"
   if len(medianList) > 0:
-    data = merge2DateLists(medianList, ["median"], data, [valueKey])
+    data = merge2DateLists(medianList, ["median", "dayAverage"], data, [valueKey])
     for tick in data:
       if tick[valueKey] == tick["median"]:
         tick["relativeDifference"] = 1
       else:
+        diff = tick[valueKey] - tick["median"]
         tick["relativeDifference"] = min(tick[valueKey] / max(tick["median"], 0.1), 3)
+        if tick["dayAverage"] != 0:
+          tick["scaledDifference"] = max(min((diff / tick["dayAverage"]) + 1, 3),tick["relativeDifference"])
+          #tick["scaledDifference"] = min((diff / tick["dayAverage"]) + 1, 3)
+        else:
+          tick["scaledDifference"] = 1
+
+
   else:
     print("SHOULD NOT HAPPEN X")
   return data
@@ -33,9 +41,12 @@ def medianDateRange(fromDate, toDate, lobName, granularity, data):
 def minuteDictToDateDict(baseDate, dict, valueName):
   dateDict = {}
   baseDate = baseDate.replace(tzinfo=None)
+  if (len(dict.values()) == 0):
+    return dateDict
+  dayAverage = sum(dict.values()) / len(dict.values())
   for minute, x in dict.items():
     id = baseDate + datetime.timedelta(minutes=minute)
-    dateDict[id] = {"_id": id, valueName: x}
+    dateDict[id] = {"_id": id, valueName: x, "dayAverage": dayAverage}
   return dateDict
 
 
