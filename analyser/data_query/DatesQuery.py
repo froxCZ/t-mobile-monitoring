@@ -14,7 +14,7 @@ class DatesQuery(BaseDateQuery):
     self.dates = roundedDates
     self.lobName = lobName
     self.query = []
-    self.coll = mongo.dataDb()["lobs"]
+    self.coll = mongo.lobs()
     self.metrics = []
     self.maxTicks = 10000
     self.resultName = resultName
@@ -77,18 +77,18 @@ class DatesQuery(BaseDateQuery):
 
     groupObject = {
       "_id": {
-        "year": {"$year": "$_id"},
-        "month": {"$month": "$_id"},
-        "dayOfMonth": {"$dayOfMonth": "$_id"},
-        "hour": {"$hour": "$_id"},
+        "year": {"$year": self._idTimezoneFix()},
+        "month": {"$month": self._idTimezoneFix()},
+        "dayOfMonth": {"$dayOfMonth":self._idTimezoneFix()},
+        "hour": {"$hour": self._idTimezoneFix()},
         "minute": {
           "$subtract": [
-            {"$minute": "$_id"},
-            {"$mod": [{"$minute": "$_id"}, groupByMinutes]}
+            {"$minute": self._idTimezoneFix()},
+            {"$mod": [{"$minute":self._idTimezoneFix()}, groupByMinutes]}
           ]
         }
       },
-      "anyDate": {"$first": "$_id"},
+      "anyDate": {"$first": self._idTimezoneFix()},
     }
     project = {"_id": "$_id"}
     return groupObject, project
@@ -96,18 +96,18 @@ class DatesQuery(BaseDateQuery):
   def createHourGrouping(self, groupByHours):
     groupObject = {
       "_id": {
-        "year": {"$year": "$_id"},
-        "month": {"$month": "$_id"},
-        "dayOfMonth": {"$dayOfMonth": "$_id"},
+        "year": {"$year": self._idTimezoneFix()},
+        "month": {"$month": self._idTimezoneFix()},
+        "dayOfMonth": {"$dayOfMonth": self._idTimezoneFix()},
         "hour": {
           "$subtract": [
-            {"$hour": "$_id"},
-            {"$mod": [{"$hour": "$_id"}, groupByHours]}
+            {"$hour": self._idTimezoneFix()},
+            {"$mod": [{"$hour": self._idTimezoneFix()}, groupByHours]}
           ]
         },
         "minute": "0"
       },
-      "anyDate": {"$first": "$_id"},
+      "anyDate": {"$first": self._idTimezoneFix()},
     }
     project = {"_id": "$_id"}
     return groupObject, project
@@ -115,13 +115,13 @@ class DatesQuery(BaseDateQuery):
   def createDayGrouping(self, groupByDays):
     groupObject = {
       "_id": {
-        "year": {"$year": "$_id"},
-        "month": {"$month": "$_id"},
-        "dayOfMonth": {"$dayOfMonth": "$_id"},
+        "year": {"$year": self._idTimezoneFix()},
+        "month": {"$month": self._idTimezoneFix()},
+        "dayOfMonth": {"$dayOfMonth": self._idTimezoneFix()},
         "hour": "0",
         "minute": "0",
       },
-      "anyDate": {"$first": "$_id"},
+      "anyDate": {"$first": self._idTimezoneFix()},
     }
     project = {
       "_id": "$_id"

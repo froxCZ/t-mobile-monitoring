@@ -1,7 +1,7 @@
 # large files: "FOX",        "RTB",
 from mongo import mongo
 
-configColl = mongo.db()["config"]
+configColl = mongo.config()
 
 
 class Lob:

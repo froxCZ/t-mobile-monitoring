@@ -276,7 +276,7 @@ def dendo():
   a = np.random.multivariate_normal([10, 0], [[3, 1], [1, 4]], size=[100, ])
   b = np.random.multivariate_normal([0, 20], [[3, 1], [1, 4]], size=[50, ])
   X = R
-  Z = linkage(X, 'median')
+  Z = linkage(X, 'ward')
   plt.figure(figsize=(25, 10))
   plt.title('Hierarchical Clustering Dendrogram')
   plt.xlabel('sample index')

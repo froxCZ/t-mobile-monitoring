@@ -25,7 +25,7 @@ IGNORE_DAYS = [(24, 12), (31, 12), (1, 1)]
 def _getPastHolidays(lobName, date, days):
   resultDays = []
   i = 1
-  dayToTest = date.replace(tzinfo=None)
+  dayToTest = date
   while len(resultDays) <= days and dayToTest > INITIAL_DATE:
     dayToTest -= datetime.timedelta(days=1)
     if _isHoliday(dayToTest) and _isUsualDay(dayToTest):

@@ -27,7 +27,7 @@ def updateLob(lobName):
 @lobs.route('/<string:lobName>/outage', methods=["POST"])
 def saveOutage(lobName):
   from mongo import mongo
-  outagesColl = mongo.db()["outages"]
+  outagesColl = mongo.outages()
   json = request.get_json()
   fromDate = util.jsStringToDate(json["from"])  # might need timezone?
   toDate = util.jsStringToDate(json["to"])  # might need timezone?
@@ -48,8 +48,8 @@ def saveOutage(lobName):
 
 @lobs.route('/<string:lobName>/outages', methods=["GET"])
 def getOutages(lobName):
-  fromDate = util.jsStringToDate(request.args.get('from'), hoursOffset=10)
-  toDate = util.jsStringToDate(request.args.get('to'), hoursOffset=10)
+  fromDate = util.jsStringToDate(request.args.get('from'))
+  toDate = util.jsStringToDate(request.args.get('to'))
   from outage import OutageQuery
   outages = OutageQuery(lobName).getOutages(fromDate, toDate)
   return jsonify(outages)

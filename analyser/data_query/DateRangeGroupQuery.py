@@ -13,7 +13,7 @@ class DateRangeGroupQuery(BaseDateQuery):
     self.lobNames = lobNames
     self.granularity = int(granularity)
     self.query = []
-    self.coll = mongo.dataDb()["lobs"]
+    self.coll = mongo.lobs()
     self.metrics = []
     self.maxTicks = 500
     self.dates = dates
@@ -63,7 +63,7 @@ class DateRangeGroupQuery(BaseDateQuery):
           grouping = self.createMinuteGrouping(minuteGroup)
           break
     elif groupCount <= 12 * 60:
-      minuteGroups = [60, 2 * 60,3*60, 4 * 60, 8 * 60,12*60]
+      minuteGroups = [60, 2 * 60, 3 * 60, 4 * 60, 8 * 60, 12 * 60]
       for minuteGroup in minuteGroups:
         if (groupCount <= minuteGroup):
           minuteRange = minuteGroup
@@ -80,18 +80,18 @@ class DateRangeGroupQuery(BaseDateQuery):
 
     groupObject = {
       "_id": {
-        "year": {"$year": "$_id"},
-        "month": {"$month": "$_id"},
-        "dayOfMonth": {"$dayOfMonth": "$_id"},
-        "hour": {"$hour": "$_id"},
+        "year": {"$year": self._idTimezoneFix()},
+        "month": {"$month": self._idTimezoneFix()},
+        "dayOfMonth": {"$dayOfMonth": self._idTimezoneFix()},
+        "hour": {"$hour": self._idTimezoneFix()},
         "minute": {
           "$subtract": [
-            {"$minute": "$_id"},
-            {"$mod": [{"$minute": "$_id"}, groupByMinutes]}
+            {"$minute": self._idTimezoneFix()},
+            {"$mod": [{"$minute": self._idTimezoneFix()}, groupByMinutes]}
           ]
         }
       },
-      "anyDate": {"$first": "$_id"},
+      "anyDate": {"$first":self._idTimezoneFix()},
     }
     project = {"_id": "$_id"}
     return groupObject, project
@@ -99,18 +99,18 @@ class DateRangeGroupQuery(BaseDateQuery):
   def createHourGrouping(self, groupByHours):
     groupObject = {
       "_id": {
-        "year": {"$year": "$_id"},
-        "month": {"$month": "$_id"},
-        "dayOfMonth": {"$dayOfMonth": "$_id"},
+        "year": {"$year": self._idTimezoneFix()},
+        "month": {"$month": self._idTimezoneFix()},
+        "dayOfMonth": {"$dayOfMonth": self._idTimezoneFix()},
         "hour": {
           "$subtract": [
-            {"$hour": "$_id"},
-            {"$mod": [{"$hour": "$_id"}, groupByHours]}
+            {"$hour": self._idTimezoneFix()},
+            {"$mod": [{"$hour": self._idTimezoneFix()}, groupByHours]}
           ]
         },
         "minute": "0"
       },
-      "anyDate": {"$first": "$_id"},
+      "anyDate": {"$first": self._idTimezoneFix()},
     }
     project = {"_id": "$_id"}
     return groupObject, project
@@ -118,13 +118,13 @@ class DateRangeGroupQuery(BaseDateQuery):
   def createDayGrouping(self, groupByDays):
     groupObject = {
       "_id": {
-        "year": {"$year": "$_id"},
-        "month": {"$month": "$_id"},
-        "dayOfMonth": {"$dayOfMonth": "$_id"},
+        "year": {"$year": self._idTimezoneFix()},
+        "month": {"$month": self._idTimezoneFix()},
+        "dayOfMonth": {"$dayOfMonth": self._idTimezoneFix()},
         "hour": "0",
         "minute": "0",
       },
-      "anyDate": {"$first": "$_id"},
+      "anyDate": {"$first": self._idTimezoneFix()},
     }
     project = {"_id": "$_id"}
     return groupObject, project
@@ -142,13 +142,13 @@ class DateRangeGroupQuery(BaseDateQuery):
   def execute(self):
     result = super(DateRangeGroupQuery, self).execute()
     timeSequenceResult = []
-    lastDate = self.fromDate.replace(hour=0, minute=0, second=0, tzinfo=None)
+    lastDate = self.fromDate
     timeDelta = datetime.timedelta(minutes=self.metadata["granularity"])
     i = 0
     nullMetrics = {}
     for metric in self.metrics:
       nullMetrics[metric] = 0
-    while lastDate <= self.toDate.replace(tzinfo=None):
+    while lastDate <= self.toDate:
       if i < len(result) and lastDate == result[i]["_id"]:
         timeSequenceResult.append({**nullMetrics, **result[i]})
         i += 1

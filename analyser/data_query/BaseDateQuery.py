@@ -14,7 +14,8 @@ class BaseDateQuery:
       group = i["_id"]
       date = datetime.datetime(group["year"], group["month"], group["dayOfMonth"], int(group["hour"]),
                                int(group["minute"]))
-      date.replace(tzinfo=None)
+      from config import TIMEZONE
+      date = date.replace(tzinfo=TIMEZONE)
       i["_id"] = date
       for key in i.keys():
         if key == "_id":
@@ -26,6 +27,9 @@ class BaseDateQuery:
 
     result = sorted(result, key=lambda x: x["_id"])
     return result
+
+  def _idTimezoneFix(self):
+    return {"$add": ["$_id", 60 * 60 * 1000]}
 
   @abc.abstractmethod
   def prepare(self):

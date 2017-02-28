@@ -13,7 +13,7 @@ class DayAverageQuery:
     self.resultName = resultName
     if self.resultName is None:
       self.resultName = lobName
-    self.coll = mongo.dataDb()["lobs"]
+    self.coll = mongo.lobs()
 
   def prepare(self):
     match = self.createMatchObject()

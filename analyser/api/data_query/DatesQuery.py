@@ -12,7 +12,7 @@ class DatesQuery:
     self.dates = roundedDates
     self.lobName = lobName
     self.query = []
-    self.coll = mongo.dataDb()["lobs"]
+    self.coll = mongo.lobs()
     self.metrics = []
     self.maxTicks = 10000
     self.resultName = resultName

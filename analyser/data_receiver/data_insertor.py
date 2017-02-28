@@ -40,7 +40,7 @@ def _sumUpdates(updates):
 
 
 def insertData(lobRows):
-  coll = mongo.dataDb()["lobs"]
+  coll = mongo.lobs()
   updates = _sumUpdates(list(map(_createUpdateDict, lobRows)))
 
   print("Processed "+str(len(lobRows))+ " rows")

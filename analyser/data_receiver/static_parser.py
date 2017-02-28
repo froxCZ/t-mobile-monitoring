@@ -1,5 +1,7 @@
 import csv
 
+import pytz
+
 import data_receiver.util as util
 from config import config
 from data_receiver import data_insertor
@@ -33,7 +35,7 @@ class StaticParser:
     lobRow["lob"] = row[2]
     lobRow["sourceName"] = row[3]
     lobRow["dataSize"] = row[5]
-    lobRow["date"] = util.stringToDate(row[6])
+    lobRow["date"] = util.stringToDate(row[6]).replace(tzinfo=pytz.timezone('CET'))
     return lobRow
 
 

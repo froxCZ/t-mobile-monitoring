@@ -1,11 +1,10 @@
-import datetime
-
 import dateutil.parser
 
+from config import TIMEZONE
 
-def jsStringToDate(string, hoursOffset=0):
-  return dateutil.parser.parse(string) \
-         - datetime.timedelta(hours=hoursOffset)  # hack while dates in mongo are at 00:00Z instead of 00:00CET
+
+def jsStringToDate(string):
+  return dateutil.parser.parse(string).replace(tzinfo=TIMEZONE)
 
 
 def dateToString(date):

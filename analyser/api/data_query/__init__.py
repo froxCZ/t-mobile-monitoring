@@ -13,8 +13,8 @@ api_data_query = Blueprint('data_query', __name__)
 @api_data_query.route('/', methods=["POST"])
 def dataQuery():
   searchParam = request.get_json()
-  fromDate = util.jsStringToDate(searchParam["from"], hoursOffset=10).replace(hour=0, minute=0, second=0)
-  toDate = util.jsStringToDate(searchParam["to"], hoursOffset=10).replace(hour=0, minute=0, second=0)
+  fromDate = util.jsStringToDate(searchParam["from"]).replace(hour=0, minute=0, second=0)
+  toDate = util.jsStringToDate(searchParam["to"]).replace(hour=0, minute=0, second=0)
   lobNames = searchParam["aggregation"]["sum"]
   response = {}
   mongoQuery = data_query.DateRangeGroupQuery(fromDate, toDate, lobNames, searchParam["granularity"])

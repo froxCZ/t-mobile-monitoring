@@ -18,7 +18,7 @@ def medianDateRange(fromDate, toDate, lobName, granularity, data):
     date += dayDelta
   valueKey = lobName
   # valueKey = "smoothed"
-  if len(medianList) > 0:
+  if True:
     data = merge2DateLists(medianList, ["median", "dayAverage"], data, [valueKey])
     for tick in data:
       if tick[valueKey] == tick["median"]:
@@ -45,7 +45,7 @@ def medianDateRange(fromDate, toDate, lobName, granularity, data):
 
 def minuteDictToDateDict(baseDate, dict, valueName):
   dateDict = {}
-  baseDate = baseDate.replace(tzinfo=None)
+  baseDate = baseDate
   if (len(dict.values()) == 0):
     return dateDict
   dayAverage = sum(dict.values()) / len(dict.values())
