@@ -1,4 +1,5 @@
 # large files: "FOX",        "RTB",
+#deprecated. use __init__
 from mongo import mongo
 
 configColl = mongo.config()
