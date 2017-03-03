@@ -3,11 +3,28 @@ from datetime import timedelta
 from mongo import mongo
 
 
-def _createUpdateDict(row):
+class DataInsertor():
+  def insertInputs(self, inputsList):
+    """
+    inserts inputsList into database.
+    :param inputsList: list of objects containing date and input data information.
+    :return:
+    """
+    coll = mongo.lobs()
+    updates = _sumUpdates(list(map(_createInputUpdateDict, inputsList)))
+    print("Inserted " + str(len(inputsList)) + " rows")
+    for key, value in updates.items():
+      coll.update({'_id': key}, value, upsert=True)
+
+  def insertForwards(self, forwardsList):
+    pass
+
+
+def _createInputUpdateDict(row):
   date = row["date"]
   indexDate = date - timedelta(seconds=date.second)
 
-  updatePath = "data." + row["country"] + "." + row["lob"] + "."
+  updatePath = "data." + row["lob"] + ".inputs."
   try:
     dataSize = int(row["dataSize"])
   except ValueError:
@@ -15,7 +32,7 @@ def _createUpdateDict(row):
     print(row)
     dataSize = 0
   update = {"$inc":
-              {updatePath + str(date.second): dataSize,
+              {updatePath + row["neid"]: dataSize,
                updatePath + "sum": dataSize,
                updatePath + "updatesCnt": 1
                }
@@ -37,13 +54,3 @@ def _sumUpdates(updates):
           prevUpdate["$inc"][key] = value
 
   return sums
-
-
-def insertData(lobRows):
-  coll = mongo.lobs()
-  updates = _sumUpdates(list(map(_createUpdateDict, lobRows)))
-
-  print("Processed "+str(len(lobRows))+ " rows")
-
-  for key, value in updates.items():
-    coll.update({'_id': key}, value, upsert=True)

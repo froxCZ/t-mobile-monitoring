@@ -55,50 +55,6 @@ CZ_LOBS = {"SIS": Lob("CZ", "SIS", 180),
            "ICG": Lob("CZ", "ICG", 60)}
 LOBS = {"CZ": CZ_LOBS}
 
-
-# LOBS_CZ_CONFIG = [
-#   Lob("CZ", "SIS", 180),
-#   Lob("CZ", "DWA", 10),
-#   Lob("CZ", "MWB", 10),
-#   Lob("CZ", "DAR", 15),
-#   Lob("CZ", "SMS", 10),
-#   Lob("CZ", "PCF", 15),
-#   Lob("CZ", "PPC", 15),
-#   Lob("CZ", "TCF", 30),
-#   Lob("CZ", "GSM", 15),
-#   Lob("CZ", "TPP", 60),
-#   Lob("CZ", "XTC", 15),
-#   Lob("CZ", "PST", 60),
-#   Lob("CZ", "WHS", 10),
-#   Lob("CZ", "TAP", 120),
-#   Lob("CZ", "SBC", 90),
-#   Lob("CZ", "SCF", 180),
-#   Lob("CZ", "LAS", 15),
-#   Lob("CZ", "MMS", 15),
-#   Lob("CZ", "ATS", 15),
-#   Lob("CZ", "RRA", 60),
-#   Lob("CZ", "VMS", 60),
-#   Lob("CZ", "MTS", 15),
-#   Lob("CZ", "OTA", 30),
-#   Lob("CZ", "BVS", 15),
-#   Lob("CZ", "VOP", 20),
-#   Lob("CZ", "WEL", 60),
-#   Lob("CZ", "CIR", 60),
-#   Lob("CZ", "SMG", 60),
-#   Lob("CZ", "LTP", 1440),
-#   Lob("CZ", "M2M", 1440),
-#   Lob("CZ", "EWG", 180),
-#   Lob("CZ", "TIT", 120),
-#   Lob("CZ", "RES", 1440),
-#   Lob("CZ", "KPI", 1440),
-#   Lob("CZ", "EPC", 120),
-#   Lob("CZ", "MNT", 10),
-#   Lob("CZ", "TOC", 1440),
-#   Lob("CZ", "EWH", 60),
-#   Lob("CZ", "ACI", 10),
-#   Lob("CZ", "ICG", 60)
-# ]
-
 def getLobConfigByName(fullName):
   res = configColl.find_one({"_id": "lobs"}, {"lobs." + fullName: 1})
   tmp = fullName.split(".")
