@@ -3,11 +3,45 @@ import datetime
 from flask import Blueprint, jsonify
 from flask import request
 
-import api.util as util
 import data_query
 import smooth
+import util
 
 api_data_query = Blueprint('data_query', __name__)
+
+@api_data_query.route('/v2', methods=["POST"])
+def dataQueryV2():
+  searchParam = request.get_json()
+  fromDate = util.stringToDate(searchParam["from"])
+  toDate = util.stringToDate(searchParam["to"])
+  lobNames = searchParam["lobNames"]
+  response = {}
+  mongoQuery = data_query.DateRangeGroupQuery(fromDate, toDate, lobNames, searchParam["granularity"])
+  data = mongoQuery.execute()
+  metrics = {}
+  metricsList = mongoQuery.metrics
+  metadata = mongoQuery.metadata
+  #data = data_query.medianDateRange(fromDate, toDate, lobNames[0], metadata["granularity"], data)
+  metricsList.append("relativeDifference")
+  metricsList.append("scaledDifference")
+  metricsList.append("median")
+
+  if (len(data) > 10):
+    validMetricName = metricsList[0]
+    smoothData(data, metadata["granularity"], validMetricName)
+    metricsList.append(validMetricName + "_smoothed")
+
+  for metric in metricsList:
+    maxx = 0
+    minn = float('inf')
+    for row in data:
+      if metric in row:
+        maxx = max(row[metric], maxx)
+        minn = min(row[metric], minn)
+    metrics[metric] = {"max": maxx, "min": minn}
+  response["data"] = data
+  response["metadata"] = {**{"metrics": metrics}, **metadata}
+  return jsonify(response)
 
 
 @api_data_query.route('/', methods=["POST"])

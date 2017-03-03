@@ -25,7 +25,7 @@ class LobsMonitoring extends Component {
   }
 
   componentDidMount() {
-    new Api().fetch("/lobs/", {method: 'GET'}).then((response) => {
+    Api.fetch("/lobs/", {method: 'GET'}).then((response) => {
       this.setState({lobs: response.lobs});
     });
   }

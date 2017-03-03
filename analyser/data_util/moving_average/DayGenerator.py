@@ -1,6 +1,6 @@
 import datetime
 
-from api import util
+import util
 
 HOLIDAYS = [(1, 1),  # day, month
             (1, 1),
@@ -17,7 +17,7 @@ HOLIDAYS = [(1, 1),  # day, month
             (25, 12),
             (26, 12), ]
 
-INITIAL_DATE = util.jsStringToDate("2016-08-01T00:00:00")
+INITIAL_DATE = util.stringToDate("01.08.2016")
 
 IGNORE_DAYS = [(24, 12), (31, 12), (1, 1)]
 

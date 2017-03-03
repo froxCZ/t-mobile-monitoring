@@ -57,11 +57,10 @@ LOBS = {"CZ": CZ_LOBS}
 
 def getLobConfigByName(fullName):
   res = configColl.find_one({"_id": "lobs"}, {"lobs." + fullName: 1})
-  tmp = fullName.split(".")
+  tmp = fullName.split("_")
   country = tmp[0]
-  lob = tmp[1]
-  granularity = res["lobs"][country][lob]["granularity"]
-  return Lob(country, lob, granularity)
+  granularity = res["lobs"][fullName]["granularity"]
+  return Lob(country, fullName, granularity)
 
 
 def getLobsConfig():

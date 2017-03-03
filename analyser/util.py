@@ -8,6 +8,8 @@ from config import TIMEZONE
 def jsStringToDate(string):
   return dateutil.parser.parse(string).replace(tzinfo=TIMEZONE)
 
+def stringToDate(dateString):
+  return datetime.datetime.strptime(dateString, "%d.%m.%Y").replace(tzinfo=TIMEZONE)
 
 def dateToString(date):
   return date.strftime("%Y-%m-%dT%H:%M:%S.000Z")

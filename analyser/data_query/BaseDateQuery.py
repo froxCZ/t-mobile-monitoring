@@ -17,13 +17,6 @@ class BaseDateQuery:
       from config import TIMEZONE
       date = date.replace(tzinfo=TIMEZONE)
       i["_id"] = date
-      for key in i.keys():
-        if key == "_id":
-          continue
-        newKey = key.replace("_", ".")
-        if key != newKey:
-          i[newKey] = i[key]
-          del i[key]
 
     result = sorted(result, key=lambda x: x["_id"])
     return result

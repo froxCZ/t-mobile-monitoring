@@ -1,6 +1,6 @@
 import React, {Component} from "react";
 
-export default class LobMonitoringDetail extends Component {
+export default class LobMonitoringDetailForward extends Component {
   constructor() {
     super()
 

@@ -6,7 +6,7 @@ from mongo import mongo
 
 
 class DateRangeGroupQuery(BaseDateQuery):
-  def __init__(self, fromDate, toDate, lobNames, granularity, dates=None):
+  def __init__(self, fromDate, toDate, lobNames, granularity, dates=None, neids=None, forwards=None):
     super().__init__()
     self.fromDate = fromDate
     self.toDate = toDate
@@ -17,6 +17,7 @@ class DateRangeGroupQuery(BaseDateQuery):
     self.metrics = []
     self.maxTicks = 500
     self.dates = dates
+    self.createDataPathAndOutputs(lobNames, neids, forwards)
     if (int(self.granularity) == 0):
       for lobName in lobNames:
         self.granularity = max(self.granularity, config.getLobConfigByName(lobName).granularity)
@@ -24,13 +25,27 @@ class DateRangeGroupQuery(BaseDateQuery):
       self.maxTicks = 2000
     self.metadata = {}
 
+  def createDataPathAndOutputs(self, lobNames, neids, forwards):
+    self.dataPaths = []
+    if neids == None and forwards == None:
+      for lobName in lobNames:
+        self.dataPaths.append(("$data." + lobName + ".inputs.sum", lobName))
+    elif neids != None and len(lobNames) == 1:
+      lobName = lobNames[0]
+      for neid in neids:
+        self.dataPaths.append(("$data." + lobName + ".inputs." + neid, lobName + "." + neid))
+    elif forwards != None and len(lobNames) == 1:
+      lobName = lobNames[0]
+      for forward in forwards:
+        self.dataPaths.append(("$data." + lobName + ".forwards." + forward, lobName + "." + forward))
+
   def prepare(self):
     if (self.dates == None):
       match = {"$match": {"_id": {"$gte": self.fromDate, "$lt": self.toDate}}}
     else:
       match = self.createMatchObject()
     group, project = self.createTimeGroupAndProjection(abs(self.fromDate.timestamp() - self.toDate.timestamp()))
-    group2, project2 = self.createDataGroupAndProjection(self.lobNames)
+    group2, project2 = self.createDataGroupAndProjection()
     group.update(group2)
     project.update(project2)
     group = {"$group": group}
@@ -91,7 +106,7 @@ class DateRangeGroupQuery(BaseDateQuery):
           ]
         }
       },
-      "anyDate": {"$first":self._idTimezoneFix()},
+      "anyDate": {"$first": self._idTimezoneFix()},
     }
     project = {"_id": "$_id"}
     return groupObject, project
@@ -129,14 +144,14 @@ class DateRangeGroupQuery(BaseDateQuery):
     project = {"_id": "$_id"}
     return groupObject, project
 
-  def createDataGroupAndProjection(self, lobs):
+  def createDataGroupAndProjection(self):
     group = {}
     project = {}
-    for dataPath in lobs:
-      validName = validMongoAttribute(dataPath)
-      group[validName] = {"$sum": "$data." + dataPath + ".sum"}
+    for dataPath in self.dataPaths:
+      validName = dataPath[1]
+      group[validName] = {"$sum": dataPath[0]}
       project[validName] = "$" + validName
-      self.metrics.append(dataPath)
+      self.metrics.append(validName)
     return group, project
 
   def execute(self):

@@ -12,6 +12,10 @@ export default class LobMonitoringDetail extends Component {
     hashHistory.push(this.props.location.pathname + "/" + forwardName);
   }
 
+  goToNeidDetail(neidName) {
+    hashHistory.push(this.props.location.pathname + "/neid/" + neidName);
+  }
+
   componentWillMount() {
     this.propChange(this.props)
   }
@@ -24,7 +28,7 @@ export default class LobMonitoringDetail extends Component {
     let lobName = props.params.lobName;
     if (this.state.lobName != lobName) {
       this.setState({lobName: lobName});
-      new Api().fetch("/lobs/" + lobName, {method: 'GET'}).then((response) => {
+      Api.fetch("/lobs/" + lobName, {method: 'GET'}).then((response) => {
         this.setState({lob: response});
       });
     }
@@ -36,7 +40,7 @@ export default class LobMonitoringDetail extends Component {
     if (this.state.lob) {
       for (let neidName in this.state.lob.neids) {
         neidRows.push(
-          <tr onClick={this.goToForwardDetail.bind(this, neidName)}>
+          <tr onClick={this.goToNeidDetail.bind(this, neidName)}>
             <td>{neidName}</td>
             <td>80%</td>
             <td>
@@ -80,7 +84,7 @@ export default class LobMonitoringDetail extends Component {
           <div className="col-lg-12">
             <div className="card">
               <div className="card-header">
-                <i className="fa fa-align-justify"></i> Neid list
+                <i className="fa fa-align-justify"></i> Inputs list
               </div>
               <div className="card-block">
                 <table className="table">
