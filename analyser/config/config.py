@@ -1,5 +1,5 @@
 # large files: "FOX",        "RTB",
-#deprecated. use __init__
+# deprecated. use __init__
 from mongo import mongo
 
 configColl = mongo.config()
@@ -105,12 +105,17 @@ def getLobConfigByName(fullName):
   country = tmp[0]
   lob = tmp[1]
   granularity = res["lobs"][country][lob]["granularity"]
-  return Lob(country,lob,granularity)
+  return Lob(country, lob, granularity)
+
 
 def getLobsConfig():
   res = configColl.find_one({"_id": "lobs"})
   return res
 
 
+def getLobConfig(lobName):
+  return getLobsConfig()["lobs"][lobName]
+
+
 def updateLob(lobName, lobUpdate):
-  return configColl.update_one({"_id":"lobs"},lobUpdate)
+  return configColl.update_one({"_id": "lobs"}, lobUpdate)

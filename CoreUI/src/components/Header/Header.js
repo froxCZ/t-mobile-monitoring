@@ -1,5 +1,6 @@
 import React, {Component} from "react";
 import {Dropdown, DropdownMenu, DropdownItem} from "reactstrap";
+import LoadingBar from "react-redux-loading-bar";
 class Header extends Component {
 
   constructor(props) {
@@ -35,6 +36,7 @@ class Header extends Component {
   render() {
     return (
       <header className="app-header navbar">
+        <LoadingBar/>
         <button className="navbar-toggler mobile-sidebar-toggler hidden-lg-up" onClick={this.mobileSidebarToggle}
                 type="button">&#9776;</button>
         <a className="navbar-brand" href="#"></a>

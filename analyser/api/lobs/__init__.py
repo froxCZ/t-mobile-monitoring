@@ -8,11 +8,17 @@ from config import config
 
 lobs = Blueprint('lobs', __name__)
 
+@lobs.route('/', methods=["GET"])
+def lobsList():
+  return jsonify(config.getLobsConfig())
 
 @lobs.route('/configs', methods=["GET"])
 def lobsConfig():
   return jsonify(config.getLobsConfig())
 
+@lobs.route('/<string:lobName>', methods=["GET"])
+def getLobConfig(lobName):
+  return jsonify(config.getLobConfig(lobName))
 
 @lobs.route('/config/<string:lobName>', methods=["POST"])
 def updateLob(lobName):

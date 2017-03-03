@@ -2,10 +2,11 @@ import traceback
 from datetime import datetime
 
 from flask import Flask, jsonify
+from flask.ext.cors import CORS
 from flask.json import JSONEncoder
 
 app = Flask(__name__)
-
+CORS(app)
 
 class CustomJSONEncoder(JSONEncoder):
   def default(self, obj):
