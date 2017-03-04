@@ -15,9 +15,9 @@ def medianDateRange(fromDate, toDate, lobNames, granularity, data, neids=[], for
   date = fromDate
   while date < toDate:
     similarDaysQuery = SimilarDaysMedianQuery(lobNames, date,
-                           granularity=granularity,
-                           neids=neids,
-                           forwards=forwards)
+                                              granularity=granularity,
+                                              neids=neids,
+                                              forwards=forwards)
     similarDatesData = similarDaysQuery.execute()
     l = util.minuteDictToDateDict(date, similarDatesData, "expected")
     valueKey = similarDaysQuery.metrics[0]
@@ -35,12 +35,15 @@ def medianDateRange(fromDate, toDate, lobNames, granularity, data, neids=[], for
         diff = tick[valueKey] - tick["expected"]
         tick["relativeDifference"] = min(tick[valueKey] / max(tick["expected"], 0.1), 3)
         if tick["dayAverage"] != 0:
-          scaledDiff = min((diff / tick["dayAverage"]) + 1, 3)
-          if scaledDiff >= 1 and tick["relativeDifference"] >= 1:
-            tick["scaledDifference"] = min(scaledDiff, tick["relativeDifference"])
+          if tick["relativeDifference"] >= 0.1:
+            scaledDiff = min((diff / tick["dayAverage"]) + 1, 3)
+            if scaledDiff >= 1 and tick["relativeDifference"] >= 1:
+              tick["scaledDifference"] = min(scaledDiff, tick["relativeDifference"])
+            else:
+              tick["scaledDifference"] = max(scaledDiff, tick["relativeDifference"])
+              # tick["scaledDifference"] = min((diff / tick["dayAverage"]) + 1, 3)
           else:
-            tick["scaledDifference"] = max(scaledDiff, tick["relativeDifference"])
-            # tick["scaledDifference"] = min((diff / tick["dayAverage"]) + 1, 3)
+            tick["scaledDifference"] = tick["relativeDifference"]
         else:
           tick["scaledDifference"] = 1
   else:
