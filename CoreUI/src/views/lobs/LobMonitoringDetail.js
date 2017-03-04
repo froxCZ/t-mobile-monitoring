@@ -9,7 +9,7 @@ export default class LobMonitoringDetail extends Component {
   }
 
   goToForwardDetail(forwardName) {
-    hashHistory.push(this.props.location.pathname + "/" + forwardName);
+    hashHistory.push(this.props.location.pathname + "/forward/" + forwardName);
   }
 
   goToNeidDetail(neidName) {
@@ -57,9 +57,9 @@ export default class LobMonitoringDetail extends Component {
       }
       for (let forward in this.state.lob.forwards) {
         forwardRows.push(
-          <tr onClick={this.goToForwardDetail.bind(this, forward.neid)}>
-            <td>{forward.neid}</td>
-            <td>{forward.target}</td>
+          <tr onClick={this.goToForwardDetail.bind(this, forward)}>
+            <td>{forward}</td>
+            <td>70%</td>
             <td>
               <span className="badge badge-pill badge-success">42</span>
               <span className="badge badge-pill badge-warning">3</span>

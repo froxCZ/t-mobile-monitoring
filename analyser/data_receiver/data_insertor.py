@@ -12,12 +12,35 @@ class DataInsertor():
     """
     coll = mongo.lobs()
     updates = _sumUpdates(list(map(_createInputUpdateDict, inputsList)))
-    print("Inserted " + str(len(inputsList)) + " rows")
+    print("Inserted " + str(len(inputsList)) + " neid inputs")
     for key, value in updates.items():
       coll.update({'_id': key}, value, upsert=True)
 
   def insertForwards(self, forwardsList):
-    pass
+    coll = mongo.lobs()
+    updates = _sumUpdates(list(map(_createForwardUpdateDict, forwardsList)))
+    print("Inserted " + str(len(forwardsList)) + " forwards")
+    for key, value in updates.items():
+      coll.update({'_id': key}, value, upsert=True)
+
+def _createForwardUpdateDict(row):
+  date = row["date"]
+  indexDate = date - timedelta(seconds=date.second)
+
+  updatePath = "data." + row["lob"] + ".forwards."
+  try:
+    dataSize = int(row["dataSize"])
+  except ValueError:
+    print("ValueError: " + row["dataSize"])
+    print(row)
+    dataSize = 0
+  update = {"$inc":
+              {updatePath + row["forward"]: dataSize,
+               updatePath + "sum": dataSize,
+               updatePath + "updatesCnt": 1
+               }
+            }
+  return (indexDate, update)
 
 
 def _createInputUpdateDict(row):

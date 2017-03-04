@@ -24,7 +24,7 @@ export default (
           <Route path=":lobName" name="Lob">
             <IndexRoute component={LobMonitoringDetail}/>
             <Route path="neid/:neidName" name="Forward" component={LobMonitoringDetailNeid}/>
-            <Route path="forward/:forwardDetail" name="Forward" component={LobMonitoringDetailForward}/>
+            <Route path="forward/:forwardName" name="Forward" component={LobMonitoringDetailForward}/>
           </Route>
         </Route>
 

@@ -10,7 +10,7 @@ class DateRangeGroupQuery(DatesQuery):
     lastDate = self.fromDate
     dates = []
     timeDelta = datetime.timedelta(days=1)
-    while lastDate <= self.toDate:
+    while lastDate < self.toDate:
       dates.append(lastDate)
       lastDate += timeDelta
     super().__init__(dates,lobNames, granularity, neids, forwards)
@@ -25,7 +25,7 @@ class DateRangeGroupQuery(DatesQuery):
     nullMetrics = {}
     for metric in self.metrics:
       nullMetrics[metric] = 0
-    while lastDate <= self.toDate:
+    while lastDate < self.toDate:
       if i < len(result) and lastDate == result[i]["_id"]:
         timeSequenceResult.append({**nullMetrics, **result[i]})
         i += 1

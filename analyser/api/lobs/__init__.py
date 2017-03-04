@@ -31,6 +31,9 @@ def discover():
     for neidName, neid in newConfig["neids"].items():
       setObj["lobs." + lobName + ".neids." + neidName] = neid
       addedCnt += 1
+    for forwardName, forward in newConfig["forwards"].items():
+      setObj["lobs." + lobName + ".forwards." + forwardName] = forward
+      addedCnt += 1
   res = mongo.config().update_many({"_id": "lobs"}, {"$set": setObj})
   return jsonify({"added": res.modified_count * addedCnt})
 

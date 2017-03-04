@@ -10,6 +10,20 @@ function delayPromise(duration) {
   };
 }
 class Api {
+  lobData(fromDate, toDate, lobName, neids, forwards, granularity) {
+    var myInit = {
+      method: 'POST',
+      body: {
+        "from": fromDate,
+        "to": toDate,
+        "lobNames": [lobName],
+        "neids": neids,
+        "forwards": forwards,
+        "granularity": granularity || 0
+      }
+    };
+    return this.fetch("/data_query/v2", myInit);
+  }
 
   lobInputs(fromDate, toDate, lobName, neids, granularity) {
     var myInit = {
