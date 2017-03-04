@@ -2,6 +2,7 @@ import React, {Component} from "react";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import Moment from "moment";
+import _ from "lodash"; // Expects that Highcharts was loaded in the code.
 const MINUTE_RANGES = [
   0,
   5,
@@ -16,13 +17,27 @@ const MINUTE_RANGES = [
   720,
   1440
 ];
+const LOCAL_STORAGE = "chartControls";
 export default class ChatControl extends Component {
   constructor() {
     super()
-    this.state = {
-      fromDate: Moment().subtract(7, 'days'),
-      dayRange: 7,
-      granularity: 0
+    let storageObject = null
+    if (localStorage.getItem(LOCAL_STORAGE)) {
+      try {
+        storageObject = JSON.parse(localStorage.getItem(LOCAL_STORAGE));
+        storageObject.fromDate = Moment(storageObject.fromDate, "DD.MM.YYYY")
+      } catch (e) {
+        storageObject = null
+      }
+    }
+    if (storageObject) {
+      this.state = storageObject;
+    } else {
+      this.state = {
+        fromDate: Moment().subtract(7, 'days'),
+        dayRange: 7,
+        granularity: 0
+      }
     }
   }
 
@@ -31,6 +46,12 @@ export default class ChatControl extends Component {
     let toDateStr = Moment(this.state.fromDate).add(this.state.dayRange, 'days').format("DD.MM.YYYY");
     console.log(dateStr)
     this.props.onApply(dateStr, toDateStr, this.state.granularity)
+  }
+
+  componentDidUpdate() {
+    let toStorage = _.pick(this.state, ['dayRange', 'granularity']);
+    toStorage.fromDate = this.state.fromDate.format("DD.MM.YYYY");
+    localStorage.setItem(LOCAL_STORAGE, JSON.stringify(toStorage));
   }
 
   render() {
