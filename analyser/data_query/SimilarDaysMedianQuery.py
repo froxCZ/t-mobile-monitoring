@@ -2,21 +2,30 @@ from statistics import median
 
 
 class SimilarDaysMedianQuery:
-  def __init__(self, lobName, date, granularity=0):
+  def __init__(self, lobNames, date, granularity=0, neids=[], forwards=[]):
     from data_util.moving_average import DayGenerator
-    self.lobName = lobName
+    self.lobNames = lobNames
+    self.neids = neids
+    self.forwards = forwards
     self.date = date
     self.granularity = granularity
-    self.dates = DayGenerator.getPastSimilarDays(self.lobName, date)
+    self.dates = DayGenerator.getPastSimilarDays(self.lobNames, date)
+    if len(lobNames) > 1:
+      raise Exception("only one lob name can be specified")
+    if len(neids) + len(forwards) > 1:
+      raise Exception("only one neid or forward can be specified")
 
   def execute(self):
     from data_query.DatesQuery import DatesQuery
-    datesQuery = DatesQuery(self.dates, self.lobName, resultName="value", granularity=self.granularity)
+    datesQuery = DatesQuery(self.dates, self.lobNames,
+                            granularity=self.granularity,
+                            neids=self.neids,
+                            forwards=self.forwards)
     data = datesQuery.execute()
     self.metadata = datesQuery.metadata
     self.metrics = datesQuery.metrics
-    #_createWeightedMeans(data,"value")
-    return _createMedians(data, "value")
+    # _createWeightedMeans(data,"value")
+    return _createMedians(data, datesQuery.metrics[0])
 
 
 def _createMedians(data, valueName):
@@ -61,8 +70,10 @@ def _createWeightedMeans(data, valueName):
       continue
     dayMedians[minute] = _weightedMean(valueList)
   return dayMedians
+
+
 def _weightedMean(values):
-  weights = [(i+1)*(i+1) for i in range(0,len(values))]
+  weights = [(i + 1) * (i + 1) for i in range(0, len(values))]
 
   s = 0
   for x, y in zip(values, weights):

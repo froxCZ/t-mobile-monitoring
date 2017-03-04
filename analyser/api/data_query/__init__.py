@@ -9,19 +9,26 @@ import util
 
 api_data_query = Blueprint('data_query', __name__)
 
+
 @api_data_query.route('/v2', methods=["POST"])
 def dataQueryV2():
   searchParam = request.get_json()
   fromDate = util.stringToDate(searchParam["from"])
   toDate = util.stringToDate(searchParam["to"])
   lobNames = searchParam["lobNames"]
+  neids = []
+  forwards = []
+  if "neids" in searchParam:
+    neids = searchParam["neids"]
   response = {}
-  mongoQuery = data_query.DateRangeGroupQuery(fromDate, toDate, lobNames, searchParam["granularity"])
+  mongoQuery = data_query.DateRangeGroupQuery(fromDate, toDate, lobNames, searchParam["granularity"], neids=neids)
   data = mongoQuery.execute()
   metrics = {}
   metricsList = mongoQuery.metrics
   metadata = mongoQuery.metadata
-  #data = data_query.medianDateRange(fromDate, toDate, lobNames[0], metadata["granularity"], data)
+  data = data_query.medianDateRange(fromDate, toDate, lobNames, metadata["granularity"], data,
+                                    neids=neids,
+                                    forwards=forwards)
   metricsList.append("relativeDifference")
   metricsList.append("scaledDifference")
   metricsList.append("median")
@@ -112,6 +119,7 @@ def getDayMedians():
   response["granularity"] = medianQuery.metadata["granularity"]
   response["metrics"] = ["median"]
   return jsonify(response)
+
 
 def smoothData(data, granularity, validMetricName):
   dataList = []

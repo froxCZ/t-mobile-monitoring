@@ -3,20 +3,27 @@ import datetime
 import util
 from .DateRangeGroupQuery import DateRangeGroupQuery
 from .DatesQuery import DatesQuery
+from .DatesQueryV1 import DatesQueryV1
 from .SimilarDaysMedianQuery import SimilarDaysMedianQuery
 
-def medianDateRange(fromDate, toDate, lobName, granularity, data):
+
+def medianDateRange(fromDate, toDate, lobNames, granularity, data, neids=[], forwards=[]):
   fromDate = fromDate.replace(hour=0, minute=0, second=0)
   toDate = toDate.replace(hour=0, minute=0, second=0)
   dayDelta = datetime.timedelta(days=1)
   medianList = []
   date = fromDate
   while date < toDate:
-    l = util.minuteDictToDateDict(date, SimilarDaysMedianQuery(lobName, date, granularity=granularity).execute(), "median")
+    similarDaysQuery = SimilarDaysMedianQuery(lobNames, date,
+                           granularity=granularity,
+                           neids=neids,
+                           forwards=forwards)
+    similarDatesData = similarDaysQuery.execute()
+    l = util.minuteDictToDateDict(date, similarDatesData, "median")
+    valueKey = similarDaysQuery.metrics[0]
     for d, v in l.items():
       medianList.append(v)
     date += dayDelta
-  valueKey = lobName
   # valueKey = "smoothed"
   if True:
     data = util.merge2DateLists(medianList, ["median", "dayAverage"], data, [valueKey])

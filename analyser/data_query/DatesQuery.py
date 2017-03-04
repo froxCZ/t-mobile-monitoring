@@ -1,52 +1,52 @@
 import datetime
 
 from config import config
-from data_query.BaseDateQuery import BaseDateQuery
 from mongo import mongo
 
 
-class DatesQuery(BaseDateQuery):
-  def __init__(self, dates, lobName, resultName=None, granularity=0):
-    super().__init__()
-    roundedDates = []
-    for date in dates:
-      roundedDates.append(date.replace(hour=0, minute=0, second=0, microsecond=0))
-    self.dates = roundedDates
-    self.lobName = lobName
-    self.query = []
+class DatesQuery:
+  def __init__(self, dates, lobNames, granularity, neids=None, forwards=None):
+    self.query = None
     self.coll = mongo.lobs()
     self.metrics = []
-    self.maxTicks = 10000
-    self.resultName = resultName
-    if self.resultName is None:
-      self.resultName = lobName
-    if granularity == 0:
-      self.granularity = config.getLobConfigByName(lobName).granularity
-    else:
-      self.granularity = granularity
-
+    self.dates = dates
+    self.lobNames = lobNames
+    self.granularity = int(granularity)
+    self.createDataPathAndOutputs(lobNames, neids, forwards)
+    if (int(self.granularity) == 0):
+      for lobName in lobNames:
+        self.granularity = max(self.granularity, config.getLobConfigByName(lobName).granularity)
     self.metadata = {}
 
-  def prepare(self):
-    match = self.createMatchObject()
-    group, project = self.createTimeGroupAndProjection()
-    group2, project2 = self.createDataGroupAndProjection()
-    group.update(group2)
-    project.update(project2)
-    group = {"$group": group}
-    project = {"$project": project}
-    sort = {
-      "$sort": {
-        "_id": 1
-      }
-    }
-    self.query = [match, group, project, sort]
+  def execute(self):
+    self.prepare()
+    result = list(self.coll.aggregate(self.query))
+    for i in result:
+      group = i["_id"]
+      date = datetime.datetime(group["year"], group["month"], group["dayOfMonth"], int(group["hour"]),
+                               int(group["minute"]))
+      from config import TIMEZONE
+      date = date.replace(tzinfo=TIMEZONE)
+      i["_id"] = date
 
-  def createMatchObject(self):
-    orMatches = []
-    for date in self.dates:
-      orMatches.append({"_id": {"$gte": date, "$lt": date + datetime.timedelta(days=1)}})
-    return {"$match": {"$or": orMatches}}
+    result = sorted(result, key=lambda x: x["_id"])
+    return result
+
+  def createDataPathAndOutputs(self, lobNames, neids, forwards):
+    self.dataPaths = []
+    if (neids == None or len(neids) == 0) and (forwards == None or len(forwards) == 0):
+      for lobName in lobNames:
+        self.dataPaths.append(("$data." + lobName + ".inputs.sum", lobName))
+    elif neids != None and len(lobNames) == 1:
+      lobName = lobNames[0]
+      for neid in neids:
+        self.dataPaths.append(("$data." + lobName + ".inputs." + neid, lobName + "-" + neid))
+    elif forwards != None and len(lobNames) == 1:
+      lobName = lobNames[0]
+      for forward in forwards:
+        self.dataPaths.append(("$data." + lobName + ".forwards." + forward, lobName + "-" + forward))
+    else:
+      raise Exception("Cannot make query. Either one lob and neids|forwards, or more lobs but no neids&forwards")
 
   def createTimeGroupAndProjection(self):
     groupCount = self.granularity
@@ -60,7 +60,7 @@ class DatesQuery(BaseDateQuery):
           grouping = self.createMinuteGrouping(minuteGroup)
           break
     elif groupCount <= 12 * 60:
-      minuteGroups = [60, 2 * 60,3*60, 4 * 60, 8 * 60,12*60]
+      minuteGroups = [60, 2 * 60, 3 * 60, 4 * 60, 8 * 60, 12 * 60]
       for minuteGroup in minuteGroups:
         if (groupCount <= minuteGroup):
           minuteRange = minuteGroup
@@ -74,17 +74,16 @@ class DatesQuery(BaseDateQuery):
     return grouping
 
   def createMinuteGrouping(self, groupByMinutes):
-
     groupObject = {
       "_id": {
         "year": {"$year": self._idTimezoneFix()},
         "month": {"$month": self._idTimezoneFix()},
-        "dayOfMonth": {"$dayOfMonth":self._idTimezoneFix()},
+        "dayOfMonth": {"$dayOfMonth": self._idTimezoneFix()},
         "hour": {"$hour": self._idTimezoneFix()},
         "minute": {
           "$subtract": [
             {"$minute": self._idTimezoneFix()},
-            {"$mod": [{"$minute":self._idTimezoneFix()}, groupByMinutes]}
+            {"$mod": [{"$minute": self._idTimezoneFix()}, groupByMinutes]}
           ]
         }
       },
@@ -131,22 +130,33 @@ class DatesQuery(BaseDateQuery):
   def createDataGroupAndProjection(self):
     group = {}
     project = {}
-    validResultName = validMongoAttribute(self.resultName)
-    validName = validMongoAttribute(self.lobName)
-    group[validName] = {"$sum": "$data." + self.lobName + ".sum"}
-    project[validResultName] = "$" + validName
-    self.metrics.append(self.resultName)
+    for dataPath in self.dataPaths:
+      validName = dataPath[1]
+      group[validName] = {"$sum": dataPath[0]}
+      project[validName] = "$" + validName
+      self.metrics.append(validName)
     return group, project
 
-  def execute(self):
-    if(len(self.dates)) == 0:
-      return []
-    """
-    some time ticks might be missing
-    :return:
-    """
-    return super(DatesQuery, self).execute()
+  def _idTimezoneFix(self):
+    return {"$add": ["$_id", 60 * 60 * 1000]}
 
+  def createMatchObject(self):
+    orMatches = []
+    for date in self.dates:
+      orMatches.append({"_id": {"$gte": date, "$lt": date + datetime.timedelta(days=1)}})
+    return {"$match": {"$or": orMatches}}
 
-def validMongoAttribute(string):
-  return string.replace(".", "_")
+  def prepare(self):
+    match = self.createMatchObject()
+    group, project = self.createTimeGroupAndProjection()
+    group2, project2 = self.createDataGroupAndProjection()
+    group.update(group2)
+    project.update(project2)
+    group = {"$group": group}
+    project = {"$project": project}
+    sort = {
+      "$sort": {
+        "_id": 1
+      }
+    }
+    self.query = [match, group, project, sort]
