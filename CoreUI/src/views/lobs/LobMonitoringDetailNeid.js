@@ -60,9 +60,6 @@ export default class LobMonitoringDetailNeid extends Component {
         <div className="row">
           <div className="col-sm-6">
             <div className="card">
-              <div className="card-header">
-                <strong>Chart control</strong>
-              </div>
               <div className="card-block">
                 <ChatControl onApply={this.loadData.bind(this)}/>
               </div>

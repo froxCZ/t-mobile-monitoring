@@ -20,8 +20,11 @@ def dataQueryV2():
   forwards = []
   if "neids" in searchParam:
     neids = searchParam["neids"]
+  if "forwards" in searchParam:
+    forwards = searchParam["forwards"]
   response = {}
-  mongoQuery = data_query.DateRangeGroupQuery(fromDate, toDate, lobNames, searchParam["granularity"], neids=neids)
+  mongoQuery = data_query.DateRangeGroupQuery(fromDate, toDate, lobNames, searchParam["granularity"], neids=neids,
+                                              forwards=forwards)
   data = mongoQuery.execute()
   metrics = {}
   metricsList = mongoQuery.metrics

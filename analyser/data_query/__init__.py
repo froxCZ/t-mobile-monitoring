@@ -47,6 +47,8 @@ def medianDateRange(fromDate, toDate, lobNames, granularity, data, neids=[], for
             tick["scaledDifference"] = tick["relativeDifference"]
         else:
           tick["scaledDifference"] = 1
+      tick["scaledDifference"] = round(tick["scaledDifference"], 3)
+      tick["relativeDifference"] = round(tick["relativeDifference"], 3)
   else:
     print("SHOULD NOT HAPPEN X")
   return data

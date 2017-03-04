@@ -1,5 +1,6 @@
 import React, {Component} from "react";
 import "react-datepicker/dist/react-datepicker.css";
+import Util from "../Util";
 import {
   LineChart,
   Line,
@@ -16,9 +17,9 @@ import {
 const DAY_NR_TO_NAME = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 const COLORS = ["#FF0080", "#FF6600", "#028482"]
 const COLORS_MAP = {
-  "scaledDifference": "#e180c7",
-  "relativeDifference": "#a7a9af",
-  "expected": "#749fd4"
+  "scaledDifference": "#FF0080",
+  "relativeDifference": "#4b4c4c",
+  "expected": "#648dbd"
 }
 export default class LobChart extends Component {
   constructor() {
@@ -39,17 +40,25 @@ export default class LobChart extends Component {
   }
 
   render() {
-    LobChart.adjustDate(this.props.data);
+    if (!this.props.data) {
+      return <p></p>
+    }
+    LobChart.adjustData(this.props.data);
+    let referenceLines = [];
+    if (this.props.difference) {
+      referenceLines.push(<ReferenceLine y={1} label="expected" stroke="gray"/>)
+      referenceLines.push(<ReferenceLine y={this.props.warningLevel} label="expected" stroke="#bd8f1d"/>)
+      referenceLines.push(<ReferenceLine y={this.props.alarmLevel} label="expected" stroke="#bd3e39"/>)
+    }
     return (
       <ResponsiveContainer height='100%' width='100%' aspect={4.0 / 1.5}>
         <LineChart data={this.props.data} syncId="anyId">
           <XAxis dataKey="tickValue"/>
           <YAxis/>
-          <Tooltip/>
+          <Tooltip /*wrapperStyle={{backgroundColor:'#ff000000'}}*//>
           <Legend />
-          <ReferenceLine y={1} label="expected" stroke="gray"/>
-          <ReferenceLine y={0.8} label="expected" stroke="yellow"/>
-          <ReferenceLine y={0.6} label="expected" stroke="red"/>
+          {referenceLines}
+
           {this.renderLines()}
         </LineChart>
       </ResponsiveContainer>
@@ -78,7 +87,7 @@ export default class LobChart extends Component {
     return lines
   }
 
-  static adjustDate(data) {
+  static adjustData(data) {
     for (let row of data) {
       if (!row.tickValue) {
         row.tickValue = LobChart.dateToTickValue(row._id)
@@ -87,7 +96,7 @@ export default class LobChart extends Component {
   }
 
   static dateToTickValue(_id) {
-    return _id + " - " + DAY_NR_TO_NAME[new Date(_id).getDay()] + "";
+    return Util.formatIsoDateString(_id, "DD.MM.YYYY hh:mm a ddd");
   }
 
 }

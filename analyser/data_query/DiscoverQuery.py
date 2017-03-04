@@ -1,4 +1,3 @@
-import util
 from config import config
 from mongo import mongo
 
@@ -20,25 +19,18 @@ class DiscoverQuery():
         if lobName not in lobsConfig:
           continue
         if lobName not in discovered:
-          discovered[lobName] = {"neids": {}, "forwards": {}}
+          discovered[lobName] = {"inputs": {}, "forwards": {}}
         if "inputs" in lob:
           for neid in lob["inputs"]:
             if neid == "sum" or neid == "updatesCnt":
               continue
-            if neid not in lobsConfig[lobName]["neids"] and neid not in discovered[lobName]["neids"]:
-              discovered[lobName]["neids"][neid] = {"granulity": 0}
+            if neid not in lobsConfig[lobName]["inputs"] and neid not in discovered[lobName]["inputs"]:
+              discovered[lobName]["inputs"][neid] = {"granularity": 0}
         if "forwards" in lob:
           for forward in lob["forwards"]:
             if forward == "sum" or forward == "updatesCnt":
               continue
             if forward not in lobsConfig[lobName]["forwards"] and forward not in discovered[lobName]["forwards"]:
-              discovered[lobName]["forwards"][forward] = {"granulity": 0}
+              discovered[lobName]["forwards"][forward] = {"granularity": 0}
 
     return discovered
-
-
-f = util.stringToDate("01.01.2017")
-t = util.stringToDate("10.01.2017")
-
-res = DiscoverQuery(f, t).execute()
-print(res)

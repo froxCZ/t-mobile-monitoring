@@ -5,7 +5,6 @@ import Full from "./containers/Full/";
 import LobsMonitoring from "./views/lobs/LobsMonitoring";
 import LobMonitoringDetail from "./views/lobs/LobMonitoringDetail";
 import LobMonitoringDetailForward from "./views/lobs/LobMonitoringDetailForward";
-import LobMonitoringDetailNeid from "./views/lobs/LobMonitoringDetailNeid";
 import LobsSettings from "./views/lobs/LobsSettings";
 import Incidents from "./views/incidents/Incidents";
 import UsersList from "./views/settings/UsersList";
@@ -23,7 +22,7 @@ export default (
           <IndexRoute component={LobsMonitoring}/>
           <Route path=":lobName" name="Lob">
             <IndexRoute component={LobMonitoringDetail}/>
-            <Route path="neid/:neidName" name="Forward" component={LobMonitoringDetailNeid}/>
+            <Route path="neid/:neidName" name="Input" component={LobMonitoringDetailForward}/>
             <Route path="forward/:forwardName" name="Forward" component={LobMonitoringDetailForward}/>
           </Route>
         </Route>

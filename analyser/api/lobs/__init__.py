@@ -48,7 +48,7 @@ def getLobConfig(lobName):
   return jsonify(config.getLobConfig(lobName))
 
 
-@lobs.route('/config/<string:lobName>', methods=["POST"])
+@lobs.route('/<string:lobName>', methods=["POST"])
 def updateLob(lobName):
   setObj = {}
   from config.config import configColl

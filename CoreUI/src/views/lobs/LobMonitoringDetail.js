@@ -3,6 +3,7 @@ import {hashHistory} from "react-router";
 import Api from "../../Api";
 import classnames from "classnames";
 import {TabContent, TabPane, Nav, NavItem, NavLink} from "reactstrap";
+import LobOverviewCharts from "../../components/LobOverviewCharts";
 const LIST_TAB = 'listTab'
 const CHART_TAB = 'chartTab'
 export default class LobMonitoringDetail extends Component {
@@ -75,7 +76,7 @@ export default class LobMonitoringDetail extends Component {
                     this.toggle(CHART_TAB);
                   }}
                 >
-                  Chart
+                  Charts Overview
                 </NavLink>
               </NavItem>
               <NavItem>
@@ -111,17 +112,22 @@ export default class LobMonitoringDetail extends Component {
   }
 
   renderCharts(){
-    return <h1>chart</h1>
+    return <div>
+      <LobOverviewCharts lobName={this.state.lobName}/>
+      </div>
   }
 
   renderList() {
     let neidRows = []
     let forwardRows = []
     if (this.state.lob) {
-      for (let neidName in this.state.lob.neids) {
+      for (let neidName in this.state.lob.inputs) {
+        let neidConfig = this.state.lob.inputs[neidName]
+        console.log(neidConfig)
         neidRows.push(
           <tr onClick={this.goToNeidDetail.bind(this, neidName)}>
             <td>{neidName}</td>
+            <td>{neidConfig.granularity}</td>
             <td>80%</td>
             <td>
               <span className="badge badge-pill badge-success">42</span>
@@ -135,10 +141,12 @@ export default class LobMonitoringDetail extends Component {
             </td>
           </tr>)
       }
-      for (let forward in this.state.lob.forwards) {
+      for (let forwardName in this.state.lob.forwards) {
+        let forward = this.state.lob.forwards[forwardName]
         forwardRows.push(
-          <tr onClick={this.goToForwardDetail.bind(this, forward)}>
-            <td>{forward}</td>
+          <tr onClick={this.goToForwardDetail.bind(this, forwardName)}>
+            <td>{forwardName}</td>
+            <td>{forward.granularity}</td>
             <td>70%</td>
             <td>
               <span className="badge badge-pill badge-success">42</span>
@@ -165,6 +173,7 @@ export default class LobMonitoringDetail extends Component {
                 <thead>
                 <tr>
                   <th>Neid</th>
+                  <th>Granularity</th>
                   <th>Traffic level</th>
                   <th>Forwardings</th>
                   <th>Status</th>
@@ -188,8 +197,9 @@ export default class LobMonitoringDetail extends Component {
               <table className="table">
                 <thead>
                 <tr>
-                  <th>Neid</th>
-                  <th>Target</th>
+                  <th>Forward</th>
+                  <th>Granularity</th>
+                  <th>Traffic level</th>
                   <th>Forwardings</th>
                   <th>Status</th>
                 </tr>

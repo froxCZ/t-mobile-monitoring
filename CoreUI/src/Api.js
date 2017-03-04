@@ -10,6 +10,15 @@ function delayPromise(duration) {
   };
 }
 class Api {
+
+  updateLobConfig(lobName, updateObj) {
+    var myInit = {
+      method: 'POST',
+      body: updateObj
+    };
+    return this.fetch("/lobs/" + lobName, myInit);
+  }
+
   lobData(fromDate, toDate, lobName, neids, forwards, granularity) {
     var myInit = {
       method: 'POST',

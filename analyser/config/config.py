@@ -65,11 +65,29 @@ def getLobConfigByName(fullName):
 
 def getLobsConfig():
   res = configColl.find_one({"_id": "lobs"})
+  defaultWarning = 0.8
+  defaultError = 0.65
+
   for lobName,config in res["lobs"].items():
-    if "neids" not in config:
-      config["neids"] = {}
+    granularity = config["granularity"]
+    if "inputs" not in config:
+      config["inputs"] = {}
     if "forwards" not in config:
       config["forwards"] = {}
+    def setDefaults(obj):
+      if obj["granularity"] <= 0:
+        obj["granularity"] = granularity
+      if "warningLevel" not in obj:
+        obj["warningLevel"] = defaultWarning
+      if "alarmLevel" not in obj:
+        obj["alarmLevel"] = defaultError
+    setDefaults(config)
+    for neidName,neid in config["inputs"].items():
+      setDefaults(neid)
+    for forwardName,forward in config["forwards"].items():
+      setDefaults(forward)
+
+
   return res
 
 
