@@ -2,7 +2,7 @@ import React, {Component} from "react";
 import Api from "../../Api";
 import ChatControl from "../../components/ChartControl";
 import "react-datepicker/dist/react-datepicker.css";
-
+import LobChart from "../../components/LobChart";
 const MINUTE_RANGES = [
   5,
   10,
@@ -19,7 +19,7 @@ const MINUTE_RANGES = [
 export default class LobMonitoringDetailNeid extends Component {
   constructor() {
     super()
-    this.state = {};
+    this.state = {data: [], metadata: {}};
 
   }
 
@@ -43,9 +43,9 @@ export default class LobMonitoringDetailNeid extends Component {
   }
 
   loadData(fromDate, toDate, granularity) {
-    Api.lobInputs(fromDate, toDate, this.state.lobName, this.state.neidName, granularity)
+    Api.lobInputs(fromDate, toDate, this.state.lobName, [this.state.neidName], granularity)
       .then(response => {
-        console.log(response)
+        this.setState({data: response.data, metadata: response.metadata})
       })
   }
 
@@ -71,18 +71,26 @@ export default class LobMonitoringDetailNeid extends Component {
           </div>
 
         </div>
-
         <div className="row">
-          <div className="col-lg-12">
+          <div className="col-lg-6">
+            <div className="card">
+              <div className="card-header">
+                Traffic difference
+              </div>
+              <LobChart data={this.state.data} metrics={this.state.metadata.metrics} difference={true}/>
+            </div>
+          </div>
+          <div className="col-lg-6">
             <div className="card">
               <div className="card-header">
                 Traffic
               </div>
-              chart!
+              <LobChart data={this.state.data} metrics={this.state.metadata.metrics}/>
             </div>
           </div>
-
         </div>
+
+
       </div>
 
     )

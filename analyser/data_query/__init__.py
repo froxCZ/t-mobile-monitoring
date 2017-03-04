@@ -19,21 +19,21 @@ def medianDateRange(fromDate, toDate, lobNames, granularity, data, neids=[], for
                            neids=neids,
                            forwards=forwards)
     similarDatesData = similarDaysQuery.execute()
-    l = util.minuteDictToDateDict(date, similarDatesData, "median")
+    l = util.minuteDictToDateDict(date, similarDatesData, "expected")
     valueKey = similarDaysQuery.metrics[0]
     for d, v in l.items():
       medianList.append(v)
     date += dayDelta
   # valueKey = "smoothed"
   if True:
-    data = util.merge2DateLists(medianList, ["median", "dayAverage"], data, [valueKey])
+    data = util.merge2DateLists(medianList, ["expected", "dayAverage"], data, [valueKey])
     for tick in data:
-      if tick[valueKey] == tick["median"]:
+      if tick[valueKey] == tick["expected"]:
         tick["relativeDifference"] = 1
         tick["scaledDifference"] = 1
       else:
-        diff = tick[valueKey] - tick["median"]
-        tick["relativeDifference"] = min(tick[valueKey] / max(tick["median"], 0.1), 3)
+        diff = tick[valueKey] - tick["expected"]
+        tick["relativeDifference"] = min(tick[valueKey] / max(tick["expected"], 0.1), 3)
         if tick["dayAverage"] != 0:
           scaledDiff = min((diff / tick["dayAverage"]) + 1, 3)
           if scaledDiff >= 1 and tick["relativeDifference"] >= 1:

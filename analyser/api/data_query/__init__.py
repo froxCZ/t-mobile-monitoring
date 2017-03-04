@@ -26,12 +26,13 @@ def dataQueryV2():
   metrics = {}
   metricsList = mongoQuery.metrics
   metadata = mongoQuery.metadata
-  data = data_query.medianDateRange(fromDate, toDate, lobNames, metadata["granularity"], data,
-                                    neids=neids,
-                                    forwards=forwards)
-  metricsList.append("relativeDifference")
-  metricsList.append("scaledDifference")
-  metricsList.append("median")
+  if len(lobNames) == 1 and len(neids) + len(forwards) <= 1:
+    data = data_query.medianDateRange(fromDate, toDate, lobNames, metadata["granularity"], data,
+                                      neids=neids,
+                                      forwards=forwards)
+    metricsList.append("relativeDifference")
+    metricsList.append("scaledDifference")
+    metricsList.append("expected")
 
   if (len(data) > 10):
     validMetricName = metricsList[0]

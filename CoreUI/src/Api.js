@@ -11,14 +11,14 @@ function delayPromise(duration) {
 }
 class Api {
 
-  lobInputs(fromDate, toDate, lobName, neid, granularity) {
+  lobInputs(fromDate, toDate, lobName, neids, granularity) {
     var myInit = {
       method: 'POST',
       body: {
         "from": fromDate,
         "to": toDate,
         "lobNames": [lobName],
-        "neid": neid,
+        "neids": neids,
         "granularity": granularity || 0
       }
     };
