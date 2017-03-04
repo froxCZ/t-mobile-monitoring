@@ -5,20 +5,45 @@ from flask import request
 
 from api import util
 from config import config
+from data_query import DiscoverQuery
+from mongo import mongo
 
 lobs = Blueprint('lobs', __name__)
+
 
 @lobs.route('/', methods=["GET"])
 def lobsList():
   return jsonify(config.getLobsConfig())
 
+
+@lobs.route('/discover', methods=["POST"])
+def discover():
+  """
+  find new neids and forwards for the past 14 days and adds them to the config
+  :return:
+  """
+  now = datetime.datetime.now()
+  fromDate = now - datetime.timedelta(days=14)
+  newLobNeids = DiscoverQuery(fromDate, now).execute()
+  setObj = {}
+  addedCnt = 0
+  for lobName, newConfig in newLobNeids.items():
+    for neidName, neid in newConfig["neids"].items():
+      setObj["lobs." + lobName + ".neids." + neidName] = neid
+      addedCnt += 1
+  res = mongo.config().update_many({"_id": "lobs"}, {"$set": setObj})
+  return jsonify({"added": res.modified_count * addedCnt})
+
+
 @lobs.route('/configs', methods=["GET"])
 def lobsConfig():
   return jsonify(config.getLobsConfig())
 
+
 @lobs.route('/<string:lobName>', methods=["GET"])
 def getLobConfig(lobName):
   return jsonify(config.getLobConfig(lobName))
+
 
 @lobs.route('/config/<string:lobName>', methods=["POST"])
 def updateLob(lobName):
@@ -47,7 +72,8 @@ def saveOutage(lobName):
     date = date + dayDelta
     fromDate = date
 
-  res = outagesColl.update_one({"_id": date}, {"$set": {"lobs." + lobName: {"from": fromDate, "to": toDate}}}, upsert=True)
+  res = outagesColl.update_one({"_id": date}, {"$set": {"lobs." + lobName: {"from": fromDate, "to": toDate}}},
+                               upsert=True)
 
   return jsonify({})
 

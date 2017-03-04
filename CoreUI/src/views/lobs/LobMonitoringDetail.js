@@ -55,7 +55,7 @@ export default class LobMonitoringDetail extends Component {
             </td>
           </tr>)
       }
-      for (let forward of this.state.lob.forwards) {
+      for (let forward in this.state.lob.forwards) {
         forwardRows.push(
           <tr onClick={this.goToForwardDetail.bind(this, forward.neid)}>
             <td>{forward.neid}</td>

@@ -65,6 +65,11 @@ def getLobConfigByName(fullName):
 
 def getLobsConfig():
   res = configColl.find_one({"_id": "lobs"})
+  for lobName,config in res["lobs"].items():
+    if "neids" not in config:
+      config["neids"] = {}
+    if "forwards" not in config:
+      config["forwards"] = {}
   return res
 
 

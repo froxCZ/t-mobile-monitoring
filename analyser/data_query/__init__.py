@@ -4,6 +4,7 @@ import util
 from .DateRangeGroupQuery import DateRangeGroupQuery
 from .DatesQuery import DatesQuery
 from .DatesQueryV1 import DatesQueryV1
+from .DiscoverQuery import DiscoverQuery
 from .SimilarDaysMedianQuery import SimilarDaysMedianQuery
 
 

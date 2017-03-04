@@ -1,22 +1,20 @@
 import React, {Component} from "react";
-
+import Api from "../../Api";
 export default class LobsSettings extends Component {
   LobsSettings() {
+
+  }
+
+  discover() {
+    Api.fetch("/lobs/discover", {method: 'GET'}).then(result => {
+      console.log(result)
+    })
 
   }
 
   render() {
     return (
       <div className="animated fadeIn">
-        <div className="row">
-          <div className="col-lg-12">
-            <div className="card">
-              <div className="card-header">
-                Health status <span className="badge badge-success">OK</span>
-              </div>
-            </div>
-          </div>
-        </div>
         <div className="row">
           <div className="col-lg-12">
             <div className="card">
