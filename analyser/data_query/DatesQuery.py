@@ -37,14 +37,20 @@ class DatesQuery:
     if (neids == None or len(neids) == 0) and (forwards == None or len(forwards) == 0):
       for lobName in lobNames:
         self.dataPaths.append(("$data." + lobName + ".inputs.sum", lobName))
-    elif neids != None and len(lobNames) == 1:
+    elif (neids != None and len(neids) > 0) and len(lobNames) == 1:
       lobName = lobNames[0]
-      for neid in neids:
-        self.dataPaths.append(("$data." + lobName + ".inputs." + neid, lobName + "-" + neid))
-    elif forwards != None and len(lobNames) == 1:
+      if neids[0] == "*":
+        self.dataPaths.append(("$data." + lobName + ".inputs.sum", lobName + "-inputs"))
+      else:
+        for neid in neids:
+          self.dataPaths.append(("$data." + lobName + ".inputs." + neid, lobName + "-" + neid))
+    elif (forwards != None and len(forwards) > 0) and len(lobNames) == 1:
       lobName = lobNames[0]
-      for forward in forwards:
-        self.dataPaths.append(("$data." + lobName + ".forwards." + forward, lobName + "-" + forward))
+      if forwards[0] == "*":
+        self.dataPaths.append(("$data." + lobName + ".forwards.sum", lobName + "-forwards"))
+      else:
+        for forward in forwards:
+          self.dataPaths.append(("$data." + lobName + ".forwards." + forward, lobName + "-" + forward))
     else:
       raise Exception("Cannot make query. Either one lob and neids|forwards, or more lobs but no neids&forwards")
 

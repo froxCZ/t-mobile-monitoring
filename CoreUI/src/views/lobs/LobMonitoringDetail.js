@@ -1,10 +1,14 @@
 import React, {Component} from "react";
 import {hashHistory} from "react-router";
 import Api from "../../Api";
+import classnames from "classnames";
+import {TabContent, TabPane, Nav, NavItem, NavLink} from "reactstrap";
+const LIST_TAB = 'listTab'
+const CHART_TAB = 'chartTab'
 export default class LobMonitoringDetail extends Component {
   constructor() {
     super()
-    this.state = {}
+    this.state = {activeTab: LIST_TAB}
 
   }
 
@@ -34,7 +38,83 @@ export default class LobMonitoringDetail extends Component {
     }
   }
 
+  toggle(tab) {
+    if (this.state.activeTab !== tab) {
+      this.setState({
+        activeTab: tab
+      });
+    }
+  }
+
   render() {
+
+    return (
+      <div className="animated fadeIn">
+        <div className="row">
+          <div className="col-lg-12">
+            <h2>{this.state.lobName}</h2>
+          </div>
+        </div>
+        <div className="row">
+          <div className="col-lg-12">
+            <Nav tabs>
+              <NavItem>
+                <NavLink
+                  className={classnames({active: this.state.activeTab === LIST_TAB})}
+                  onClick={() => {
+                    this.toggle(LIST_TAB);
+                  }}
+                >
+                  List
+                </NavLink>
+              </NavItem>
+              <NavItem>
+                <NavLink
+                  className={classnames({active: this.state.activeTab === CHART_TAB})}
+                  onClick={() => {
+                    this.toggle(CHART_TAB);
+                  }}
+                >
+                  Chart
+                </NavLink>
+              </NavItem>
+              <NavItem>
+                <NavLink
+                  className={classnames({active: this.state.activeTab === '3'})}
+                  onClick={() => {
+                    this.toggle('3');
+                  }}
+                >
+                  -
+                </NavLink>
+              </NavItem>
+            </Nav>
+            <TabContent activeTab={this.state.activeTab}>
+              <TabPane tabId={LIST_TAB}>
+                {this.renderList()}
+              </TabPane>
+              <TabPane tabId={CHART_TAB}>
+                {this.renderCharts()}
+              </TabPane>
+              <TabPane tabId="3">
+                2. Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore
+                et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut
+                aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum
+                dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui
+                officia deserunt mollit anim id est laborum.
+              </TabPane>
+            </TabContent>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
+  renderCharts(){
+    return <h1>chart</h1>
+  }
+
+  renderList() {
     let neidRows = []
     let forwardRows = []
     if (this.state.lob) {
@@ -73,65 +153,55 @@ export default class LobMonitoringDetail extends Component {
           </tr>)
       }
     }
-    return (
-      <div className="animated fadeIn">
-        <div className="row">
-          <div className="col-lg-12">
-            <h2>{this.state.lobName}</h2>
-          </div>
-        </div>
-        <div className="row">
-          <div className="col-lg-12">
-            <div className="card">
-              <div className="card-header">
-                <i className="fa fa-align-justify"></i> Inputs list
-              </div>
-              <div className="card-block">
-                <table className="table">
-                  <thead>
-                  <tr>
-                    <th>Neid</th>
-                    <th>Traffic level</th>
-                    <th>Forwardings</th>
-                    <th>Status</th>
-                  </tr>
-                  </thead>
-                  <tbody>
-                  {neidRows}
-                  </tbody>
-                </table>
-              </div>
+    return (<div>
+      <div className="row">
+        <div className="col-lg-12">
+          <div className="card">
+            <div className="card-header">
+              <i className="fa fa-align-justify"></i> Inputs list
+            </div>
+            <div className="card-block">
+              <table className="table">
+                <thead>
+                <tr>
+                  <th>Neid</th>
+                  <th>Traffic level</th>
+                  <th>Forwardings</th>
+                  <th>Status</th>
+                </tr>
+                </thead>
+                <tbody>
+                {neidRows}
+                </tbody>
+              </table>
             </div>
           </div>
-
-        </div>
-        <div className="row">
-          <div className="col-lg-12">
-            <div className="card">
-              <div className="card-header">
-                <i className="fa fa-align-justify"></i> Forwards list
-              </div>
-              <div className="card-block">
-                <table className="table">
-                  <thead>
-                  <tr>
-                    <th>Neid</th>
-                    <th>Target</th>
-                    <th>Forwardings</th>
-                    <th>Status</th>
-                  </tr>
-                  </thead>
-                  <tbody>
-                  {forwardRows}
-                  </tbody>
-                </table>
-              </div>
-            </div>
-          </div>
-
         </div>
       </div>
-
-    )
+      <div className="row">
+        <div className="col-lg-12">
+          <div className="card">
+            <div className="card-header">
+              <i className="fa fa-align-justify"></i> Forwards list
+            </div>
+            <div className="card-block">
+              <table className="table">
+                <thead>
+                <tr>
+                  <th>Neid</th>
+                  <th>Target</th>
+                  <th>Forwardings</th>
+                  <th>Status</th>
+                </tr>
+                </thead>
+                <tbody>
+                {forwardRows}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>)
   }
 }
