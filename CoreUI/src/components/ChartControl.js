@@ -54,6 +54,10 @@ export default class ChatControl extends Component {
     localStorage.setItem(LOCAL_STORAGE, JSON.stringify(toStorage));
   }
 
+  shiftDays(direction) {
+    this.setState({fromDate: Moment(this.state.fromDate).add(this.state.dayRange * direction, 'days')})
+  }
+
   render() {
     return (
       <div className="row">
@@ -86,8 +90,8 @@ export default class ChatControl extends Component {
         <div className="form-group col-sm-2">
           <label htmlFor="toDate">Shift date</label>
           <div style={{display: "block"}}>
-            <button type="button" className="btn btn-primary">&larr;</button>
-            <button type="button" className="btn btn-primary">&rarr;</button>
+            <button type="button" className="btn btn-primary" onClick={() => this.shiftDays(-1)}>&larr;</button>
+            <button type="button" className="btn btn-primary" onClick={() => this.shiftDays(1)}>&rarr;</button>
           </div>
         </div>
         <div className="form-group col-sm-2">
