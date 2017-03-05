@@ -35,10 +35,7 @@ export default class LobOverviewCharts extends Component {
     let lobName = props.lobName;
     let metricName = props.metricName;
     if (this.state.lobName != lobName || this.state.metricName != metricName) {
-      this.setState({lobName: lobName, metricName: metricName});
-      Api.fetch("/lobs/" + lobName, {method: 'GET'}).then((response) => {
-        this.setState({lob: response});
-      });
+      this.setState({lobName: lobName, metricName: metricName,lob: this.props.lob});
     }
   }
 

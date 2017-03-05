@@ -111,10 +111,10 @@ export default class LobMonitoringDetail extends Component {
     )
   }
 
-  renderCharts(){
+  renderCharts() {
     return <div>
-      <LobOverviewCharts lobName={this.state.lobName}/>
-      </div>
+      <LobOverviewCharts lobName={this.state.lobName} lob={this.state.lob}/>
+    </div>
   }
 
   renderList() {
@@ -130,6 +130,7 @@ export default class LobMonitoringDetail extends Component {
             <td>{neidConfig.granularity}</td>
             <td>{neidConfig.softAlarmLevel}</td>
             <td>{neidConfig.hardAlarmLevel}</td>
+            <td>{neidConfig.overrideParentSettings ? 'yes' : 'no'}</td>
             <td>80%</td>
             <td>
               <span className="badge badge-pill badge-success">42</span>
@@ -151,6 +152,7 @@ export default class LobMonitoringDetail extends Component {
             <td>{forward.granularity}</td>
             <td>{forward.softAlarmLevel}</td>
             <td>{forward.hardAlarmLevel}</td>
+            <td>{forward.overrideParentSettings ? 'yes' : 'no'}</td>
             <td>70%</td>
             <td>
               <span className="badge badge-pill badge-success">42</span>
@@ -180,6 +182,7 @@ export default class LobMonitoringDetail extends Component {
                   <th>Granularity</th>
                   <th>Soft Alarm</th>
                   <th>Hard Alarm</th>
+                  <th>Override</th>
                   <th>Traffic level</th>
                   <th>Forwardings</th>
                   <th>Status</th>
@@ -207,6 +210,7 @@ export default class LobMonitoringDetail extends Component {
                   <th>Granularity</th>
                   <th>Soft Alarm</th>
                   <th>Hard Alarm</th>
+                  <th>Override</th>
                   <th>Traffic level</th>
                   <th>Forwardings</th>
                   <th>Status</th>

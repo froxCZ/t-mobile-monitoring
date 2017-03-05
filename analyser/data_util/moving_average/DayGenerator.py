@@ -50,11 +50,17 @@ def _getPastWorkDays(lobName, date, days=10):
   i = 1
   while len(resultDays) <= days:
     dayToTest = date - datetime.timedelta(days=i)
-    if _isWorkDay(dayToTest) and _isUsualDay(dayToTest):
+    if _isWorkDay(dayToTest) and _isSameWorkDay(date, dayToTest) and _isUsualDay(dayToTest):
       resultDays.append(dayToTest)
     i += 1
   return resultDays
 
+
+def _isSameWorkDay(date, dateToTest):
+  if date.weekday() == 0 or date.weekday() == 4:
+    return date.weekday() == dateToTest.weekday()
+  else:
+    return True
 
 def _getPastWeekends(lobName, date, days=10):
   resultDays = []

@@ -55,6 +55,7 @@ CZ_LOBS = {"SIS": Lob("CZ", "SIS", 180),
            "ICG": Lob("CZ", "ICG", 60)}
 LOBS = {"CZ": CZ_LOBS}
 
+
 def getLobConfigByName(fullName):
   res = configColl.find_one({"_id": "lobs"}, {"lobs." + fullName: 1})
   tmp = fullName.split("_")
@@ -62,35 +63,52 @@ def getLobConfigByName(fullName):
   granularity = res["lobs"][fullName]["granularity"]
   return Lob(country, fullName, granularity)
 
+
 def getLobConfigByNameDict(fullName):
   return getLobsConfig()["lobs"][fullName]
 
+
 def getLobsConfig():
+  """
+  returns config for all inputs and forwards. Config is derived from parent object.
+  :return:
+  """
   res = configColl.find_one({"_id": "lobs"})
   softAlarm = 0.75
   hardAlarm = 0.5
+  defaultObject = {"softAlarmLevel": softAlarm, "hardAlarmLevel": hardAlarm, "granularity": 240}
 
-  for lobName,config in res["lobs"].items():
-    granularity = config["granularity"]
+  for lobName, config in res["lobs"].items():
     if "inputs" not in config:
       config["inputs"] = {}
     if "forwards" not in config:
       config["forwards"] = {}
-    def setDefaults(obj):
-      if obj["granularity"] <= 0:
-        obj["granularity"] = granularity
-      if "softAlarmLevel" not in obj:
-        obj["softAlarmLevel"] = softAlarm
-      if "hardAlarmLevel" not in obj:
-        obj["hardAlarmLevel"] = hardAlarm
-    setDefaults(config)
-    for neidName,neid in config["inputs"].items():
-      setDefaults(neid)
-    for forwardName,forward in config["forwards"].items():
-      setDefaults(forward)
-
+    setDefaultParams(config, parentObj=defaultObject)
+    del config["overrideParentSettings"]
+    for neidName, neid in config["inputs"].items():
+      setDefaultParams(neid, parentObj=config)
+    forwards = {}
+    for forwardName, forward in config["forwards"].items():
+      inputName = forwardName.split(":")[0]
+      if inputName in config["inputs"]:
+        setDefaultParams(forward, parentObj=config["inputs"][inputName])
+        forwards[forwardName] = forward
+    config["forwards"] = forwards
 
   return res
+
+
+def setDefaultParams(obj, parentObj):
+  attributes = ["granularity", "softAlarmLevel", "hardAlarmLevel"]
+  override = True
+  for attribute in attributes:
+    if attribute not in obj or obj[attribute] <= 0:
+      override = False
+  if override == False:
+    for attribute in attributes:
+      obj[attribute] = parentObj[attribute]
+
+  obj["overrideParentSettings"] = override
 
 
 def getLobConfig(lobName):

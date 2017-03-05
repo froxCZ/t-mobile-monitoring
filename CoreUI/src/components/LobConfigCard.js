@@ -64,6 +64,7 @@ export default class LobConfigCard extends Component {
   renderConfig() {
     let lobInfo = null;
     if (this.state.flow) {
+
       lobInfo =
         <div className="row">
           <div className="form-group col-sm-2">
@@ -103,8 +104,23 @@ export default class LobConfigCard extends Component {
                    }}/>
           </div>
           <div className="form-group col-sm-2">
-            <label>&nbsp;</label>
+            <label>{this.props.flowType == "forwards" && <span>Override</span>}&nbsp;</label>
             <div style={{display: "block"}}>
+              {this.props.flowType != "both" &&
+              <label className="switch switch-text switch-primary">
+                <input type="checkbox" className="switch-input"
+                       defaultChecked={this.state.flow.overrideParentSettings}
+                       onChange={(e) => {
+                         this.setState({
+                           flow: Object.assign(this.state.flow, {overrideParentSettings: e.target.checked})
+                         })
+                         this.props.onChange();
+                       }}                />
+                <span className="switch-label" data-on="Oa" data-off="Off"></span>
+                <span className="switch-handle"></span>
+              </label>
+              }
+              &nbsp;
               <button type="button" className="btn btn-primary" onClick={
                 () => {
                   this.saveConfig()
