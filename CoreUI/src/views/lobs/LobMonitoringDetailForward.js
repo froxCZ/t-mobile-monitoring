@@ -3,7 +3,6 @@ import Api from "../../Api";
 import ChatControl from "../../components/ChartControl";
 import "react-datepicker/dist/react-datepicker.css";
 import LobChart from "../../components/LobChart";
-import LobConfigCard from "../../components/LobConfigCard";
 const MINUTE_RANGES = [
   5,
   10,
@@ -52,7 +51,12 @@ export default class LobMonitoringDetailForward extends Component {
     if (this.state.lobName != lobName || this.state.flowName != flowName) {
       this.setState({lobName: lobName, flowName: flowName, flowType: flowType, inputs: inputs, forwards: forwards});
       Api.fetch("/lobs/" + lobName, {method: 'GET'}).then((response) => {
-        this.setState({lob: response, flow: response[flowType][flowName], flowName: flowName});
+        this.setState({
+          lob: response,
+          options: response[flowType][flowName].options,
+          flowName: flowName,
+          optionsString: JSON.stringify(response[flowType][flowName].options, null, 2)
+        });
       });
     }
   }
@@ -72,6 +76,7 @@ export default class LobMonitoringDetailForward extends Component {
   }
 
   render() {
+    console.log(this.state.optionsString)
     return (
       <div className="animated fadeIn">
         <div className="row">
@@ -86,12 +91,7 @@ export default class LobMonitoringDetailForward extends Component {
                 Config
               </div>
               <div className="card-block">
-                <LobConfigCard flow={this.state.flow}
-                               lobName={this.state.lobName}
-                               flowType={this.state.flowType}
-                               flowName={this.state.flowName}
-                               onChange={() => this.forceUpdate()}
-                />
+                {this.renderOptions()}
               </div>
             </div>
           </div>
@@ -113,11 +113,11 @@ export default class LobMonitoringDetailForward extends Component {
               <div className="card-header">
                 Traffic difference
               </div>
-              {this.state.flow &&
+              {this.state.options &&
               <LobChart data={this.state.data} metrics={this.state.metadata.metrics}
                         difference={true}
-                        softAlarmLevel={this.state.flow.softAlarmLevel}
-                        hardAlarmLevel={this.state.flow.hardAlarmLevel}/>
+                        softAlarmLevel={this.state.options.softAlarmLevel}
+                        hardAlarmLevel={this.state.options.hardAlarmLevel}/>
               }
             </div>
           </div>
@@ -135,5 +135,64 @@ export default class LobMonitoringDetailForward extends Component {
       </div>
 
     )
+  }
+
+  isValidJson(str) {
+    try {
+      JSON.parse(str);
+    } catch (e) {
+      return false;
+    }
+    return true;
+  }
+
+  renderOptions() {
+    let isValidJson = this.isValidJson(this.state.optionsString)
+    let buttonText = isValidJson ? "Save" : "Invalid JSON"
+    return (
+
+      <div className="col-md-5">
+                <textarea id="textarea-input"
+                          name="textarea-input"
+                          rows="5"
+                          className="form-control" value={this.state.optionsString}
+                          onChange={(e) => {
+                            let state = {optionsString: e.target.value}
+                            try {
+                              state.options = JSON.parse(e.target.value);
+                            } catch (e) {
+                            }
+                            this.setState(state)
+                          }}
+                />
+        <div style={{display: "block"}}>
+          <button type="button"
+                  className="btn btn-primary"
+                  disabled={!isValidJson}
+                  onClick={
+                    () => {
+                      this.saveOptions()
+                    }}>{buttonText}
+          </button>
+        </div>
+
+      </div>)
+  }
+
+  saveOptions() {
+    if (!this.isValidJson(this.state.optionsString)) {
+      return
+    }
+    var myInit = {
+      method: 'PUT',
+      body: this.state.optionsString
+    };
+    Api.fetch("/lobs/" + this.state.lobName +
+      "/options?flowType=" + this.state.flowType + "&flowName=" + this.state.flowName, myInit).then(response => {
+      this.setState({
+        options: response,
+        optionsString: JSON.stringify(response, null, 2)
+      })
+    })
   }
 }

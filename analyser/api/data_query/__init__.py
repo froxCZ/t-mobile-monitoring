@@ -108,6 +108,7 @@ def getDayAverages():
 
 @api_data_query.route('/day_medians', methods=["GET"])
 def getDayMedians():
+  """deprecated"""
   lobName = request.args.get('lobName')
   requestDate = request.args.get('date')
   if requestDate is None:

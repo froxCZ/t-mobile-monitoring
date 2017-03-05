@@ -163,6 +163,17 @@ export default class LobMonitoringDetail extends Component {
       </div>)
   }
 
+  saveOptions() {
+    if(!this.isValidJson(this.state.optionsString)){
+      return
+    }
+    var myInit = {
+      method: 'PUT',
+      body: this.state.optionsString
+    };
+    Api.fetch("/lobs/" + this.state.lobName + "/options", myInit);
+  }
+
   renderList() {
     let neidRows = []
     let forwardRows = []
@@ -172,10 +183,10 @@ export default class LobMonitoringDetail extends Component {
         neidRows.push(
           <tr onClick={this.goToNeidDetail.bind(this, neidName)}>
             <td>{neidName}</td>
-            <td>{neidConfig.granularity}</td>
-            <td>{neidConfig.softAlarmLevel}</td>
-            <td>{neidConfig.hardAlarmLevel}</td>
-            <td>{neidConfig.overrideParentSettings ? 'yes' : 'no'}</td>
+            <td>{neidConfig.options.granularity}</td>
+            <td>{neidConfig.options.softAlarmLevel}</td>
+            <td>{neidConfig.options.hardAlarmLevel}</td>
+            <td>-- compare with parent --</td>
             <td>80%</td>
             <td>
               <span className="badge badge-pill badge-success">42</span>
@@ -194,10 +205,10 @@ export default class LobMonitoringDetail extends Component {
         forwardRows.push(
           <tr onClick={this.goToForwardDetail.bind(this, forwardName)}>
             <td>{forwardName}</td>
-            <td>{forward.granularity}</td>
-            <td>{forward.softAlarmLevel}</td>
-            <td>{forward.hardAlarmLevel}</td>
-            <td>{forward.overrideParentSettings ? 'yes' : 'no'}</td>
+            <td>{forward.options.granularity}</td>
+            <td>{forward.options.softAlarmLevel}</td>
+            <td>{forward.options.hardAlarmLevel}</td>
+            <td>--</td>
             <td>70%</td>
             <td>
               <span className="badge badge-pill badge-success">42</span>
@@ -270,16 +281,5 @@ export default class LobMonitoringDetail extends Component {
         </div>
       </div>
     </div>)
-  }
-
-  saveOptions() {
-    if(!this.isValidJson(this.state.optionsString)){
-      return
-    }
-    var myInit = {
-      method: 'PUT',
-      body: this.state.optionsString
-    };
-    Api.fetch("/lobs/" + this.state.lobName + "/options", myInit);
   }
 }

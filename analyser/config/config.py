@@ -76,7 +76,7 @@ def getLobsConfig():
   res = configColl.find_one({"_id": "lobs"})
   softAlarm = 0.75
   hardAlarm = 0.5
-  defaultObject = {"softAlarmLevel": softAlarm, "hardAlarmLevel": hardAlarm, "granularity": 240}
+  defaultObject = {"softAlarmLevel": softAlarm, "hardAlarmLevel": hardAlarm, "granularity": 240, "options": {}}
 
   for lobName, config in res["lobs"].items():
     if "inputs" not in config:
@@ -84,8 +84,10 @@ def getLobsConfig():
     if "forwards" not in config:
       config["forwards"] = {}
     setDefaultParams(config, parentObj=defaultObject)
-    if "options" not in config:
-      config["options"] = {}
+    config["options"] = {**config["options"], **{"granularity": config["granularity"],
+                                                 "softAlarmLevel": config["softAlarmLevel"],
+                                                 "hardAlarmLevel": config["hardAlarmLevel"]
+                                                 }}
     del config["overrideParentSettings"]
     for neidName, neid in config["inputs"].items():
       setDefaultParams(neid, parentObj=config)
@@ -101,20 +103,37 @@ def getLobsConfig():
 
 
 def setDefaultParams(obj, parentObj):
-  attributes = ["granularity", "softAlarmLevel", "hardAlarmLevel"]
-  override = True
+  attributes = ["granularity", "softAlarmLevel", "hardAlarmLevel", "options"]
+  overridingParent = False
+  if "options" in obj and len(obj["options"]) > 0:
+    overridingParent = True
   for attribute in attributes:
     if attribute not in obj or obj[attribute] == None:
-      override = False
-  if override == False:
-    for attribute in attributes:
       obj[attribute] = parentObj[attribute]
-
-  obj["overrideParentSettings"] = override
+  obj["options"] = {**parentObj["options"], **obj["options"]}
+  obj["overrideParentSettings"] = overridingParent
 
 
 def getLobConfig(lobName):
   return getLobsConfig()["lobs"][lobName]
+
+
+def getOptionsByFullFlowName(fullFlowName):
+  if fullFlowName.count(".") > 0:
+    lob, type, flow = fullFlowName.split(".")
+    return getLobConfig(lob)[type][flow]["options"]
+  else:
+    return getLobConfig(fullFlowName)["options"]
+
+
+def getOptions(lobName, input=None, forward=None):
+  lobConfig = getLobsConfig()[lobName]
+  if input == None and forward == None:
+    return lobConfig["options"]
+  elif forward == None:
+    return lobConfig["inputs"][input]["options"]
+  else:
+    return lobConfig["forwards"][forward]["options"]
 
 
 def updateLob(lobName, lobUpdate):

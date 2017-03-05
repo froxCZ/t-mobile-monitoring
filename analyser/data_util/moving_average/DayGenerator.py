@@ -22,6 +22,13 @@ INITIAL_DATE = util.stringToDate("01.08.2016")
 IGNORE_DAYS = [(24, 12), (31, 12), (1, 1)]
 
 
+class DayGenerator():
+  def __init__(self):
+    super().__init__()
+
+
+
+
 def _getPastHolidays(lobName, date, days):
   resultDays = []
   i = 1
