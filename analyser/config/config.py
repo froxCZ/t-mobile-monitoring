@@ -62,6 +62,8 @@ def getLobConfigByName(fullName):
   granularity = res["lobs"][fullName]["granularity"]
   return Lob(country, fullName, granularity)
 
+def getLobConfigByNameDict(fullName):
+  return getLobsConfig()["lobs"][fullName]
 
 def getLobsConfig():
   res = configColl.find_one({"_id": "lobs"})

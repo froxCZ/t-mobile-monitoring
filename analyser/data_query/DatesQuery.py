@@ -34,9 +34,12 @@ class DatesQuery:
 
   def createDataPathAndOutputs(self, lobNames, neids, forwards):
     self.dataPaths = []
+    granularities = []
+    lobConfig = config.getLobConfigByNameDict(lobNames[0])
     if (neids == None or len(neids) == 0) and (forwards == None or len(forwards) == 0):
       for lobName in lobNames:
         self.dataPaths.append(("$data." + lobName + ".inputs.sum", lobName))
+      raise Exception("fix granulity")
     elif (neids != None and len(neids) > 0) and len(lobNames) == 1:
       lobName = lobNames[0]
       if neids[0] == "*":
@@ -44,6 +47,7 @@ class DatesQuery:
       else:
         for neid in neids:
           self.dataPaths.append(("$data." + lobName + ".inputs." + neid, lobName + "-" + neid))
+          granularities.append(lobConfig["inputs"][neid]["granularity"])
     elif (forwards != None and len(forwards) > 0) and len(lobNames) == 1:
       lobName = lobNames[0]
       if forwards[0] == "*":
@@ -51,8 +55,11 @@ class DatesQuery:
       else:
         for forward in forwards:
           self.dataPaths.append(("$data." + lobName + ".forwards." + forward, lobName + "-" + forward))
+          granularities.append(lobConfig["forwards"]["granularity"])
     else:
       raise Exception("Cannot make query. Either one lob and neids|forwards, or more lobs but no neids&forwards")
+    if (self.granularity == 0 and len(granularities)>0):
+      self.granularity = max(granularities)
 
   def createTimeGroupAndProjection(self):
     groupCount = self.granularity

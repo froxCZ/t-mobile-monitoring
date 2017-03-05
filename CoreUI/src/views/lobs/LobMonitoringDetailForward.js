@@ -63,7 +63,7 @@ export default class LobMonitoringDetailForward extends Component {
       controlSettings.fromDate,
       controlSettings.toDate,
       this.state.lobName,
-      this.state.neids,
+      this.state.inputs,
       this.state.forwards,
       controlSettings.granularity)
       .then(response => {
