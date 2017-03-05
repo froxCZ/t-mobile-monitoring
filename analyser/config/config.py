@@ -84,6 +84,8 @@ def getLobsConfig():
     if "forwards" not in config:
       config["forwards"] = {}
     setDefaultParams(config, parentObj=defaultObject)
+    if "options" not in config:
+      config["options"] = {}
     del config["overrideParentSettings"]
     for neidName, neid in config["inputs"].items():
       setDefaultParams(neid, parentObj=config)
@@ -102,7 +104,7 @@ def setDefaultParams(obj, parentObj):
   attributes = ["granularity", "softAlarmLevel", "hardAlarmLevel"]
   override = True
   for attribute in attributes:
-    if attribute not in obj or obj[attribute] <= 0:
+    if attribute not in obj or obj[attribute] == None:
       override = False
   if override == False:
     for attribute in attributes:

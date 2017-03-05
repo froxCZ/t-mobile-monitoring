@@ -48,13 +48,31 @@ def getLobConfig(lobName):
   return jsonify(config.getLobConfig(lobName))
 
 
+@lobs.route('/<string:lobName>/options', methods=["PUT"])
+def putOptions(lobName):
+  body = request.get_json()
+  from config.config import configColl
+  configColl.update_one({"_id": "lobs"}, {"$set": {"lobs." + lobName + ".options": body}})
+  return jsonify(config.getLobConfig(lobName)["options"])
+
+
 @lobs.route('/<string:lobName>', methods=["POST"])
 def updateLob(lobName):
   setObj = {}
+  unsetObj = {}
+  body = request.get_json()
   from config.config import configColl
-  for key, value in request.get_json().items():
-    setObj["lobs." + lobName + "." + key] = value
-  configColl.update_one({"_id": "lobs"}, {"$set": setObj})
+  for key, value in body.items():
+    if value == None:
+      unsetObj["lobs." + lobName + "." + key] = value
+    else:
+      setObj["lobs." + lobName + "." + key] = value
+  updateObj = {}
+  if (len(setObj)):
+    updateObj["$set"] = setObj
+  if (len(unsetObj)):
+    updateObj["$unset"] = unsetObj
+  configColl.update_one({"_id": "lobs"}, updateObj)
   return jsonify({})
 
 

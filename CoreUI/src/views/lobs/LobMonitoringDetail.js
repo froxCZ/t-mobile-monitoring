@@ -6,10 +6,11 @@ import {TabContent, TabPane, Nav, NavItem, NavLink} from "reactstrap";
 import LobOverviewCharts from "../../components/LobOverviewCharts";
 const LIST_TAB = 'listTab'
 const CHART_TAB = 'chartTab'
+const CONFIG_TAB = 'configTab'
 export default class LobMonitoringDetail extends Component {
   constructor() {
     super()
-    this.state = {activeTab: LIST_TAB}
+    this.state = {activeTab: LIST_TAB, optionsString: ''}
 
   }
 
@@ -32,11 +33,15 @@ export default class LobMonitoringDetail extends Component {
   propChange(props) {
     let lobName = props.params.lobName;
     if (this.state.lobName != lobName) {
-      this.setState({lobName: lobName});
-      Api.fetch("/lobs/" + lobName, {method: 'GET'}).then((response) => {
-        this.setState({lob: response});
-      });
+      this.reloadLob(lobName);
     }
+  }
+
+  reloadLob(lobName) {
+    this.setState({lobName: lobName});
+    Api.fetch("/lobs/" + lobName, {method: 'GET'}).then((response) => {
+      this.setState({lob: response, optionsString: JSON.stringify(response.options, null, 2)});
+    });
   }
 
   toggle(tab) {
@@ -81,12 +86,12 @@ export default class LobMonitoringDetail extends Component {
               </NavItem>
               <NavItem>
                 <NavLink
-                  className={classnames({active: this.state.activeTab === '3'})}
+                  className={classnames({active: this.state.activeTab === CONFIG_TAB})}
                   onClick={() => {
-                    this.toggle('3');
+                    this.toggle(CONFIG_TAB);
                   }}
                 >
-                  -
+                  Config
                 </NavLink>
               </NavItem>
             </Nav>
@@ -97,12 +102,8 @@ export default class LobMonitoringDetail extends Component {
               <TabPane tabId={CHART_TAB}>
                 {this.renderCharts()}
               </TabPane>
-              <TabPane tabId="3">
-                2. Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore
-                et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut
-                aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum
-                dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui
-                officia deserunt mollit anim id est laborum.
+              <TabPane tabId={CONFIG_TAB}>
+                {this.renderOptions()}
               </TabPane>
             </TabContent>
           </div>
@@ -117,13 +118,57 @@ export default class LobMonitoringDetail extends Component {
     </div>
   }
 
+  isValidJson(str) {
+    try {
+      JSON.parse(str);
+    } catch (e) {
+      return false;
+    }
+    return true;
+  }
+
+  renderOptions() {
+    let isValidJson = this.isValidJson(this.state.optionsString)
+    let buttonText = isValidJson ? "Save" : "Invalid JSON"
+    return (
+      <div className="row">
+        <div className="col-sm-6">
+          <div className="card">
+            <div className="card-header">
+              Options
+            </div>
+            <div className="card-block">
+              <div className="col-md-9">
+                <textarea id="textarea-input"
+                          name="textarea-input"
+                          rows="30"
+                          className="form-control" value={this.state.optionsString}
+                          onChange={(e) => this.setState({optionsString: e.target.value})}
+                />
+                <div style={{display: "block"}}>
+                  <button type="button"
+                          className="btn btn-primary"
+                          disabled={!isValidJson}
+                          onClick={
+                            () => {
+                              this.saveOptions()
+                            }}>{buttonText}
+                  </button>
+                </div>
+
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>)
+  }
+
   renderList() {
     let neidRows = []
     let forwardRows = []
     if (this.state.lob) {
       for (let neidName in this.state.lob.inputs) {
         let neidConfig = this.state.lob.inputs[neidName]
-        console.log(neidConfig)
         neidRows.push(
           <tr onClick={this.goToNeidDetail.bind(this, neidName)}>
             <td>{neidName}</td>
@@ -225,5 +270,16 @@ export default class LobMonitoringDetail extends Component {
         </div>
       </div>
     </div>)
+  }
+
+  saveOptions() {
+    if(!this.isValidJson(this.state.optionsString)){
+      return
+    }
+    var myInit = {
+      method: 'PUT',
+      body: this.state.optionsString
+    };
+    Api.fetch("/lobs/" + this.state.lobName + "/options", myInit);
   }
 }

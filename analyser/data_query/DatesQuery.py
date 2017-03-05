@@ -47,7 +47,8 @@ class DatesQuery:
       else:
         for neid in neids:
           self.dataPaths.append(("$data." + lobName + ".inputs." + neid, lobName + "-" + neid))
-          granularities.append(lobConfig["inputs"][neid]["granularity"])
+      for neidName, neid in lobConfig["inputs"].items():
+        granularities.append(neid["granularity"])
     elif (forwards != None and len(forwards) > 0) and len(lobNames) == 1:
       lobName = lobNames[0]
       if forwards[0] == "*":
@@ -55,10 +56,11 @@ class DatesQuery:
       else:
         for forward in forwards:
           self.dataPaths.append(("$data." + lobName + ".forwards." + forward, lobName + "-" + forward))
-          granularities.append(lobConfig["forwards"][forward]["granularity"])
+      for forwardName, forward in lobConfig["forwards"].items():
+        granularities.append(forward["granularity"])
     else:
       raise Exception("Cannot make query. Either one lob and neids|forwards, or more lobs but no neids&forwards")
-    if (self.granularity == 0 and len(granularities)>0):
+    if (self.granularity == 0 and len(granularities) > 0):
       self.granularity = max(granularities)
 
   def createTimeGroupAndProjection(self):

@@ -39,8 +39,7 @@ def getPastSimilarDays(lobName, date, days=10):
   if (_isWorkDay(date)):
     return _getPastWorkDays(lobName, date, days)
   if (_isWeekendDay(date)):
-    return _getSameWeekendDay(lobName, date, 3)
-    # return _getPastWeekends(lobName, date, days)
+    return _getPastWeekends(lobName, date, 4)
   if (_isHoliday(date)):
     return _getPastHolidays(lobName, date, 4)
 
@@ -48,9 +47,9 @@ def getPastSimilarDays(lobName, date, days=10):
 def _getPastWorkDays(lobName, date, days=10):
   resultDays = []
   i = 1
-  while len(resultDays) <= days:
+  while len(resultDays) <= 4:
     dayToTest = date - datetime.timedelta(days=i)
-    if _isWorkDay(dayToTest) and _isSameWorkDay(date, dayToTest) and _isUsualDay(dayToTest):
+    if _isWorkDay(dayToTest) and _isUsualDay(dayToTest):# and _isSameWorkDay(date, dayToTest):
       resultDays.append(dayToTest)
     i += 1
   return resultDays

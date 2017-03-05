@@ -42,16 +42,19 @@ export default class LobConfigCard extends Component {
 
   saveConfig() {
     let lobDataPath;
-    if (this.props.flowType == "both") {
-      lobDataPath = ".";
+    let updateObj = {};
+    let override = true;
+    if (this.props.flowType == "lob") {
+      lobDataPath = "";
+      override = true;
     } else {
       lobDataPath = this.props.flowType + "." + this.props.flowName + ".";
+      override = this.state.flow.overrideParentSettings
+    }
+    for (let attribute of ["granularity", "softAlarmLevel", "hardAlarmLevel"]) {
+      updateObj[lobDataPath + attribute] = override ? this.state.flow[attribute] : null
     }
 
-    let updateObj = {};
-    for (let attribute in this.state.flow) {
-      updateObj[lobDataPath + attribute] = this.state.flow[attribute]
-    }
     Api.updateLobConfig(this.props.lobName, updateObj).then(res => {
 
     })
@@ -63,6 +66,7 @@ export default class LobConfigCard extends Component {
 
   renderConfig() {
     let lobInfo = null;
+    console.log(this.flow)
     if (this.state.flow) {
 
       lobInfo =
@@ -104,9 +108,9 @@ export default class LobConfigCard extends Component {
                    }}/>
           </div>
           <div className="form-group col-sm-2">
-            <label>{this.props.flowType == "forwards" && <span>Override</span>}&nbsp;</label>
+            <label>{this.props.flowType != "lob" && <span>Override</span>}&nbsp;</label>
             <div style={{display: "block"}}>
-              {this.props.flowType != "both" &&
+              {this.props.flowType != "lob" &&
               <label className="switch switch-text switch-primary">
                 <input type="checkbox" className="switch-input"
                        defaultChecked={this.state.flow.overrideParentSettings}
@@ -115,7 +119,7 @@ export default class LobConfigCard extends Component {
                            flow: Object.assign(this.state.flow, {overrideParentSettings: e.target.checked})
                          })
                          this.props.onChange();
-                       }}                />
+                       }}/>
                 <span className="switch-label" data-on="Oa" data-off="Off"></span>
                 <span className="switch-handle"></span>
               </label>

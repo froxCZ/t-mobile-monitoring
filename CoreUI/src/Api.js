@@ -52,7 +52,9 @@ class Api {
     let myHeaders = new Headers();
     myHeaders.append("Content-Type", "application/json");
     myInit.headers = myHeaders;
-    myInit.body = JSON.stringify(myInit.body)
+    if (typeof myInit.body != 'string' || !myInit.body instanceof String) {
+      myInit.body = JSON.stringify(myInit.body)
+    }
     let request = new Request(url, myInit);
     Store.dispatch(showLoading());
     return fetch(request).then((response) => response.json())

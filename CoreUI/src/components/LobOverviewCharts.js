@@ -3,6 +3,7 @@ import Api from "../Api";
 import ChatControl from "./ChartControl";
 import "react-datepicker/dist/react-datepicker.css";
 import LobChart from "./LobChart";
+import LobConfigCard from "./LobConfigCard";
 const MINUTE_RANGES = [
   5,
   10,
@@ -34,9 +35,7 @@ export default class LobOverviewCharts extends Component {
   propChange(props) {
     let lobName = props.lobName;
     let metricName = props.metricName;
-    if (this.state.lobName != lobName || this.state.metricName != metricName) {
-      this.setState({lobName: lobName, metricName: metricName,lob: this.props.lob});
-    }
+    this.setState({lobName: lobName, metricName: metricName, lob: this.props.lob});
   }
 
   loadData(controlSettings) {
@@ -59,6 +58,7 @@ export default class LobOverviewCharts extends Component {
   }
 
   render() {
+    console.log(this.state.lob)
     return (
       <div className="animated fadeIn">
         <div className="row">
@@ -67,6 +67,20 @@ export default class LobOverviewCharts extends Component {
           </div>
         </div>
         <div className="row">
+          <div className="col-sm-6">
+            <div className="card">
+              <div className="card-header">
+                Config
+              </div>
+              <div className="card-block">
+                <LobConfigCard flow={this.state.lob}
+                               lobName={this.state.lobName}
+                               flowType="lob"
+                               onChange={() => this.forceUpdate()}
+                />
+              </div>
+            </div>
+          </div>
           <div className="col-sm-6">
             <div className="card">
               <div className="card-block">
