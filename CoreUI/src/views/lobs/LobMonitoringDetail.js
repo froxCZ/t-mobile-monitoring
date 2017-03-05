@@ -128,6 +128,8 @@ export default class LobMonitoringDetail extends Component {
           <tr onClick={this.goToNeidDetail.bind(this, neidName)}>
             <td>{neidName}</td>
             <td>{neidConfig.granularity}</td>
+            <td>{neidConfig.softAlarmLevel}</td>
+            <td>{neidConfig.hardAlarmLevel}</td>
             <td>80%</td>
             <td>
               <span className="badge badge-pill badge-success">42</span>
@@ -147,6 +149,8 @@ export default class LobMonitoringDetail extends Component {
           <tr onClick={this.goToForwardDetail.bind(this, forwardName)}>
             <td>{forwardName}</td>
             <td>{forward.granularity}</td>
+            <td>{forward.softAlarmLevel}</td>
+            <td>{forward.hardAlarmLevel}</td>
             <td>70%</td>
             <td>
               <span className="badge badge-pill badge-success">42</span>
@@ -174,6 +178,8 @@ export default class LobMonitoringDetail extends Component {
                 <tr>
                   <th>Neid</th>
                   <th>Granularity</th>
+                  <th>Soft Alarm</th>
+                  <th>Hard Alarm</th>
                   <th>Traffic level</th>
                   <th>Forwardings</th>
                   <th>Status</th>
@@ -199,6 +205,8 @@ export default class LobMonitoringDetail extends Component {
                 <tr>
                   <th>Forward</th>
                   <th>Granularity</th>
+                  <th>Soft Alarm</th>
+                  <th>Hard Alarm</th>
                   <th>Traffic level</th>
                   <th>Forwardings</th>
                   <th>Status</th>

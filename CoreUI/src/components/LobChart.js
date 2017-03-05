@@ -47,8 +47,8 @@ export default class LobChart extends Component {
     let referenceLines = [];
     if (this.props.difference) {
       referenceLines.push(<ReferenceLine y={1} label="expected" stroke="gray"/>)
-      referenceLines.push(<ReferenceLine y={this.props.warningLevel} label="expected" stroke="#bd8f1d"/>)
-      referenceLines.push(<ReferenceLine y={this.props.alarmLevel} label="expected" stroke="#bd3e39"/>)
+      referenceLines.push(<ReferenceLine y={this.props.softAlarmLevel} label="expected" stroke="#bd8f1d"/>)
+      referenceLines.push(<ReferenceLine y={this.props.hardAlarmLevel} label="expected" stroke="#bd3e39"/>)
     }
     return (
       <ResponsiveContainer height='100%' width='100%' aspect={4.0 / 1.5}>

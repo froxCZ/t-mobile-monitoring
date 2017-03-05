@@ -3,6 +3,7 @@ import Api from "../../Api";
 import ChatControl from "../../components/ChartControl";
 import "react-datepicker/dist/react-datepicker.css";
 import LobChart from "../../components/LobChart";
+import LobConfigCard from "../../components/LobConfigCard";
 const MINUTE_RANGES = [
   5,
   10,
@@ -12,6 +13,7 @@ const MINUTE_RANGES = [
   120,
   180,
   240,
+  360,
   480,
   720,
   1440
@@ -69,66 +71,7 @@ export default class LobMonitoringDetailForward extends Component {
       })
   }
 
-  saveConfig() {
-    let lobDataPath = this.state.flowType + "." + this.state.flowName + ".";
-    let updateObj = {};
-    for (let attribute in this.state.flow) {
-      updateObj[lobDataPath + attribute] = this.state.flow[attribute]
-    }
-    Api.updateLobConfig(this.state.lobName, updateObj).then(res => {
-      if (this.state.controlSettings) {
-        this.loadData(this.state.controlSettings);
-      }
-    })
-  }
-
-
   render() {
-    let lobInfo = null
-    if (this.state.lob) {
-      lobInfo =
-        <div className="row">
-          <div className="form-group col-sm-2">
-            <label htmlFor="ccmonth">Granularity</label>
-            <select className="form-control" id="ccmonth"
-                    defaultValue={this.state.flow.granularity}
-                    onChange={(e) => this.setState({
-                      flow: Object.assign({}, this.state.flow, {granularity: Number(e.target.value)})
-                    })}>
-              {MINUTE_RANGES.map(function (minuteRange) {
-                return <option>{minuteRange}</option>
-              })
-              }
-            </select>
-          </div>
-          <div className="form-group col-sm-2">
-            <label htmlFor="fromDate">Warning</label>
-            <input className="form-control" type="text" defaultValue={this.state.flow.warningLevel}
-                   onChange={(e) => this.setState({
-                     flow: Object.assign({}, this.state.flow, {warningLevel: Number(e.target.value)})
-                   })}/>
-          </div>
-          <div className="form-group col-sm-2">
-            <label htmlFor="fromDate">Alarm</label>
-            <input className="form-control" type="text" defaultValue={this.state.flow.alarmLevel}
-                   onChange={(e) => this.setState({
-                     flow: Object.assign({}, this.state.flow, {alarmLevel: Number(e.target.value)})
-                   })}/>
-          </div>
-          <div className="form-group col-sm-2">
-            <label>&nbsp;</label>
-            <div style={{display: "block"}}>
-              <button type="button" className="btn btn-primary" onClick={
-                () => {
-                  this.saveConfig()
-                }}>Save
-              </button>
-            </div>
-          </div>
-        </div>
-    } else {
-      lobInfo = <div>loading...</div>
-    }
     return (
       <div className="animated fadeIn">
         <div className="row">
@@ -143,7 +86,12 @@ export default class LobMonitoringDetailForward extends Component {
                 Config
               </div>
               <div className="card-block">
-                {lobInfo}
+                <LobConfigCard flow={this.state.flow}
+                               lobName={this.state.lobName}
+                               flowType={this.state.flowType}
+                               flowName={this.state.flowName}
+                               onChange={() => this.forceUpdate()}
+                />
               </div>
             </div>
           </div>
@@ -168,8 +116,8 @@ export default class LobMonitoringDetailForward extends Component {
               {this.state.flow &&
               <LobChart data={this.state.data} metrics={this.state.metadata.metrics}
                         difference={true}
-                        warningLevel={this.state.flow.warningLevel}
-                        alarmLevel={this.state.flow.alarmLevel}/>
+                        softAlarmLevel={this.state.flow.softAlarmLevel}
+                        hardAlarmLevel={this.state.flow.hardAlarmLevel}/>
               }
             </div>
           </div>

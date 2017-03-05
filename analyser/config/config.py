@@ -65,8 +65,8 @@ def getLobConfigByName(fullName):
 
 def getLobsConfig():
   res = configColl.find_one({"_id": "lobs"})
-  defaultWarning = 0.8
-  defaultError = 0.65
+  softAlarm = 0.75
+  hardAlarm = 0.5
 
   for lobName,config in res["lobs"].items():
     granularity = config["granularity"]
@@ -77,10 +77,10 @@ def getLobsConfig():
     def setDefaults(obj):
       if obj["granularity"] <= 0:
         obj["granularity"] = granularity
-      if "warningLevel" not in obj:
-        obj["warningLevel"] = defaultWarning
-      if "alarmLevel" not in obj:
-        obj["alarmLevel"] = defaultError
+      if "softAlarmLevel" not in obj:
+        obj["softAlarmLevel"] = softAlarm
+      if "hardAlarmLevel" not in obj:
+        obj["hardAlarmLevel"] = hardAlarm
     setDefaults(config)
     for neidName,neid in config["inputs"].items():
       setDefaults(neid)
