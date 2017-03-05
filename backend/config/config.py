@@ -83,27 +83,33 @@ def getLobsConfig():
 
     for neidName, neid in config["inputs"].items():
       setDefaultParams(neid, parentObj=config)
+      neid["name"] = neidName
+      neid["type"] = "inputs"
+      neid["lobName"] = lobName
+      neid["dataPath"] = lobName + "." + neidName
+      neid["gName"] = lobName + "_" + neidName
     forwards = {}
     for forwardName, forward in config["forwards"].items():
       inputName = forwardName.split(":")[0]
       if inputName in config["inputs"]:
         setDefaultParams(forward, parentObj=config["inputs"][inputName])
         forwards[forwardName] = forward
+      forward["name"] = forwardName
+      forward["type"] = "forwards"
+      forward["lobName"] = lobName
+      forward["dataPath"] = lobName + "." + forwardName
+      forward["gName"] = lobName + "_" + forwardName
     config["forwards"] = forwards
 
   return res
 
 
 def setDefaultParams(obj, parentObj):
-  attributes = ["granularity", "softAlarmLevel", "hardAlarmLevel", "options"]
   overridingParent = False
   if "options" in obj and len(obj["options"]) > 0:
     overridingParent = True
   else:
     obj["options"] = {}
-  for attribute in attributes:
-    if attribute not in obj or obj[attribute] == None:
-      pass  # obj[attribute] = parentObj[attribute]
   obj["options"] = {**parentObj["options"], **obj["options"]}
   obj["overrideParentSettings"] = overridingParent
 
