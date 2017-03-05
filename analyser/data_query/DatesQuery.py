@@ -37,9 +37,7 @@ class DatesQuery:
     granularities = []
     lobConfig = config.getLobConfigByNameDict(lobNames[0])
     if (neids == None or len(neids) == 0) and (forwards == None or len(forwards) == 0):
-      for lobName in lobNames:
-        self.dataPaths.append(("$data." + lobName + ".inputs.sum", lobName))
-      raise Exception("fix granulity")
+      raise Exception("specify inputs or forwards!")
     elif (neids != None and len(neids) > 0) and len(lobNames) == 1:
       lobName = lobNames[0]
       if neids[0] == "*":
@@ -48,7 +46,7 @@ class DatesQuery:
         for neid in neids:
           self.dataPaths.append(("$data." + lobName + ".inputs." + neid, lobName + "-" + neid))
       for neidName, neid in lobConfig["inputs"].items():
-        granularities.append(neid["granularity"])
+        granularities.append(neid["options"]["granularity"])
     elif (forwards != None and len(forwards) > 0) and len(lobNames) == 1:
       lobName = lobNames[0]
       if forwards[0] == "*":
@@ -57,7 +55,7 @@ class DatesQuery:
         for forward in forwards:
           self.dataPaths.append(("$data." + lobName + ".forwards." + forward, lobName + "-" + forward))
       for forwardName, forward in lobConfig["forwards"].items():
-        granularities.append(forward["granularity"])
+        granularities.append(forward["options"]["granularity"])
     else:
       raise Exception("Cannot make query. Either one lob and neids|forwards, or more lobs but no neids&forwards")
     if (self.granularity == 0 and len(granularities) > 0):

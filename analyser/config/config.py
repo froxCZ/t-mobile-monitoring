@@ -60,7 +60,7 @@ def getLobConfigByName(fullName):
   res = configColl.find_one({"_id": "lobs"}, {"lobs." + fullName: 1})
   tmp = fullName.split("_")
   country = tmp[0]
-  granularity = res["lobs"][fullName]["granularity"]
+  granularity = res["lobs"][fullName]["options"]["granularity"]
   return Lob(country, fullName, granularity)
 
 
@@ -74,21 +74,13 @@ def getLobsConfig():
   :return:
   """
   res = configColl.find_one({"_id": "lobs"})
-  softAlarm = 0.75
-  hardAlarm = 0.5
-  defaultObject = {"softAlarmLevel": softAlarm, "hardAlarmLevel": hardAlarm, "granularity": 240, "options": {}}
 
   for lobName, config in res["lobs"].items():
     if "inputs" not in config:
       config["inputs"] = {}
     if "forwards" not in config:
       config["forwards"] = {}
-    setDefaultParams(config, parentObj=defaultObject)
-    config["options"] = {**config["options"], **{"granularity": config["granularity"],
-                                                 "softAlarmLevel": config["softAlarmLevel"],
-                                                 "hardAlarmLevel": config["hardAlarmLevel"]
-                                                 }}
-    del config["overrideParentSettings"]
+
     for neidName, neid in config["inputs"].items():
       setDefaultParams(neid, parentObj=config)
     forwards = {}
@@ -107,9 +99,11 @@ def setDefaultParams(obj, parentObj):
   overridingParent = False
   if "options" in obj and len(obj["options"]) > 0:
     overridingParent = True
+  else:
+    obj["options"] = {}
   for attribute in attributes:
     if attribute not in obj or obj[attribute] == None:
-      obj[attribute] = parentObj[attribute]
+      pass  # obj[attribute] = parentObj[attribute]
   obj["options"] = {**parentObj["options"], **obj["options"]}
   obj["overrideParentSettings"] = overridingParent
 
@@ -127,8 +121,8 @@ def getOptionsByFullFlowName(fullFlowName):
 
 
 def getOptions(lobName, input=None, forward=None):
-  lobConfig = getLobsConfig()[lobName]
-  if input == None and forward == None:
+  lobConfig = getLobConfig(lobName)
+  if (input == None and forward == None) or input == "*" or forward == "*":
     return lobConfig["options"]
   elif forward == None:
     return lobConfig["inputs"][input]["options"]

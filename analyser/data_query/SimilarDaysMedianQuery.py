@@ -3,13 +3,14 @@ from statistics import median
 
 class SimilarDaysMedianQuery:
   def __init__(self, lobNames, date, granularity=0, neids=[], forwards=[]):
-    from data_util.moving_average import DayGenerator
+    from data_util import SimilarPastDaysFinder
     self.lobNames = lobNames
     self.neids = neids
     self.forwards = forwards
     self.date = date
     self.granularity = granularity
-    self.dates = DayGenerator.getPastSimilarDays(self.lobNames, date)
+    self.dates = SimilarPastDaysFinder(self.lobNames, self.neids, self.forwards).findSimilarPastDays(date)
+    #self.dates = DayGenerator.getPastSimilarDays(self.lobNames, date)
     if len(lobNames) > 1:
       raise Exception("only one lob name can be specified")
     if len(neids) + len(forwards) > 1:
