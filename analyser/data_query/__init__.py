@@ -5,7 +5,7 @@ from .DateRangeGroupQuery import DateRangeGroupQuery
 from .DatesQuery import DatesQuery
 from .DatesQueryV1 import DatesQueryV1
 from .DiscoverQuery import DiscoverQuery
-from .SimilarDaysMedianQuery import SimilarDaysMedianQuery
+from .ExpectedTrafficQuery import ExpectedTrafficQuery
 
 
 def medianDateRange(fromDate, toDate, lobNames, granularity, data, neids=[], forwards=[]):
@@ -15,10 +15,10 @@ def medianDateRange(fromDate, toDate, lobNames, granularity, data, neids=[], for
   medianList = []
   date = fromDate
   while date < toDate:
-    similarDaysQuery = SimilarDaysMedianQuery(lobNames, date,
-                                              granularity=granularity,
-                                              neids=neids,
-                                              forwards=forwards)
+    similarDaysQuery = ExpectedTrafficQuery(lobNames, date,
+                                            granularity=granularity,
+                                            neids=neids,
+                                            forwards=forwards)
     similarDatesData = similarDaysQuery.execute()
     l = util.minuteDictToDateDict(date, similarDatesData, "expected")
     valueKey = similarDaysQuery.metrics[0]

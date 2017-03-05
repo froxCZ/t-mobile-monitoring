@@ -1,7 +1,7 @@
 from statistics import median
 
 
-class SimilarDaysMedianQuery:
+class ExpectedTrafficQuery:
   def __init__(self, lobNames, date, granularity=0, neids=[], forwards=[]):
     from data_util import SimilarPastDaysFinder
     self.lobNames = lobNames

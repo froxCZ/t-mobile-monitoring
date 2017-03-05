@@ -103,7 +103,7 @@ export default class LobMonitoringDetail extends Component {
                 {this.renderCharts()}
               </TabPane>
               <TabPane tabId={CONFIG_TAB}>
-                {this.renderOptions()}
+                {this.renderConfig()}
               </TabPane>
             </TabContent>
           </div>
@@ -127,21 +127,21 @@ export default class LobMonitoringDetail extends Component {
     return true;
   }
 
-  renderOptions() {
+  renderConfig() {
     let isValidJson = this.isValidJson(this.state.optionsString)
     let buttonText = isValidJson ? "Save" : "Invalid JSON"
     return (
       <div className="row">
-        <div className="col-sm-6">
+        <div className="col-sm-3">
           <div className="card">
             <div className="card-header">
-              Options
+              Lob Options
             </div>
             <div className="card-block">
-              <div className="col-md-9">
+
                 <textarea id="textarea-input"
                           name="textarea-input"
-                          rows="30"
+                          rows="15"
                           className="form-control" value={this.state.optionsString}
                           onChange={(e) => this.setState({optionsString: e.target.value})}
                 />
@@ -156,7 +156,6 @@ export default class LobMonitoringDetail extends Component {
                   </button>
                 </div>
 
-              </div>
             </div>
           </div>
         </div>

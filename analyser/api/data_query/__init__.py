@@ -116,7 +116,7 @@ def getDayMedians():
   else:
     requestDate = util.jsStringToDate(requestDate)
   requestDate = util.resetDateTimeMidnight(requestDate)
-  medianQuery = data_query.SimilarDaysMedianQuery(lobName, requestDate)
+  medianQuery = data_query.ExpectedTrafficQuery(lobName, requestDate)
   medians = medianQuery.execute()
   dataList = data_query.dateDictToList(data_query.minuteDictToDateDict(requestDate, medians, "median"))
   response = {}
