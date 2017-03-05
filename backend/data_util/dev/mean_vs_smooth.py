@@ -3,6 +3,8 @@ import numpy as np
 
 import api.util as util
 from api.data_query import DateRangeGroupQuery
+
+
 def running_mean(l, N):
   sum = 0
   result = list( 0 for x in l)
