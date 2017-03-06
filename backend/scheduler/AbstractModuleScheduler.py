@@ -1,9 +1,13 @@
 import abc
-import logging
+
 
 class AbstractModuleScheduler:
+
+  def __init__(self):
+    pass
+
+
   name = ""
   @abc.abstractmethod
   def run(self):
-    logging.info("running " + self.name)
     return

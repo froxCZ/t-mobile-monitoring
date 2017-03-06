@@ -8,6 +8,8 @@ class LobAnalyzer:
 
   def run(self):
     logging.info("analyzing " + self.flow["name"])
+
+
     return 0
 
   def getResult(self):

@@ -10,11 +10,11 @@ class OutlierDetector:
     self.dateTime = dateTime
 
   def _getMedians(self):
-    from data_util.moving_average import SimilarDaysMedianQuery
-    return SimilarDaysMedianQuery(self.lobName,self.dateTime).execute()
+    from data_query import ExpectedTrafficQuery
+    return ExpectedTrafficQuery(self.lobName,self.dateTime).execute()
 
   def _getCurrentData(self):
-    from api.data_query import DatesQuery
+    from data_query import DatesQuery
     datesQuery = DatesQuery([self.dateTime], self.lobName, resultName="value");
     data = datesQuery.execute()
     return util.listToDayMinutes(data)

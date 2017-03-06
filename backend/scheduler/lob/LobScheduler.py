@@ -24,8 +24,8 @@ class LobScheduler(AbstractModuleScheduler):
           l = jobsToSchedule.get(granularity, [])
           l.append(flow)
           jobsToSchedule[granularity] = l
-          logging.debug("should schedule " + flow["dataPath"])
-
+    if(len(jobsToSchedule)) == 0:
+      logging.debug("no jobs to execute")
     for gran, flowList in sorted(jobsToSchedule.items()):
       for flow in flowList:
         time = datetime.datetime.now().replace(tzinfo=TIMEZONE)
@@ -48,5 +48,5 @@ class LobScheduler(AbstractModuleScheduler):
 
 
 if __name__ == "__main__":
-  logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.DEBUG)
+  logging.basicConfig(format='%(levelname)s [%(module)s]: %(message)s', level=logging.DEBUG)
   LobScheduler().run()
