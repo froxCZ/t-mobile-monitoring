@@ -8,17 +8,14 @@ from .DiscoverQuery import DiscoverQuery
 from .ExpectedTrafficQuery import ExpectedTrafficQuery
 
 
-def medianDateRange(fromDate, toDate, lobNames, granularity, data, neids=[], forwards=[]):
+def medianDateRange(fromDate, toDate, flows, granularity, data):
   fromDate = fromDate.replace(hour=0, minute=0, second=0)
   toDate = toDate.replace(hour=0, minute=0, second=0)
   dayDelta = datetime.timedelta(days=1)
   medianList = []
   date = fromDate
   while date < toDate:
-    similarDaysQuery = ExpectedTrafficQuery(lobNames, date,
-                                            granularity=granularity,
-                                            neids=neids,
-                                            forwards=forwards)
+    similarDaysQuery = ExpectedTrafficQuery(date, flows, granularity=granularity)
     similarDatesData = similarDaysQuery.execute()
     l = util.minuteDictToDateDict(date, similarDatesData, "expected")
     valueKey = similarDaysQuery.metrics[0]

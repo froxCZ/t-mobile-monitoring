@@ -2,30 +2,19 @@ from statistics import median
 
 
 class ExpectedTrafficQuery:
-  def __init__(self, lobNames, date, granularity=0, neids=[], forwards=[]):
+  def __init__(self, date, flows, granularity=0):
     from data_util import SimilarPastDaysFinder
-    self.lobNames = lobNames
-    self.neids = neids
-    self.forwards = forwards
+    self.flows = flows
     self.date = date
     self.granularity = granularity
-    self.dates = SimilarPastDaysFinder(self.lobNames, self.neids, self.forwards).findSimilarPastDays(date)
-    #self.dates = DayGenerator.getPastSimilarDays(self.lobNames, date)
-    if len(lobNames) > 1:
-      raise Exception("only one lob name can be specified")
-    if len(neids) + len(forwards) > 1:
-      raise Exception("only one neid or forward can be specified")
+    self.dates = SimilarPastDaysFinder(flows).findSimilarPastDays(date)
 
   def execute(self):
     from data_query.DatesQuery import DatesQuery
-    datesQuery = DatesQuery(self.dates, self.lobNames,
-                            granularity=self.granularity,
-                            neids=self.neids,
-                            forwards=self.forwards)
+    datesQuery = DatesQuery(self.dates, self.flows, self.granularity)
     data = datesQuery.execute()
     self.metadata = datesQuery.metadata
     self.metrics = datesQuery.metrics
-    # _createWeightedMeans(data,"value")
     return _createMedians(data, datesQuery.metrics[0])
 
 

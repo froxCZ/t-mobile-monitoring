@@ -74,44 +74,61 @@ def getLobsConfig():
   :return:
   """
   res = configColl.find_one({"_id": "lobs"})
-
+  defaultConfig = {
+    "granularity": 240,
+    "hardAlarmLevel": 0.5,
+    "softAlarmLevel": 0.75
+  }
   for lobName, config in res["lobs"].items():
+    config["options"] = {**defaultConfig, **config["options"]}
     if "inputs" not in config:
       config["inputs"] = {}
     if "forwards" not in config:
       config["forwards"] = {}
-
-    for neidName, neid in config["inputs"].items():
-      setDefaultParams(neid, parentObj=config)
-      neid["name"] = neidName
-      neid["type"] = "inputs"
-      neid["lobName"] = lobName
-      neid["dataPath"] = lobName + "." + neidName
-      neid["gName"] = lobName + "_" + neidName
+    config["flows"] = {}
+    inputs = {}
+    for flowName, flowOptions in config["inputs"].items():
+      flow = {"options": setDefaultOptions(flowOptions, parentObj=config["options"])}
+      flow["name"] = flowName
+      flow["type"] = "inputs"
+      flow["lobName"] = lobName
+      flow["dataPath"] = lobName + ".inputs." + flowName
+      flow["gName"] = lobName + "_" + flowName
+      inputs[flowName] = flow
+      config["flows"][flowName] = flow
+    config["inputs"] = inputs
     forwards = {}
-    for forwardName, forward in config["forwards"].items():
-      inputName = forwardName.split(":")[0]
+    for flowName, flowOptions in config["forwards"].items():
+      inputName = flowName.split(":")[0]
       if inputName in config["inputs"]:
-        setDefaultParams(forward, parentObj=config["inputs"][inputName])
-        forwards[forwardName] = forward
-      forward["name"] = forwardName
-      forward["type"] = "forwards"
-      forward["lobName"] = lobName
-      forward["dataPath"] = lobName + "." + forwardName
-      forward["gName"] = lobName + "_" + forwardName
+        flow = {"options": setDefaultOptions(flowOptions, parentObj=config["options"])}
+        flow["name"] = flowName
+        flow["type"] = "forwards"
+        flow["lobName"] = lobName
+        flow["dataPath"] = lobName + ".forwards." + flowName
+        flow["gName"] = lobName + "_" + flowName
+        forwards[flowName] = flow
+        config["flows"][flowName] = flow
     config["forwards"] = forwards
-
   return res
 
 
-def setDefaultParams(obj, parentObj):
-  overridingParent = False
-  if "options" in obj and len(obj["options"]) > 0:
-    overridingParent = True
-  else:
-    obj["options"] = {}
-  obj["options"] = {**parentObj["options"], **obj["options"]}
-  obj["overrideParentSettings"] = overridingParent
+def setDefaultOptions(obj, parentObj):
+  # overridingParent = False
+  # todo do overriding
+  return {**parentObj, **obj}
+  # obj["overrideParentSettings"] = overridingParent
+
+
+def createMergedFlowsObject(lobName, flowType):
+  flow = {}
+  flow["name"] = lobName + "-" + flowType
+  flow["type"] = "all_forwards"
+  flow["lobName"] = lobName
+  flow["dataPath"] = lobName + "." + flowType + ".sum"
+  flow["gName"] = lobName + "_" + flowType
+  flow["options"] = getLobConfig(lobName)["options"]
+  return flow
 
 
 def getLobConfig(lobName):

@@ -51,9 +51,11 @@ export default class LobMonitoringDetailForward extends Component {
     if (this.state.lobName != lobName || this.state.flowName != flowName) {
       this.setState({lobName: lobName, flowName: flowName, flowType: flowType, inputs: inputs, forwards: forwards});
       Api.fetch("/lobs/" + lobName, {method: 'GET'}).then((response) => {
+        //todolet flow= response[flowType][flowName]
         this.setState({
           lob: response,
           options: response[flowType][flowName].options,
+          flow: response[flowType][flowName],
           flowName: flowName,
           optionsString: JSON.stringify(response[flowType][flowName].options, null, 2)
         });
@@ -76,7 +78,6 @@ export default class LobMonitoringDetailForward extends Component {
   }
 
   render() {
-    console.log(this.state.optionsString)
     return (
       <div className="animated fadeIn">
         <div className="row">
@@ -183,12 +184,12 @@ export default class LobMonitoringDetailForward extends Component {
     if (!this.isValidJson(this.state.optionsString)) {
       return
     }
-    var myInit = {
+    let myInit = {
       method: 'PUT',
       body: this.state.optionsString
     };
     Api.fetch("/lobs/" + this.state.lobName +
-      "/options?flowType=" + this.state.flowType + "&flowName=" + this.state.flowName, myInit).then(response => {
+      "/flow/" + this.state.flow.name, myInit).then(response => {
       this.setState({
         options: response,
         optionsString: JSON.stringify(response, null, 2)

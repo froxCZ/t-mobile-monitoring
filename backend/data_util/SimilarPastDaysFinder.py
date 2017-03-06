@@ -1,7 +1,6 @@
 import datetime
 
 import util
-from config import config
 
 HOLIDAYS = [(1, 1),  # day, month
             (1, 1),
@@ -24,16 +23,8 @@ IGNORE_DAYS = [(24, 12), (31, 12), (1, 1)]
 
 
 class SimilarPastDaysFinder():
-  def __init__(self, lobNames, inputs, forwards):
-    self.lobNames = lobNames
-    self.inputs = inputs
-    self.forwards = forwards
-    if len(inputs) > 0:
-      self.options = config.getOptions(lobNames[0], inputs[0], None)
-    elif len(forwards) > 0:
-      self.options = config.getOptions(lobNames[0], None, forwards[0])
-    else:
-      raise Exception("no inputs or forwards specified")
+  def __init__(self, flows):
+    self.options = flows[0]["options"]
     self.independentdays = self.options.get("independentdays", [])
 
   def findSimilarPastDays(self, date):

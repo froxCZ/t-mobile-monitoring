@@ -48,20 +48,22 @@ def getLobConfig(lobName):
   return jsonify(config.getLobConfig(lobName))
 
 
-@lobs.route('/<string:lobName>/options', methods=["PUT"])
-def putOptions(lobName):
+@lobs.route('/<string:lobName>/flow/<string:flowName>', methods=["PUT"])
+def putLobFlowOptions(lobName, flowName):
   body = request.get_json()
-  from config.config import configColl
-  fullFlowName = lobName
-  flowType = request.args.get('flowType')
-  if flowType is not None:
-    flowName = request.args.get('flowName')
-    if flowName is None:
-      raise Exception("flow name not specified")
-    fullFlowName += "." + flowType + "." + flowName
-  optionsPath = "lobs." + fullFlowName + ".options"
-  configColl.update_one({"_id": "lobs"}, {"$set": {optionsPath: body}})
-  return jsonify(config.getOptionsByFullFlowName(fullFlowName))
+  from config import config
+  flow = config.getLobConfig(lobName)["flows"][flowName]
+  config.configColl.update_one({"_id": "lobs"}, {"$set": {"lobs." + flow["dataPath"]: body}})
+  return jsonify(config.getLobConfig(lobName)["flows"][flowName]["options"])
+
+
+@lobs.route('/<string:lobName>/options', methods=["PUT"])
+def putLobOptions(lobName):
+  from config import config
+  body = request.get_json()
+  optionsPath = "lobs." + lobName + ".options"
+  config.configColl.update_one({"_id": "lobs"}, {"$set": {optionsPath: body}})
+  return jsonify(config.getLobConfig(lobName)["options"])
 
 
 @lobs.route('/<string:lobName>', methods=["POST"])

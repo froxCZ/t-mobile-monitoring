@@ -6,6 +6,7 @@ from flask import request
 import data_query
 import smooth
 import util
+from config import config
 
 api_data_query = Blueprint('data_query', __name__)
 
@@ -15,24 +16,32 @@ def dataQueryV2():
   searchParam = request.get_json()
   fromDate = util.stringToDate(searchParam["from"])
   toDate = util.stringToDate(searchParam["to"])
-  lobNames = searchParam["lobNames"]
+  lobName = searchParam["lobNames"][0]
+  lobConfig = config.getLobConfig(lobName)
   neids = []
   forwards = []
+  flows = []
+  granularity = searchParam.get("granularity", 0)
   if "neids" in searchParam:
-    neids = searchParam["neids"]
+    for neid in searchParam["neids"]:
+      if neid == "*":
+        flows.append(config.createMergedFlowsObject(lobName, "inputs"))
+        break
+      flows.append(lobConfig["flows"][neid])
   if "forwards" in searchParam:
-    forwards = searchParam["forwards"]
+    for forward in searchParam["forwards"]:
+      if forward == "*":
+        flows.append(config.createMergedFlowsObject(lobName, "forwards"))
+        break
+      flows.append(lobConfig["flows"][forward])
   response = {}
-  mongoQuery = data_query.DateRangeGroupQuery(fromDate, toDate, lobNames, searchParam["granularity"], neids=neids,
-                                              forwards=forwards)
+  mongoQuery = data_query.DateRangeGroupQuery(fromDate, toDate, flows, granularity=granularity)
   data = mongoQuery.execute()
   metrics = {}
   metricsList = mongoQuery.metrics
   metadata = mongoQuery.metadata
-  if len(lobNames) == 1 and len(neids) + len(forwards) <= 1:
-    data = data_query.medianDateRange(fromDate, toDate, lobNames, metadata["granularity"], data,
-                                      neids=neids,
-                                      forwards=forwards)
+  if len(flows) == 1:
+    data = data_query.medianDateRange(fromDate, toDate, flows, metadata["granularity"], data)
     metricsList.append("relativeDifference")
     metricsList.append("scaledDifference")
     metricsList.append("expected")

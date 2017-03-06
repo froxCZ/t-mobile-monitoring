@@ -5,17 +5,15 @@ from mongo import mongo
 
 
 class DatesQuery:
-  def __init__(self, dates, lobNames, granularity, neids=None, forwards=None):
+  def __init__(self, dates, flows, granularity=0):
     self.query = None
     self.coll = mongo.lobs()
     self.metrics = []
+    self.dataPaths = []
     self.dates = dates
-    self.lobNames = lobNames
+    self.flows = flows
     self.granularity = int(granularity)
-    self.createDataPathAndOutputs(lobNames, neids, forwards)
-    if (int(self.granularity) == 0):
-      for lobName in lobNames:
-        self.granularity = max(self.granularity, config.getLobConfigByName(lobName).granularity)
+    self.createDataPathAndOutputs2()
     self.metadata = {}
 
   def execute(self):
@@ -31,6 +29,14 @@ class DatesQuery:
 
     result = sorted(result, key=lambda x: x["_id"])
     return result
+
+  def createDataPathAndOutputs2(self):
+    maxGran = 0
+    for flow in self.flows:
+      self.dataPaths.append(("$data." + flow["dataPath"], flow["name"]))
+      maxGran = max(maxGran, flow["options"]["granularity"])
+    if (self.granularity == 0):
+      self.granularity = maxGran
 
   def createDataPathAndOutputs(self, lobNames, neids, forwards):
     self.dataPaths = []

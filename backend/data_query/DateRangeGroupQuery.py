@@ -1,10 +1,10 @@
 import datetime
 
-from data_query.DatesQuery import  DatesQuery
+from data_query.DatesQuery import DatesQuery
 
 
 class DateRangeGroupQuery(DatesQuery):
-  def __init__(self, fromDate, toDate, lobNames, granularity, neids=None, forwards=None):
+  def __init__(self, fromDate, toDate, flows, granularity=0):
     self.fromDate = fromDate
     self.toDate = toDate
     lastDate = self.fromDate
@@ -13,8 +13,7 @@ class DateRangeGroupQuery(DatesQuery):
     while lastDate < self.toDate:
       dates.append(lastDate)
       lastDate += timeDelta
-    super().__init__(dates,lobNames, granularity, neids, forwards)
-
+    super().__init__(dates, flows, granularity)
 
   def execute(self):
     result = super(DateRangeGroupQuery, self).execute()
