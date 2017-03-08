@@ -34,7 +34,7 @@ class SimilarPastDaysFinder():
     if (_isWeekendDay(self.date)):
       return self._getPastWeekends()
     if (_isHoliday(self.date)):
-      return self._getPastHolidays()
+      return self._getPastWeekends()
 
   def _getPastHolidays(self):
     resultDays = []

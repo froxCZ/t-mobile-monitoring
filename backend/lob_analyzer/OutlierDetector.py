@@ -12,3 +12,6 @@
 #     datesQuery = DatesQuery([self.dateTime], self.lobName, resultName="value");
 #     data = datesQuery.execute()
 #     return util.listToDayMinutes(data)
+
+class OutlierDetector():
+  pass

@@ -18,8 +18,6 @@ def dataQueryV2():
   toDate = util.stringToDate(searchParam["to"])
   lobName = searchParam["lobNames"][0]
   lobConfig = config.getLobConfig(lobName)
-  neids = []
-  forwards = []
   flows = []
   granularity = searchParam.get("granularity", 0)
   if "neids" in searchParam:
@@ -41,10 +39,10 @@ def dataQueryV2():
   metricsList = mongoQuery.metrics
   metadata = mongoQuery.metadata
   if len(flows) == 1:
-    data = data_query.medianDateRange(fromDate, toDate, flows, metadata["granularity"], data)
-    metricsList.append("relativeDifference")
-    metricsList.append("scaledDifference")
-    metricsList.append("expected")
+    flowLevelQuery = data_query.FlowLevelDateRangeQuery(fromDate, toDate, flows, metadata["granularity"], data)
+    flowLevelData = flowLevelQuery.execute()
+    data = util.merge2DateLists(flowLevelData, None, data, None)
+    metricsList.extend(flowLevelQuery.metrics)
 
   if (len(data) > 10):
     validMetricName = metricsList[0]
