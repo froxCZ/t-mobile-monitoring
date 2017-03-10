@@ -15,6 +15,7 @@ class OutageDetector():
   def getStatus(self, ticTime):
     ticTraffic = self.getticTraffic(ticTime)
     outlierType = self.outlierDetector.getOutlierType(ticTraffic)
+    self.difference = self.outlierDetector.difference
     if outlierType == status.OK:
       return status.OK
     if outlierType == status.OUTAGE:

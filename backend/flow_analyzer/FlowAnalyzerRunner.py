@@ -4,7 +4,7 @@ import logging
 import config
 from config import TIMEZONE
 from flow_analyzer import FlowAnalyzer
-from flow_analyzer.FlowAnalyzerRunnerHistory import FlowAnalyzerRunnerHistory
+from flow_analyzer.FlowStatusManager import FlowStatusManager
 from scheduler.AbstractModuleScheduler import AbstractModuleScheduler
 
 
@@ -13,15 +13,15 @@ class FlowAnalyzerRunner(AbstractModuleScheduler):
 
   def __init__(self):
     super().__init__()
-    self.runHistory = FlowAnalyzerRunnerHistory()
-    self.runHistory.removeAllExecutions()
-    #delete status history
+    self.manager = FlowStatusManager()
+    self.manager.removeAll()
+    # delete status history
 
   def run(self):
     super(FlowAnalyzerRunner, self).run()
     lobsConfig = config.getLobsConfig()["lobs"]
 
-    self.lastExecutions = self.runHistory.getLastSuccessfullExecutions()
+    self.lastExecutions = self.manager.getAll()
     jobsToSchedule = {}
     for lobName, lob in lobsConfig.items():
       for flow in {**lob["forwards"], **lob["inputs"]}.values():
@@ -38,16 +38,15 @@ class FlowAnalyzerRunner(AbstractModuleScheduler):
         analyzer = FlowAnalyzer(flow)
         runResult = analyzer.run(config.getCurrentTime().replace(tzinfo=TIMEZONE))
         if runResult == 0:
-          self.runHistory.saveSuccessfullExecution(flow, time)
+          self.manager.saveStatus(flow, analyzer.status, analyzer.difference, analyzer.ticTime)
 
   def shouldSchedule(self, flow):
-    lastExecutionTime = datetime.datetime.min.replace(tzinfo=TIMEZONE)
+    lastTicTime = datetime.datetime.min.replace(tzinfo=TIMEZONE)
     granularity = flow["options"]["granularity"]
     if flow["gName"] in self.lastExecutions:
       lastExecution = self.lastExecutions[flow["gName"]]
-      if lastExecution["result"] == 0:
-        lastExecutionTime = lastExecution["finishTime"]
-    if lastExecutionTime < config.getCurrentTime() - datetime.timedelta(minutes=granularity):
+      lastTicTime = lastExecution["ticTime"]
+    if lastTicTime < config.getCurrentTime() - datetime.timedelta(minutes=granularity):
       return True
     else:
       return False

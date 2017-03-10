@@ -20,7 +20,7 @@ class TestStringMethods(unittest.TestCase):
       ("01.02.2017 23:59:59", "01.02.2017 23:00:00"),
     ]
     for testCase in testCases:
-      latestClosedIntervalTime = self.lobAnalyzer._getLatestCompleteIntervalTime(util.stringToTime(testCase[0]))
+      latestClosedIntervalTime = self.lobAnalyzer._getLatestCompleteTicTime(util.stringToTime(testCase[0]))
       self.assertEqual(latestClosedIntervalTime, util.stringToTime(testCase[1]))
 
 

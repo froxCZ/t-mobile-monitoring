@@ -17,8 +17,8 @@ class _Mongo:
       tzinfo=pytz.timezone('CET')
     ))
 
-  def scheduleHistory(self):
-    return self.db()["scheduleHistory"].with_options(codec_options=CodecOptions(
+  def statuses(self):
+    return self.db()["statuses"].with_options(codec_options=CodecOptions(
       tz_aware=True,
       tzinfo=pytz.timezone('CET')
     ))
