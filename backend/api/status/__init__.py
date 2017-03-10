@@ -1,18 +1,16 @@
 from flask import Blueprint, jsonify
 
-import config
-from flow_analyzer import FlowAnalyzer
+from flow_analyzer import FlowStatusManager
 
 lobsStatus = Blueprint('status', __name__)
 
 
 @lobsStatus.route('/', methods=["GET"])
-def getStatusList():
-  statusList = []
-  lobsConfig = config.getLobsConfig()["lobs"]
-  for lobName, lob in lobsConfig.items():
-    for flowName,flow in lob["flows"].items():
-      print(flowName)
-      analyzer = FlowAnalyzer(flow)
-      runResult = analyzer.run(config.getCurrentTime())
-  return jsonify(statusList)
+def getLobsOverview():
+  lobsOverview = FlowStatusManager().getLobsOverview()
+  return jsonify(lobsOverview)
+
+@lobsStatus.route('/lob/<string:lobName>', methods=["GET"])
+def getLobStatusDetail(lobName):
+  lobStatusDetail = FlowStatusManager().getLobDetail(lobName)
+  return jsonify(lobStatusDetail)

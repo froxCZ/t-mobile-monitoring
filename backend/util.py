@@ -18,8 +18,8 @@ def stringToTime(dateTimeString):
   return datetime.datetime.strptime(dateTimeString, "%d.%m.%Y %H:%M:%S").replace(tzinfo=TIMEZONE)
 
 
-def dateToString(date):
-  return date.strftime("%Y-%m-%dT%H:%M:%S.000Z")
+def dateToTimeString(date):
+  return date.strftime("%d.%m.%Y %H:%M:%S")
 
 
 def dateDataListToList(dateDataList, metricName):

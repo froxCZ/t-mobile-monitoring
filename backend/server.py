@@ -5,6 +5,9 @@ from flask import Flask, jsonify
 from flask.ext.cors import CORS
 from flask.json import JSONEncoder
 
+import config
+import util
+
 app = Flask(__name__)
 CORS(app)
 
@@ -30,6 +33,11 @@ def hello():
   return "Helasdlo xWorld!"
 
 
+@app.route("/currentTime")
+def currentTime():
+  return jsonify(util.dateToTimeString(config.getCurrentTime()))
+
+
 @app.errorhandler(Exception)
 def handle_invalid_usage(error):
   response = jsonify({"message": str(error)})
@@ -45,5 +53,5 @@ from api.status import lobsStatus
 app.register_blueprint(api_data_query, url_prefix="/data_query")
 app.register_blueprint(lobsConfig, url_prefix="/lobs/config")
 app.register_blueprint(lobsStatus, url_prefix="/lobs/status")
-#SchedulerRunner().start()
+# SchedulerRunner().start()
 app.run(debug=True)

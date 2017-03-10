@@ -1,3 +1,5 @@
+import datetime
+
 import pytz
 
 from mongo import mongo
@@ -7,11 +9,13 @@ from .config import getLobsConfig
 
 configColl = mongo.config()
 TIMEZONE = pytz.timezone('CET')
-import util
+
+_BASE_DATE_DIFF = datetime.timedelta(days=60)
+
 
 def getCurrentTime():
-  #return datetime.datetime.now().replace(tzinfo=TIMEZONE)
-  return util.stringToTime("03.02.2017 20:01:00")
+  # return datetime.datetime.now().replace(tzinfo=TIMEZONE)
+  return datetime.datetime.now().replace(tzinfo=TIMEZONE) - _BASE_DATE_DIFF
 
 
 class Lob:

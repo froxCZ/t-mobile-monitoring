@@ -1,3 +1,7 @@
+import datetime
+
+import config
+from flow_analyzer import status
 from mongo import mongo
 
 
@@ -5,11 +9,70 @@ class FlowStatusManager:
   def __init__(self):
     pass
 
+  def getLobDetail(self, lobName):
+    lob = config.getLobConfig(lobName)
+    allStatuses = self.getAll()
+    lobFlowStatuses = {}
+    for flowName,flow in lob["flows"].items():
+      lobFlowStatuses[flowName] = allStatuses[flow["gName"]]
+
+    return lobFlowStatuses
+
+  def getLobsOverview(self):
+    allStatuses = self.getAll()
+    lobStatusDict = {}
+    for lobName, lob in config.getLobsConfig()["lobs"].items():
+      ok = 0
+      warning = 0
+      outage = 0
+      expired = 0
+      for flow in lob["flows"].values():
+        gName = flow["gName"]
+        flowStatus = allStatuses.get(gName, {"status": status.NA})["status"]
+        if flowStatus == status.NA:
+          expired += 1
+        elif flowStatus == status.OK:
+          ok += 1
+        elif flowStatus == status.WARNING:
+          warning += 1
+        elif flowStatus == status.OUTAGE:
+          outage += 1
+      lobStatusDict[lobName] = {
+        status.OK: ok,
+        status.WARNING: warning,
+        status.OUTAGE: outage,
+        status.NA: expired,
+      }
+    return lobStatusDict
+
   def getAll(self):
-    res = mongo.statuses().find_one({"_id": "lobs"},{"_id":0})
-    if res == None:
-      res = {}
-    return res
+    lobs = config.getLobsConfig()["lobs"]
+    res = mongo.statuses().find_one({"_id": "lobs"}, {"_id": 0})
+    if res is None:
+      return {}
+    statuses = {}
+    for lobName, lob in lobs.items():
+      for flowName, flow in lob["flows"].items():
+        gName = flow["gName"]
+        if gName in res:
+          statuses[gName] = self._setStatusMetadata(res[gName], flow)
+        else:
+          statuses[gName] = {"status": "N/A"}
+    return statuses
+
+  def _setStatusMetadata(self, status, flow):
+    ticTime = status["ticTime"]
+    granDelta = datetime.timedelta(minutes=flow["options"]["granularity"])
+    if ticTime + 2 * granDelta < config.getCurrentTime():
+      status["status"] = "N/A"
+    return status
+
+  def getStatusForFlow(self, flow):
+    gName = flow["gName"]
+    res = mongo.statuses().find_one({"_id": "lobs"}, {gName: 1})
+    if gName not in res:
+      return {"validity": "expired"}
+    return self._setStatusMetadata(res[gName], flow)
 
   def saveStatus(self, flow, status, difference, ticTime):
     statusDict = {"status": status,
@@ -19,13 +82,5 @@ class FlowStatusManager:
     mongo.statuses().update_one({"_id": "lobs"}, setObj, upsert=True)
     pass
 
-  def getStatusForFlow(self, flow):
-    gName = flow["gName"]
-    res = mongo.statuses().find_one({"_id": "lobs"}, {gName: 1})
-    if gName not in res:
-      return None
-    return res[gName]
-
   def removeAll(self):
     mongo.statuses().delete_one({"_id": "lobs"})
-    pass
