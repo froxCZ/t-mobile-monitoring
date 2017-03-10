@@ -37,5 +37,5 @@ class FlowLevelDateRangeQuery:
       resulttic["expected"] = tic["expected"]
       resulttic["dayAverage"] = tic["dayAverage"]
       resultData.append(resulttic)
-    self.metrics = ["flowDifference", "normalizedDifference", "expected", "dayAverage"]
+    self.metrics = ["ticDifference", "dayDifference", "expected", "dayAverage"]
     return resultData

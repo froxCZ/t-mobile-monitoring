@@ -77,7 +77,8 @@ def getLobsConfig():
   defaultConfig = {
     "granularity": 240,
     "hardAlarmLevel": 0.5,
-    "softAlarmLevel": 0.75
+    "softAlarmLevel": 0.75,
+    "difference": "day"
   }
   for lobName, config in res["lobs"].items():
     config["options"] = {**defaultConfig, **config["options"]}
