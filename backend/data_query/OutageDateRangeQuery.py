@@ -11,7 +11,7 @@ class OutageDateRangeQuery():
     self.toDate = util.resetDateTimeMidnight(toDate)
     self.flow = flow
     self.granularity = granularity
-    self.metric = "outage"
+    self.metric = "status"
     self.ticDict = {}
     self.flowAnalyzer = FlowAnalyzer(self.flow)
 
@@ -28,10 +28,10 @@ class OutageDateRangeQuery():
   def execute(self):
     granularityDelta = datetime.timedelta(minutes=self.granularity)
     d = self.fromDate
-    outageList = []
+    statusList = []
     while d < self.toDate:
       self.flowAnalyzer.run(d)
-      outage = self.flowAnalyzer.isOutage
-      outageList.append({"_id": d, "outage": outage})
+      status = self.flowAnalyzer.status
+      statusList.append({"_id": d, "status": status})
       d += granularityDelta
-    return outageList
+    return statusList

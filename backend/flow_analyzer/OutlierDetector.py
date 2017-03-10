@@ -1,10 +1,7 @@
 import data_util
-
+import flow_analyzer.status as status
 
 class OutlierDetector():
-  NO_OUTLIER = 0
-  SOFT_OUTLIER = 1
-  HARD_OUTLIER = 2
 
   def __init__(self, flow):
     super().__init__()
@@ -21,8 +18,8 @@ class OutlierDetector():
     softLevel = self.flow["options"]["softAlarmLevel"]
     flowLevelDifference = flowLevel[differenceType]
     if flowLevelDifference < hardLevel:
-      return self.HARD_OUTLIER
+      return status.OUTAGE
     elif flowLevelDifference < softLevel:
-      return self.SOFT_OUTLIER
+      return status.WARNING
     else:
-      return self.NO_OUTLIER
+      return status.OK

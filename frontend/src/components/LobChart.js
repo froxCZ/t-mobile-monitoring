@@ -67,7 +67,7 @@ export default class LobChart extends Component {
 
   renderOutages() {
     let outageLines = []
-    if (this.props.metrics["outage"] == null) {
+    if (this.props.metrics["status"] == null) {
       return outageLines
     }
     let inOutage = false;
@@ -76,7 +76,7 @@ export default class LobChart extends Component {
     let tick = null
     for (let i = 0; i < this.props.data.length; i++) {
       tick = this.props.data[i]
-      if (tick.outage) {
+      if (tick.status == "OUTAGE") {
         if (!inOutage) {
           outageStart = tick.tickValue
           inOutage = true;

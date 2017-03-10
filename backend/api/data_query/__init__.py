@@ -56,13 +56,13 @@ def dataQueryV2():
     metricsList.append(validMetricName + "_smoothed")
 
   for metric in metricsList:
-    maxx = 0
-    minn = float('inf')
-    for row in data:
-      if metric in row:
-        maxx = max(row[metric], maxx)
-        minn = min(row[metric], minn)
-    metrics[metric] = {"max": maxx, "min": minn}
+    # maxx = 0
+    # minn = float('inf')
+    # for row in data:
+    #   if metric in row:
+    #     maxx = max(row[metric], maxx)
+    #     minn = min(row[metric], minn)
+    metrics[metric] = {}
   response["data"] = data
   response["metadata"] = {**{"metrics": metrics}, **metadata}
   return jsonify(response)

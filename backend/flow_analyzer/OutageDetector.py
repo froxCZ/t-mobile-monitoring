@@ -1,6 +1,7 @@
 import datetime
 
 import data_query
+from flow_analyzer import status
 from flow_analyzer.OutlierDetector import OutlierDetector
 
 
@@ -11,22 +12,22 @@ class OutageDetector():
     self.outlierDetector = OutlierDetector(self.flow)
     self.precomputedData = {}
 
-  def isOutage(self, ticTime):
+  def getStatus(self, ticTime):
     ticTraffic = self.getticTraffic(ticTime)
     outlierType = self.outlierDetector.getOutlierType(ticTraffic)
-    if outlierType == OutlierDetector.NO_OUTLIER:
-      return False
-    if outlierType == OutlierDetector.HARD_OUTLIER:
-      return True
+    if outlierType == status.OK:
+      return status.OK
+    if outlierType == status.OUTAGE:
+      return status.OUTAGE
 
     ticTime = ticTraffic["_id"]
     previousticTime = ticTime - datetime.timedelta(minutes=self.flow["options"]["granularity"])
     previousticTraffic = self.getticTraffic(previousticTime)
     previousOutlierType = self.outlierDetector.getOutlierType(previousticTraffic)
-    if previousOutlierType == OutlierDetector.NO_OUTLIER:
-      return False
+    if previousOutlierType == status.OK:
+      return status.WARNING
     else:
-      return True
+      return status.OUTAGE
 
   def getticTraffic(self, ticTime):
     if ticTime in self.precomputedData:

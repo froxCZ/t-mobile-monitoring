@@ -35,6 +35,12 @@ class _Mongo:
       tzinfo=pytz.timezone('CET')
     ))
 
+  def status(self):
+    return self.db()["status"].with_options(codec_options=CodecOptions(
+      tz_aware=True,
+      tzinfo=pytz.timezone('CET')
+    ))
+
   def dataDb(self):
     return _client["dev_data"]
 

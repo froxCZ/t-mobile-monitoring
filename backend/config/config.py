@@ -78,8 +78,9 @@ def getLobsConfig():
     "granularity": 240,
     "hardAlarmLevel": 0.5,
     "softAlarmLevel": 0.75,
-    "difference": "day"
+    "difference": "day",
   }
+  flowDefaultConfig = {"enabled": True}
   for lobName, config in res["lobs"].items():
     config["options"] = {**defaultConfig, **config["options"]}
     if "inputs" not in config:
@@ -89,7 +90,7 @@ def getLobsConfig():
     config["flows"] = {}
     inputs = {}
     for flowName, flowOptions in config["inputs"].items():
-      flow = {"options": setDefaultOptions(flowOptions, parentObj=config["options"])}
+      flow = {"options": setFlowDefaultOptions(flowOptions, parentObj=config["options"])}
       flow["name"] = flowName
       flow["type"] = "inputs"
       flow["lobName"] = lobName
@@ -102,7 +103,7 @@ def getLobsConfig():
     for flowName, flowOptions in config["forwards"].items():
       inputName = flowName.split(":")[0]
       if inputName in config["inputs"]:
-        flow = {"options": setDefaultOptions(flowOptions, parentObj=config["options"])}
+        flow = {"options": setFlowDefaultOptions(flowOptions, parentObj=config["options"])}
         flow["name"] = flowName
         flow["type"] = "forwards"
         flow["lobName"] = lobName
@@ -114,11 +115,8 @@ def getLobsConfig():
   return res
 
 
-def setDefaultOptions(obj, parentObj):
-  # overridingParent = False
-  # todo do overriding
-  return {**parentObj, **obj}
-  # obj["overrideParentSettings"] = overridingParent
+def setFlowDefaultOptions(obj, parentObj):
+  return {**{"enabled": True}, **parentObj, **obj}
 
 
 def createMergedFlowsObject(lobName, flowType):

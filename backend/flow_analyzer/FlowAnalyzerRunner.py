@@ -1,21 +1,27 @@
 import datetime
 import logging
 
+import config
 from config import TIMEZONE
-from config import config
 from flow_analyzer import FlowAnalyzer
+from flow_analyzer.FlowAnalyzerRunnerHistory import FlowAnalyzerRunnerHistory
 from scheduler.AbstractModuleScheduler import AbstractModuleScheduler
-from scheduler.lob.LobScheduleHistory import LobScheduleHistory
 
 
-class LobScheduler(AbstractModuleScheduler):
-  name = "LobScheduler"
+class FlowAnalyzerRunner(AbstractModuleScheduler):
+  name = "FlowAnalyzerRunner"
+
+  def __init__(self):
+    super().__init__()
+    self.runHistory = FlowAnalyzerRunnerHistory()
+    self.runHistory.removeAllExecutions()
+    #delete status history
 
   def run(self):
-    super(LobScheduler, self).run()
+    super(FlowAnalyzerRunner, self).run()
     lobsConfig = config.getLobsConfig()["lobs"]
-    lobScheduleHistory = LobScheduleHistory()
-    self.lastExecutions = lobScheduleHistory.getLastSuccessfullExecutions()
+
+    self.lastExecutions = self.runHistory.getLastSuccessfullExecutions()
     jobsToSchedule = {}
     for lobName, lob in lobsConfig.items():
       for flow in {**lob["forwards"], **lob["inputs"]}.values():
@@ -24,15 +30,15 @@ class LobScheduler(AbstractModuleScheduler):
           l = jobsToSchedule.get(granularity, [])
           l.append(flow)
           jobsToSchedule[granularity] = l
-    if(len(jobsToSchedule)) == 0:
+    if (len(jobsToSchedule)) == 0:
       logging.debug("no jobs to execute")
     for gran, flowList in sorted(jobsToSchedule.items()):
       for flow in flowList:
-        time = datetime.datetime.now().replace(tzinfo=TIMEZONE)
-        analyzer = FlowAnalyzer(flow,datetime.datetime.now().replace(tzinfo=TIMEZONE))
-        runResult = analyzer.run()
+        time = config.getCurrentTime()
+        analyzer = FlowAnalyzer(flow)
+        runResult = analyzer.run(config.getCurrentTime().replace(tzinfo=TIMEZONE))
         if runResult == 0:
-          lobScheduleHistory.saveSuccessfullExecution(flow, time)
+          self.runHistory.saveSuccessfullExecution(flow, time)
 
   def shouldSchedule(self, flow):
     lastExecutionTime = datetime.datetime.min.replace(tzinfo=TIMEZONE)
@@ -41,7 +47,7 @@ class LobScheduler(AbstractModuleScheduler):
       lastExecution = self.lastExecutions[flow["gName"]]
       if lastExecution["result"] == 0:
         lastExecutionTime = lastExecution["finishTime"]
-    if lastExecutionTime < datetime.datetime.now().replace(tzinfo=TIMEZONE) - datetime.timedelta(minutes=granularity):
+    if lastExecutionTime < config.getCurrentTime() - datetime.timedelta(minutes=granularity):
       return True
     else:
       return False
@@ -49,4 +55,4 @@ class LobScheduler(AbstractModuleScheduler):
 
 if __name__ == "__main__":
   logging.basicConfig(format='%(levelname)s [%(module)s]: %(message)s', level=logging.DEBUG)
-  LobScheduler().run()
+  FlowAnalyzerRunner().run()

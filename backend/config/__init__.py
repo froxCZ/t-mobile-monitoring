@@ -74,10 +74,5 @@ def getLobConfigByName(fullName):
   return Lob(country, lob, granularity)
 
 
-def getLobsConfig():
-  res = configColl.find_one({"_id": "lobs"})
-  return res
-
-
 def updateLob(lobName, lobUpdate):
   return configColl.update_one({"_id": "lobs"}, lobUpdate)

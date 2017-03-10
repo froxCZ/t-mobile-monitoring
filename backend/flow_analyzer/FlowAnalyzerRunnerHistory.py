@@ -1,7 +1,7 @@
 from mongo import mongo
 
 
-class LobScheduleHistory:
+class FlowAnalyzerRunnerHistory:
   def __init__(self):
     pass
 
@@ -14,4 +14,8 @@ class LobScheduleHistory:
   def saveSuccessfullExecution(self, flow, time):
     setObj = {"$set": {flow["gName"]: {"finishTime": time, "result": 0}}}
     mongo.scheduleHistory().update_one({"_id": "lobs"}, setObj, upsert=True)
+    pass
+
+  def removeAllExecutions(self):
+    mongo.scheduleHistory().delete_one({"_id": "lobs"})
     pass

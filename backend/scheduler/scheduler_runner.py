@@ -4,17 +4,18 @@ import time
 import schedule
 
 logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.DEBUG)
-from scheduler.lob.LobScheduler import LobScheduler
+from flow_analyzer import FlowAnalyzerRunner
 
-# LobScheduler().run()
+# FlowAnalyzerRunner().run()
 #
 MODULE_SCHEDULERS = {
-  5: [LobScheduler()],
+  5*60: [FlowAnalyzerRunner()],
 
 }
 
 for seconds, schedulers in MODULE_SCHEDULERS.items():
   for scheduler in schedulers:
+    scheduler.run()
     schedule.every(seconds).seconds.do(scheduler.run)
 
 while True:
