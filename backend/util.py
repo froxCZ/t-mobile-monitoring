@@ -14,6 +14,10 @@ def stringToDate(dateString):
   return datetime.datetime.strptime(dateString, "%d.%m.%Y").replace(tzinfo=TIMEZONE)
 
 
+def stringToTime(dateTimeString):
+  return datetime.datetime.strptime(dateTimeString, "%d.%m.%Y %H:%M:%S").replace(tzinfo=TIMEZONE)
+
+
 def dateToString(date):
   return date.strftime("%Y-%m-%dT%H:%M:%S.000Z")
 

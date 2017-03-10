@@ -61,42 +61,6 @@ def dataQueryV2():
   response["metadata"] = {**{"metrics": metrics}, **metadata}
   return jsonify(response)
 
-
-@api_data_query.route('/', methods=["POST"])
-def dataQuery():
-  searchParam = request.get_json()
-  fromDate = util.jsStringToDate(searchParam["from"]).replace(hour=0, minute=0, second=0)
-  toDate = util.jsStringToDate(searchParam["to"]).replace(hour=0, minute=0, second=0)
-  lobNames = searchParam["aggregation"]["sum"]
-  response = {}
-  mongoQuery = data_query.DateRangeGroupQuery(fromDate, toDate, lobNames, searchParam["granularity"])
-  data = mongoQuery.execute()
-  metrics = {}
-  metricsList = mongoQuery.metrics
-  metadata = mongoQuery.metadata
-  data = data_query.medianDateRange(fromDate, toDate, lobNames[0], metadata["granularity"], data)
-  metricsList.append("relativeDifference")
-  metricsList.append("scaledDifference")
-  metricsList.append("median")
-
-  if (len(data) > 10):
-    validMetricName = metricsList[0]
-    smoothData(data, metadata["granularity"], validMetricName)
-    metricsList.append(validMetricName + "_smoothed")
-
-  for metric in metricsList:
-    maxx = 0
-    minn = float('inf')
-    for row in data:
-      if metric in row:
-        maxx = max(row[metric], maxx)
-        minn = min(row[metric], minn)
-    metrics[metric] = {"max": maxx, "min": minn}
-  response["data"] = data
-  response["metadata"] = {**{"metrics": metrics}, **metadata}
-  return jsonify(response)
-
-
 @api_data_query.route('/best_correlations', methods=["GET"])
 def bestCorrelations():
   lobName = request.args.get('lobName')

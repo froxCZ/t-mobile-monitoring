@@ -23,15 +23,8 @@ class FlowLevelDateRangeQuery:
       similarDaysQuery = ExpectedTrafficQuery(date, self.flows, granularity=self.granularity)
       similarDatesData = similarDaysQuery.execute()
       l = util.minuteDictToDateDict(date, similarDatesData, "expected")
-      dayTotal = 0
       for tick in l.values():
-        dayTotal += tick["expected"]
-      if len(l.values()) != 0:
-        dayAverage = dayTotal / len(l.values())
-      else:
-        dayAverage = 0
-      for tick in l.values():
-        tick["dayAverage"] = dayAverage
+        tick["dayAverage"] = similarDaysQuery.dayAverage
       valueKey = similarDaysQuery.metrics[0]
       for d, v in l.items():
         medianList.append(v)

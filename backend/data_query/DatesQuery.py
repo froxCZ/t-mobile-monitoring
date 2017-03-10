@@ -1,5 +1,6 @@
 import datetime
 
+import util
 from config import config
 from mongo import mongo
 
@@ -10,7 +11,7 @@ class DatesQuery:
     self.coll = mongo.lobs()
     self.metrics = []
     self.dataPaths = []
-    self.dates = dates
+    self.dates = [util.resetDateTimeMidnight(d) for d in dates]
     self.flows = flows
     self.granularity = int(granularity)
     self.createDataPathAndOutputs2()

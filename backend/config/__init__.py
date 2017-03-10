@@ -1,9 +1,18 @@
 import pytz
 
 from mongo import mongo
+from .config import getLobConfig
+from .config import getLobConfigByName
+from .config import getLobsConfig
 
 configColl = mongo.config()
 TIMEZONE = pytz.timezone('CET')
+import util
+
+def getCurrentTime():
+  #return datetime.datetime.now().replace(tzinfo=TIMEZONE)
+  return util.stringToTime("03.02.2017 20:01:00")
+
 
 class Lob:
   def __init__(self, country, name, granularity=None, smooth=True):
@@ -62,7 +71,8 @@ def getLobConfigByName(fullName):
   country = tmp[0]
   lob = tmp[1]
   granularity = res["lobs"][country][lob]["granularity"]
-  return Lob(country,lob,granularity)
+  return Lob(country, lob, granularity)
+
 
 def getLobsConfig():
   res = configColl.find_one({"_id": "lobs"})
@@ -70,4 +80,4 @@ def getLobsConfig():
 
 
 def updateLob(lobName, lobUpdate):
-  return configColl.update_one({"_id":"lobs"},lobUpdate)
+  return configColl.update_one({"_id": "lobs"}, lobUpdate)

@@ -16,11 +16,10 @@ class ExpectedTrafficQuery:
     self.metadata = datesQuery.metadata
     self.metrics = datesQuery.metrics
     dayMedians = _createMedians(data, datesQuery.metrics[0])
-    # if self.date.weekday() == 4: proposal for lazy friday
-    #   for minute,expectedVal in dayMedians.items():
-    #     dayMedians[minute]=dayMedians[minute]*0.9
+    self.dayAverage = 0
+    if len(dayMedians.values()) != 0:
+      self.dayAverage = sum(dayMedians.values()) / len(dayMedians.values())
     return dayMedians
-
 
 
 def _createMedians(data, valueName):
