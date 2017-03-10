@@ -28,25 +28,44 @@ class LobsMonitoring extends Component {
     Api.fetch("/lobs/config/", {method: 'GET'}).then((response) => {
       this.setState({lobs: response.lobs});
     });
+    Api.fetch("/lobs/status/", {method: 'GET'}).then((response) => {
+      this.setState({status: response});
+    });
   }
 
   render() {
     let lobRows = [];
     if (this.state.lobs) {
       for (let lobName in this.state.lobs) {
+        let flowStatuses = null
+        let statusSpan = <span className="badge badge-primary"></span>
+        if (this.state.status) {
+          let status = this.state.status[lobName]
+          flowStatuses = (<div>
+            <h5>
+              <span style={{minWidth:3+"em"}} className="badge badge-pill badge-success">{status.OK}</span>
+              &nbsp;
+              <span style={{minWidth:3+"em"}} className="badge badge-pill badge-warning">{status.WARNING}</span>
+              &nbsp;
+              <span style={{minWidth:3+"em"}} className="badge badge-pill badge-danger">{status.OUTAGE}</span>
+            </h5>
+          </div>)
+          if(status.OUTAGE > 0){
+            statusSpan = <span className="badge badge-danger">outage</span>
+          }else if(status.WARNING > 0){
+            statusSpan = <span className="badge badge-warning">warning</span>
+          }else{
+            statusSpan = <span className="badge badge-success">ok</span>
+          }
+        }
         lobRows.push(
           <tr onClick={this.goToLobDetail.bind(this, lobName)}>
             <td>{lobName}</td>
-            <td>80%</td>
             <td>
-              <span className="badge badge-pill badge-success">42</span>
-              <span className="badge badge-pill badge-warning">3</span>
-              <span className="badge badge-pill badge-danger">0</span>
+              {flowStatuses}
             </td>
             <td>
-              <span className="badge badge-success">OK</span>
-              <span className="badge badge-warning">WARNING</span>
-              <span className="badge badge-danger">ERROR</span>
+              <h4>{statusSpan}</h4>
             </td>
           </tr>)
       }
@@ -77,8 +96,7 @@ class LobsMonitoring extends Component {
                   <thead>
                   <tr>
                     <th>Lob Name</th>
-                    <th>Traffic Level</th>
-                    <th>Forwardings</th>
+                    <th>Flows</th>
                     <th>Status</th>
                   </tr>
                   </thead>
