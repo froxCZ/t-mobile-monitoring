@@ -40,7 +40,7 @@ export default class LobChart extends Component {
   }
 
   render() {
-    if (!this.props.data) {
+    if (!this.props.data || !this.props.metrics) {
       return <p></p>
     }
     LobChart.adjustData(this.props.data);
@@ -58,11 +58,53 @@ export default class LobChart extends Component {
           <Tooltip /*wrapperStyle={{backgroundColor:'#ff000000'}}*//>
           <Legend />
           {referenceLines}
-
           {this.renderLines()}
+          {this.renderOutages()}
         </LineChart>
       </ResponsiveContainer>
     )
+  }
+
+  renderOutages() {
+    let outageLines = []
+    if (this.props.metrics["outage"] == null) {
+      return outageLines
+    }
+    let inOutage = false;
+    let outageStart = null;
+    let outageEnd = null;
+    let tick = null
+    for (let i = 0; i < this.props.data.length; i++) {
+      tick = this.props.data[i]
+      if (tick.outage) {
+        if (!inOutage) {
+          outageStart = tick.tickValue
+          inOutage = true;
+        }
+        outageEnd = tick.tickValue
+      } else if (inOutage) {
+        outageLines.push(
+          <ReferenceArea x1={outageStart}
+                         x2={outageEnd}
+                         stroke="red"
+                         strokeOpacity={0.3}/>
+        )
+        outageStart = null;
+        outageEnd = null;
+        inOutage = false
+      }
+    }
+    if(inOutage){
+      outageLines.push(
+        <ReferenceArea x1={outageStart}
+                       x2={outageEnd}
+                       stroke="red"
+                       strokeOpacity={0.3}/>
+      )
+    }
+    return outageLines;
+
+
   }
 
   renderLines() {
@@ -73,6 +115,9 @@ export default class LobChart extends Component {
         continue;
       }
       if (i.includes("Difference") && !this.props.difference) {
+        continue;
+      }
+      if (i.includes("outage")) {
         continue;
       }
       if (this.props.difference && !i.includes("Difference")) {
