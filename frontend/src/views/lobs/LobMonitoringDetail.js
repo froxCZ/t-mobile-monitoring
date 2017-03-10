@@ -42,6 +42,9 @@ export default class LobMonitoringDetail extends Component {
     Api.fetch("/lobs/config/" + lobName, {method: 'GET'}).then((response) => {
       this.setState({lob: response, optionsString: JSON.stringify(response.options, null, 2)});
     });
+    Api.fetch("/lobs/status/lob/" + lobName, {method: 'GET'}).then((response) => {
+      this.setState({status: response})
+    });
   }
 
   toggle(tab) {
@@ -145,16 +148,16 @@ export default class LobMonitoringDetail extends Component {
                           className="form-control" value={this.state.optionsString}
                           onChange={(e) => this.setState({optionsString: e.target.value})}
                 />
-                <div style={{display: "block"}}>
-                  <button type="button"
-                          className="btn btn-primary"
-                          disabled={!isValidJson}
-                          onClick={
-                            () => {
-                              this.saveOptions()
-                            }}>{buttonText}
-                  </button>
-                </div>
+              <div style={{display: "block"}}>
+                <button type="button"
+                        className="btn btn-primary"
+                        disabled={!isValidJson}
+                        onClick={
+                          () => {
+                            this.saveOptions()
+                          }}>{buttonText}
+                </button>
+              </div>
 
             </div>
           </div>
@@ -163,7 +166,7 @@ export default class LobMonitoringDetail extends Component {
   }
 
   saveOptions() {
-    if(!this.isValidJson(this.state.optionsString)){
+    if (!this.isValidJson(this.state.optionsString)) {
       return
     }
     var myInit = {
@@ -171,6 +174,31 @@ export default class LobMonitoringDetail extends Component {
       body: this.state.optionsString
     };
     Api.fetch("/lobs/config/" + this.state.lobName + "/options", myInit);
+  }
+
+  getTrafficDifference(flowName) {
+    if (this.state.status) {
+      return this.state.status[flowName].difference
+    } else {
+      return "-"
+    }
+  }
+
+  getStatusBadge(flowName) {
+    if (flowName in this.state.status) {
+      let flowStatus = this.state.status[flowName].status
+      let badge = null;
+      if (flowStatus == "OK") {
+        badge = <span className="badge badge-success">ok</span>
+      } else if (flowStatus == "WARNING") {
+        badge = <span className="badge badge-warning">warning</span>
+      } else if (flowStatus == "OUTAGE") {
+        badge = <span className="badge badge-danger">outage</span>
+      }
+      return badge;
+    } else {
+      return "-"
+    }
   }
 
   renderList() {
@@ -186,16 +214,9 @@ export default class LobMonitoringDetail extends Component {
             <td>{neidConfig.options.softAlarmLevel}</td>
             <td>{neidConfig.options.hardAlarmLevel}</td>
             <td>-- compare with parent --</td>
-            <td>80%</td>
+            <td>{this.getTrafficDifference(neidName)}</td>
             <td>
-              <span className="badge badge-pill badge-success">42</span>
-              <span className="badge badge-pill badge-warning">3</span>
-              <span className="badge badge-pill badge-danger">0</span>
-            </td>
-            <td>
-              <span className="badge badge-success">OK</span>
-              <span className="badge badge-warning">WARNING</span>
-              <span className="badge badge-danger">ERROR</span>
+              <h4>{this.getStatusBadge(neidName)}</h4>
             </td>
           </tr>)
       }
@@ -208,16 +229,9 @@ export default class LobMonitoringDetail extends Component {
             <td>{forward.options.softAlarmLevel}</td>
             <td>{forward.options.hardAlarmLevel}</td>
             <td>--</td>
-            <td>70%</td>
+            <td>{this.getTrafficDifference(forwardName)}</td>
             <td>
-              <span className="badge badge-pill badge-success">42</span>
-              <span className="badge badge-pill badge-warning">3</span>
-              <span className="badge badge-pill badge-danger">0</span>
-            </td>
-            <td>
-              <span className="badge badge-success">OK</span>
-              <span className="badge badge-warning">WARNING</span>
-              <span className="badge badge-danger">ERROR</span>
+              <h4>{this.getStatusBadge(forwardName)}</h4>
             </td>
           </tr>)
       }

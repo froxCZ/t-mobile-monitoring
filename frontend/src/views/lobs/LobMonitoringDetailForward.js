@@ -49,7 +49,14 @@ export default class LobMonitoringDetailForward extends Component {
       inputs.push(flowName)
     }
     if (this.state.lobName != lobName || this.state.flowName != flowName) {
-      this.setState({lobName: lobName, flowName: flowName, flowType: flowType, inputs: inputs, forwards: forwards});
+      this.setState({
+        lobName: lobName,
+        flowName: flowName,
+        flowType: flowType,
+        inputs: inputs,
+        forwards: forwards,
+        status: null
+      });
       Api.fetch("/lobs/config/" + lobName, {method: 'GET'}).then((response) => {
         //todolet flow= response[flowType][flowName]
         this.setState({
