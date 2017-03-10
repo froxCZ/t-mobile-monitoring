@@ -13,8 +13,17 @@ lobs = Blueprint('lobs', __name__)
 
 @lobs.route('/', methods=["GET"])
 def lobsList():
-  return jsonify(config.getLobsConfig())
+  fullConfig = request.args.get('fullConfig')
+  if fullConfig is None:
+    fullConfig = False
+  lobConfigs = config.getLobsConfig()
+  if fullConfig == False:
+    for lob in lobConfigs["lobs"].values():
+      del lob["flows"]
+      del lob["inputs"]
+      del lob["forwards"]
 
+  return jsonify(lobConfigs)
 
 @lobs.route('/discover', methods=["POST"])
 def discover():
@@ -40,7 +49,17 @@ def discover():
 
 @lobs.route('/configs', methods=["GET"])
 def lobsConfig():
-  return jsonify(config.getLobsConfig())
+  fullConfig = request.args.get('fullConfig')
+  if fullConfig is None:
+    fullConfig = False
+  lobConfigs = config.getLobsConfig()
+  if fullConfig == False:
+    for lob in lobConfigs["lobs"]:
+      del lob["flows"]
+      del lob["inputs"]
+      del lob["forwards"]
+
+  return jsonify(lobConfigs)
 
 
 @lobs.route('/<string:lobName>', methods=["GET"])
