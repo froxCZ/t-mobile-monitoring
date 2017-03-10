@@ -1,4 +1,4 @@
 OK = "OK"
 WARNING = "WARNING"
 OUTAGE = "OUTAGE"
-NA = "N/A"
+NA = "N_A"

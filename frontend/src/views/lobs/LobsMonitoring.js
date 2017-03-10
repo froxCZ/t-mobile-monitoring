@@ -38,7 +38,7 @@ class LobsMonitoring extends Component {
     if (this.state.lobs) {
       for (let lobName in this.state.lobs) {
         let flowStatuses = null
-        let statusSpan = <span className="badge badge-primary"></span>
+        let statusSpan = [<span className="badge badge-primary"></span>]
         if (this.state.status) {
           let status = this.state.status[lobName]
           flowStatuses = (<div>
@@ -48,14 +48,19 @@ class LobsMonitoring extends Component {
               <span style={{minWidth:3+"em"}} className="badge badge-pill badge-warning">{status.WARNING}</span>
               &nbsp;
               <span style={{minWidth:3+"em"}} className="badge badge-pill badge-danger">{status.OUTAGE}</span>
+              &nbsp;
+              <span style={{minWidth:3+"em"}} className="badge badge-pill badge-default">{status.N_A}</span>
             </h5>
           </div>)
           if(status.OUTAGE > 0){
-            statusSpan = <span className="badge badge-danger">outage</span>
+            statusSpan = [<span style={{marginRight:"3px"}} className="badge badge-danger">outage</span>]
           }else if(status.WARNING > 0){
-            statusSpan = <span className="badge badge-warning">warning</span>
-          }else{
-            statusSpan = <span className="badge badge-success">ok</span>
+            statusSpan = [<span style={{marginRight:"3px"}} className="badge badge-warning">warning</span>]
+          }else if(status.OK > 0){
+            statusSpan = [<span style={{marginRight:"3px"}} className="badge badge-success">ok</span>]
+          }
+          if(status.N_A > 0){
+            statusSpan.push(<span className="badge badge-default">n/a</span>)
           }
         }
         lobRows.push(

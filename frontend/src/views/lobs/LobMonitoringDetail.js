@@ -177,7 +177,7 @@ export default class LobMonitoringDetail extends Component {
   }
 
   getTrafficDifference(flowName) {
-    if (this.state.status) {
+    if (flowName in this.state.status && this.state.status[flowName].difference) {
       return this.state.status[flowName].difference
     } else {
       return "-"
@@ -194,6 +194,8 @@ export default class LobMonitoringDetail extends Component {
         badge = <span className="badge badge-warning">warning</span>
       } else if (flowStatus == "OUTAGE") {
         badge = <span className="badge badge-danger">outage</span>
+      }else if(flowStatus == "N_A"){
+        badge = <span className="badge badge-default">n/a</span>
       }
       return badge;
     } else {
@@ -253,7 +255,6 @@ export default class LobMonitoringDetail extends Component {
                   <th>Hard Alarm</th>
                   <th>Override</th>
                   <th>Traffic level</th>
-                  <th>Forwardings</th>
                   <th>Status</th>
                 </tr>
                 </thead>
@@ -281,7 +282,6 @@ export default class LobMonitoringDetail extends Component {
                   <th>Hard Alarm</th>
                   <th>Override</th>
                   <th>Traffic level</th>
-                  <th>Forwardings</th>
                   <th>Status</th>
                 </tr>
                 </thead>

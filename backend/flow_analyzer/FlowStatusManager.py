@@ -57,14 +57,14 @@ class FlowStatusManager:
         if gName in res:
           statuses[gName] = self._setStatusMetadata(res[gName], flow)
         else:
-          statuses[gName] = {"status": "N/A"}
+          statuses[gName] = {"status": "N_A"}
     return statuses
 
   def _setStatusMetadata(self, status, flow):
     ticTime = status["ticTime"]
     granDelta = datetime.timedelta(minutes=flow["options"]["granularity"])
     if ticTime + 2 * granDelta < config.getCurrentTime():
-      status["status"] = "N/A"
+      return {"status": "N_A"}
     return status
 
   def getStatusForFlow(self, flow):
