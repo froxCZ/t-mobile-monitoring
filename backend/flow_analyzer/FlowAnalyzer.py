@@ -20,8 +20,8 @@ class FlowAnalyzer:
     logging.info("analyzing " + self.flow["name"])
     latestCompleteIntervalTime = self._getLatestCompleteIntervalTime(time)
     self.isOutage = self.outageDetector.isOutage(latestCompleteIntervalTime)
-    self.tickTraffic = self.outageDetector.getTickTraffic(latestCompleteIntervalTime)
-    assert self.tickTraffic is not None
+    self.ticTraffic = self.outageDetector.getticTraffic(latestCompleteIntervalTime)
+    assert self.ticTraffic is not None
 
     return 0
 
@@ -38,7 +38,7 @@ class FlowAnalyzer:
     returns result. It's up to caller to save it to db!
     :return:
     """
-    return self.isOutage, self.tickTraffic
+    return self.isOutage, self.ticTraffic
 
   def setPrecomputedData(self, precomputedData):
     self.precomputedData = precomputedData

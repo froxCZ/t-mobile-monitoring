@@ -2,7 +2,7 @@ import data_query
 import util
 
 
-class TickTrafficQuery():
+class TicTrafficQuery():
   def __init__(self, dateTime, flow):
     self.dateTime = dateTime
     self.flow = flow
@@ -10,24 +10,24 @@ class TickTrafficQuery():
   def execute(self):
     currentQuery = data_query.DatesQuery([self.dateTime], [self.flow])
     currentData = currentQuery.execute()
-    currentTick = self._getTick(currentData, self.dateTime)
-    if currentTick == None:
-      raise Exception("Could not find tick for flow " + self.flow["gName"] + " at " + str(self.dateTime))
+    currenttic = self._gettic(currentData, self.dateTime)
+    if currenttic == None:
+      raise Exception("Could not find tic for flow " + self.flow["gName"] + " at " + str(self.dateTime))
     expectedQuery = data_query.ExpectedTrafficQuery(self.dateTime, [self.flow])
     expectedData = expectedQuery.execute()
     metric = expectedQuery.metrics[0]
     dayMinute = util.dateToDayMinutes(self.dateTime)
     if dayMinute not in expectedData:
-      raise Exception("Could not find expected tick for flow " + self.flow["gName"] + " at " + str(self.dateTime))
+      raise Exception("Could not find expected tic for flow " + self.flow["gName"] + " at " + str(self.dateTime))
     expectedValue = expectedData[util.dateToDayMinutes(self.dateTime)]
-    result = {"value": currentTick[metric],
+    result = {"value": currenttic[metric],
               "expected": expectedValue,
               "dayAverage": expectedQuery.dayAverage,
-              "_id": currentTick["_id"]}
+              "_id": currenttic["_id"]}
     return result
 
-  def _getTick(self, tickList, datetime):
-    for tick in tickList:
-      if tick["_id"] == datetime:
-        return tick
+  def _gettic(self, ticList, datetime):
+    for tic in ticList:
+      if tic["_id"] == datetime:
+        return tic
     return None

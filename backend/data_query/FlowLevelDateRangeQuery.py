@@ -23,19 +23,19 @@ class FlowLevelDateRangeQuery:
       similarDaysQuery = ExpectedTrafficQuery(date, self.flows, granularity=self.granularity)
       similarDatesData = similarDaysQuery.execute()
       l = util.minuteDictToDateDict(date, similarDatesData, "expected")
-      for tick in l.values():
-        tick["dayAverage"] = similarDaysQuery.dayAverage
+      for tic in l.values():
+        tic["dayAverage"] = similarDaysQuery.dayAverage
       valueKey = similarDaysQuery.metrics[0]
       for d, v in l.items():
         medianList.append(v)
       date += dayDelta
     resultData = []
     mergedMedianListData = util.merge2DateLists(medianList, ["expected", "dayAverage"], self.data, [valueKey])
-    for tick in mergedMedianListData:
-      resultTick = calculateFlowLevelDifference(tick[valueKey], tick["expected"], tick["dayAverage"])
-      resultTick["_id"] = tick["_id"]
-      resultTick["expected"] = tick["expected"]
-      resultTick["dayAverage"] = tick["dayAverage"]
-      resultData.append(resultTick)
+    for tic in mergedMedianListData:
+      resulttic = calculateFlowLevelDifference(tic[valueKey], tic["expected"], tic["dayAverage"])
+      resulttic["_id"] = tic["_id"]
+      resulttic["expected"] = tic["expected"]
+      resulttic["dayAverage"] = tic["dayAverage"]
+      resultData.append(resulttic)
     self.metrics = ["flowDifference", "normalizedDifference", "expected", "dayAverage"]
     return resultData

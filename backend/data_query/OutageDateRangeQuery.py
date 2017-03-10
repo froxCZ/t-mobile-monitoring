@@ -12,18 +12,18 @@ class OutageDateRangeQuery():
     self.flow = flow
     self.granularity = granularity
     self.metric = "outage"
-    self.tickDict = {}
+    self.ticDict = {}
     self.flowAnalyzer = FlowAnalyzer(self.flow)
 
   def setPrecomputedData(self, precomputedData, valueKey):
-    for tick in precomputedData:
-      id = tick["_id"]
-      self.tickDict[id] = {"_id": id,
-                           "value": tick[valueKey],
-                           "expected": tick["expected"],
-                           "dayAverage": tick["dayAverage"]
+    for tic in precomputedData:
+      id = tic["_id"]
+      self.ticDict[id] = {"_id": id,
+                           "value": tic[valueKey],
+                           "expected": tic["expected"],
+                           "dayAverage": tic["dayAverage"]
                            }
-    self.flowAnalyzer.setPrecomputedData(self.tickDict)
+    self.flowAnalyzer.setPrecomputedData(self.ticDict)
 
   def execute(self):
     granularityDelta = datetime.timedelta(minutes=self.granularity)

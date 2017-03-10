@@ -24,7 +24,7 @@ def calculateFlowLevelDifference(flowValue, expected, dayAverage):
       normalizedDifference = 1
   normalizedDifference = round(normalizedDifference, 3)
   flowDifference = round(flowDifference, 3)
-  resultTick = {}
-  resultTick["flowDifference"] = flowDifference
-  resultTick["normalizedDifference"] = normalizedDifference
-  return resultTick
+  resulttic = {}
+  resulttic["flowDifference"] = flowDifference
+  resulttic["normalizedDifference"] = normalizedDifference
+  return resulttic

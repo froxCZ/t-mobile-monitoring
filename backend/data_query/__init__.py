@@ -5,4 +5,4 @@ from .DiscoverQuery import DiscoverQuery
 from .ExpectedTrafficQuery import ExpectedTrafficQuery
 from .FlowLevelDateRangeQuery import FlowLevelDateRangeQuery
 from .OutageDateRangeQuery import OutageDateRangeQuery
-from .TickTrafficQuery import TickTrafficQuery
+from .TicTrafficQuery import TicTrafficQuery

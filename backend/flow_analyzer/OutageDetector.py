@@ -11,28 +11,28 @@ class OutageDetector():
     self.outlierDetector = OutlierDetector(self.flow)
     self.precomputedData = {}
 
-  def isOutage(self, tickTime):
-    tickTraffic = self.getTickTraffic(tickTime)
-    outlierType = self.outlierDetector.getOutlierType(tickTraffic)
+  def isOutage(self, ticTime):
+    ticTraffic = self.getticTraffic(ticTime)
+    outlierType = self.outlierDetector.getOutlierType(ticTraffic)
     if outlierType == OutlierDetector.NO_OUTLIER:
       return False
     if outlierType == OutlierDetector.HARD_OUTLIER:
       return True
 
-    tickTime = tickTraffic["_id"]
-    previousTickTime = tickTime - datetime.timedelta(minutes=self.flow["options"]["granularity"])
-    previousTickTraffic = self.getTickTraffic(previousTickTime)
-    previousOutlierType = self.outlierDetector.getOutlierType(previousTickTraffic)
+    ticTime = ticTraffic["_id"]
+    previousticTime = ticTime - datetime.timedelta(minutes=self.flow["options"]["granularity"])
+    previousticTraffic = self.getticTraffic(previousticTime)
+    previousOutlierType = self.outlierDetector.getOutlierType(previousticTraffic)
     if previousOutlierType == OutlierDetector.NO_OUTLIER:
       return False
     else:
       return True
 
-  def getTickTraffic(self, tickTime):
-    if tickTime in self.precomputedData:
-      return self.precomputedData[tickTime]
+  def getticTraffic(self, ticTime):
+    if ticTime in self.precomputedData:
+      return self.precomputedData[ticTime]
     else:
-      return data_query.TickTrafficQuery(tickTime, self.flow).execute()
+      return data_query.TicTrafficQuery(ticTime, self.flow).execute()
 
   def setPrecomputedData(self, precomputedData):
     self.precomputedData = precomputedData

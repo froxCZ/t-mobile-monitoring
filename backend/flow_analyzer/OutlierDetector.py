@@ -10,10 +10,11 @@ class OutlierDetector():
     super().__init__()
     self.flow = flow
 
-  def getOutlierType(self, tickTraffic):
-    flowLevel = data_util.calculateFlowLevelDifference(tickTraffic["value"],
-                                                       tickTraffic["expected"],
-                                                       tickTraffic["dayAverage"])
+  def getOutlierType(self, ticTraffic):
+    flowLevel = data_util.calculateFlowLevelDifference(ticTraffic["value"],
+                                                       ticTraffic["expected"],
+                                                       ticTraffic["dayAverage"])
+    options = self.flow["options"]
     ##todo use relative or scaled, based on config
     # todo use lazy days to lower alarm based on config
     hardLevel = self.flow["options"]["hardAlarmLevel"]

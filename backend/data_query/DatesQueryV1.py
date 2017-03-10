@@ -16,7 +16,7 @@ class DatesQueryV1(DatesQuery):
     self.query = []
     self.coll = mongo.lobs()
     self.metrics = []
-    self.maxTicks = 10000
+    self.maxtics = 10000
     self.resultName = resultName
     if self.resultName is None:
       self.resultName = lobName
@@ -127,7 +127,7 @@ class DatesQueryV1(DatesQuery):
     if(len(self.dates)) == 0:
       return []
     """
-    some time ticks might be missing
+    some time tics might be missing
     :return:
     """
     return super(DatesQueryV1, self).execute()
