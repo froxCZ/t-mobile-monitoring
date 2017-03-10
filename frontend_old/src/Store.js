@@ -1,9 +1,9 @@
-import DevTools from './DevTools';
-import {AuthReducer, AuthListener, AuthSagas} from './actions/Auth';
-import {createStore, combineReducers, compose, applyMiddleware} from 'redux'
+import DevTools from "./DevTools";
+import {AuthReducer, AuthListener, AuthSagas} from "./actions/Auth";
+import {createStore, combineReducers, compose, applyMiddleware} from "redux";
 import createSagaMiddleware from "redux-saga";
+import {loadingBarReducer} from "react-redux-loading-bar";
 export const AUTH = "auth";
-import {loadingBarReducer} from 'react-redux-loading-bar'
 export const Reducers = combineReducers(
   {
     [AUTH]: AuthReducer,

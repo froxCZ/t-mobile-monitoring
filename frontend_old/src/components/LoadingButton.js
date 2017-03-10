@@ -1,5 +1,5 @@
-import React, {Component} from 'react';
-import Button from 'react-bootstrap/lib/Button';
+import React, {Component} from "react";
+import Button from "react-bootstrap/lib/Button";
 
 class LoadingButton extends Button {
 

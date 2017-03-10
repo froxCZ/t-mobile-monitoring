@@ -1,6 +1,6 @@
-import React, {Component} from 'react';
-import {bindActionCreators} from 'redux';
-import {connect} from 'react-redux';
+import React, {Component} from "react";
+import {bindActionCreators} from "redux";
+import {connect} from "react-redux";
 
 function mapStateToProps(state) {
     return {auth:state.auth};

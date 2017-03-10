@@ -1,12 +1,11 @@
-import React, {Component} from 'react';
-import ReactDOM from 'react-dom';
-import {bindActionCreators} from 'redux';
-import {connect} from 'react-redux';
-import Button from 'react-bootstrap/lib/Button';
-import LoadingButton from '../components/LoadingButton'
-import Panel from 'react-bootstrap/lib/Panel';
-import {FormControl, Checkbox} from 'react-bootstrap';
-import {Actions as AuthActions} from '../actions/Auth';
+import React, {Component} from "react";
+import ReactDOM from "react-dom";
+import {bindActionCreators} from "redux";
+import {connect} from "react-redux";
+import LoadingButton from "../components/LoadingButton";
+import Panel from "react-bootstrap/lib/Panel";
+import {FormControl, Checkbox} from "react-bootstrap";
+import {Actions as AuthActions} from "../actions/Auth";
 
 
 function mapStateToProps(state) {

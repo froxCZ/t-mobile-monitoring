@@ -1,8 +1,8 @@
-import React, {Component} from 'react';
-import {bindActionCreators} from 'redux';
-import {connect} from 'react-redux';
-import MyNavigation from '../components/MyNavigation'
-import LoadingBar from 'react-redux-loading-bar'
+import React, {Component} from "react";
+import {bindActionCreators} from "redux";
+import {connect} from "react-redux";
+import MyNavigation from "../components/MyNavigation";
+import LoadingBar from "react-redux-loading-bar";
 
 function mapStateToProps(state) {
   return {};
