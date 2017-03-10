@@ -25,6 +25,7 @@ def lobsList():
 
   return jsonify(lobConfigs)
 
+
 @lobsConfig.route('/discover', methods=["POST"])
 def discover():
   """
@@ -46,6 +47,7 @@ def discover():
   res = mongo.config().update_many({"_id": "lobs"}, {"$set": setObj})
   return jsonify({"added": res.modified_count * addedCnt})
 
+
 @lobsConfig.route('/<string:lobName>', methods=["GET"])
 def getLobConfig(lobName):
   return jsonify(config.getLobConfig(lobName))
@@ -57,6 +59,16 @@ def putLobFlowOptions(lobName, flowName):
   from config import config
   flow = config.getLobConfig(lobName)["flows"][flowName]
   config.configColl.update_one({"_id": "lobs"}, {"$set": {"lobs." + flow["dataPath"]: body}})
+  return jsonify(config.getLobConfig(lobName)["flows"][flowName]["options"])
+
+
+@lobsConfig.route('/<string:lobName>/flow/<string:flowName>/enable', methods=["PUT"])
+def lobFlowActivation(lobName, flowName):
+  body = request.get_json()
+  enable = body["enable"]
+  from config import config
+  flow = config.getLobConfig(lobName)["flows"][flowName]
+  config.configColl.update_one({"_id": "lobs"}, {"$set": {"lobs." + flow["dataPath"] + ".enabled": enable}})
   return jsonify(config.getLobConfig(lobName)["flows"][flowName]["options"])
 
 

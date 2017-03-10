@@ -4,6 +4,8 @@ import Api from "../../Api";
 import classnames from "classnames";
 import {TabContent, TabPane, Nav, NavItem, NavLink} from "reactstrap";
 import LobOverviewCharts from "../../components/LobOverviewCharts";
+import _ from "lodash";
+
 const LIST_TAB = 'listTab'
 const CHART_TAB = 'chartTab'
 const CONFIG_TAB = 'configTab'
@@ -177,15 +179,16 @@ export default class LobMonitoringDetail extends Component {
   }
 
   getTrafficDifference(flowName) {
-    if (flowName in this.state.status && this.state.status[flowName].difference) {
+    if (this.state.status && flowName in this.state.status && this.state.status[flowName].difference) {
       return this.state.status[flowName].difference
     } else {
       return "-"
     }
   }
 
+
   getStatusBadge(flowName) {
-    if (flowName in this.state.status) {
+    if (this.state.status && flowName in this.state.status) {
       let flowStatus = this.state.status[flowName].status
       let badge = null;
       if (flowStatus == "OK") {
@@ -194,7 +197,7 @@ export default class LobMonitoringDetail extends Component {
         badge = <span className="badge badge-warning">warning</span>
       } else if (flowStatus == "OUTAGE") {
         badge = <span className="badge badge-danger">outage</span>
-      }else if(flowStatus == "N_A"){
+      } else if (flowStatus == "N_A") {
         badge = <span className="badge badge-default">n/a</span>
       }
       return badge;
@@ -203,37 +206,74 @@ export default class LobMonitoringDetail extends Component {
     }
   }
 
+
+  flowEnabledChange(e, flow) {
+    let body = {enable: e.target.checked}
+    var myInit = {
+      method: 'PUT',
+      body: body
+    };
+    let type = flow.type
+    Api.fetch("/lobs/config/" + flow.lobName + "/flow/" + flow.name + "/enable", myInit)
+      .then(response => {
+        let newState = _.extend({}, this.state);
+        newState.lob[type][flow.name].options = response
+        this.setState(newState);
+      });
+
+  }
+
   renderList() {
     let neidRows = []
     let forwardRows = []
     if (this.state.lob) {
-      for (let neidName in this.state.lob.inputs) {
-        let neidConfig = this.state.lob.inputs[neidName]
+      for (let flowName in this.state.lob.inputs) {
+        let flow = this.state.lob.inputs[flowName]
         neidRows.push(
-          <tr onClick={this.goToNeidDetail.bind(this, neidName)}>
-            <td>{neidName}</td>
-            <td>{neidConfig.options.granularity}</td>
-            <td>{neidConfig.options.softAlarmLevel}</td>
-            <td>{neidConfig.options.hardAlarmLevel}</td>
+          <tr onClick={this.goToNeidDetail.bind(this, flowName)}>
+            <td>{flowName}</td>
+            <td>{flow.options.granularity}</td>
+            <td>{flow.options.softAlarmLevel}</td>
+            <td>{flow.options.hardAlarmLevel}</td>
             <td>-- compare with parent --</td>
-            <td>{this.getTrafficDifference(neidName)}</td>
+            <td>{this.getTrafficDifference(flowName)}</td>
             <td>
-              <h4>{this.getStatusBadge(neidName)}</h4>
+              <h4>{this.getStatusBadge(flowName)}</h4>
+            </td>
+            <td>
+              <label className="switch switch-3d switch-primary" onClick={(e) => e.stopPropagation()}>
+                <input type="checkbox" className="switch-input"
+                       checked={flow.options.enabled}
+                       onChange={(e) => this.flowEnabledChange(e, flow)}
+                />
+                <span className="switch-label"></span>
+                <span className="switch-handle"></span>
+              </label>
             </td>
           </tr>)
       }
-      for (let forwardName in this.state.lob.forwards) {
-        let forward = this.state.lob.forwards[forwardName]
+      for (let flowName in this.state.lob.forwards) {
+        let flow = this.state.lob.forwards[flowName]
         forwardRows.push(
-          <tr onClick={this.goToForwardDetail.bind(this, forwardName)}>
-            <td>{forwardName}</td>
-            <td>{forward.options.granularity}</td>
-            <td>{forward.options.softAlarmLevel}</td>
-            <td>{forward.options.hardAlarmLevel}</td>
+          <tr onClick={this.goToForwardDetail.bind(this, flowName)}>
+            <td>{flowName}</td>
+            <td>{flow.options.granularity}</td>
+            <td>{flow.options.softAlarmLevel}</td>
+            <td>{flow.options.hardAlarmLevel}</td>
             <td>--</td>
-            <td>{this.getTrafficDifference(forwardName)}</td>
+            <td>{this.getTrafficDifference(flowName)}</td>
             <td>
-              <h4>{this.getStatusBadge(forwardName)}</h4>
+              <h4>{this.getStatusBadge(flowName)}</h4>
+            </td>
+            <td>
+              <label className="switch switch-3d switch-primary" onClick={(e) => e.stopPropagation()}>
+                <input type="checkbox" className="switch-input"
+                       checked={flow.options.enabled}
+                       onChange={(e) => this.flowEnabledChange(e, flow)}
+                />
+                <span className="switch-label"></span>
+                <span className="switch-handle"></span>
+              </label>
             </td>
           </tr>)
       }
@@ -256,6 +296,7 @@ export default class LobMonitoringDetail extends Component {
                   <th>Override</th>
                   <th>Traffic level</th>
                   <th>Status</th>
+                  <th>Enabled</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -283,6 +324,8 @@ export default class LobMonitoringDetail extends Component {
                   <th>Override</th>
                   <th>Traffic level</th>
                   <th>Status</th>
+                  <th>Enabled</th>
+
                 </tr>
                 </thead>
                 <tbody>
