@@ -228,7 +228,7 @@ lobsData = [
                               0.9831210955086642, 1]}]
 
 
-def getScaledDifference(lobName, granularity=0):
+def getnormalizedDifference(lobName, granularity=0):
   fromDate = util.jsStringToDate("2016-12-15T00:00:00.000Z").replace(hour=0, minute=0, second=0)
   toDate = util.jsStringToDate("2017-01-05T00:00:00.000Z").replace(hour=0, minute=0, second=0)
   response = {}
@@ -238,7 +238,7 @@ def getScaledDifference(lobName, granularity=0):
   metricsList = mongoQuery.metrics
   metadata = mongoQuery.metadata
   data = data_query.medianDateRange(fromDate, toDate, lobName, granularity, data)
-  return util.dateDataListToList(data, "scaledDifference")
+  return util.dateDataListToList(data, "normalizedDifference")
 
 
 def lobData(lobName):

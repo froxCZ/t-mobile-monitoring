@@ -6,25 +6,25 @@ def calculateFlowLevelDifference(flowValue, expected, dayAverage):
   :param dayAverage:
   :return:
   """
-  relativeDifference = 1
-  scaledDifference = 1
+  flowDifference = 1
+  normalizedDifference = 1
   if flowValue != expected:
     diff = flowValue - expected
-    relativeDifference = min(flowValue / max(expected, 0.1), 3)
+    flowDifference = min(flowValue / max(expected, 0.1), 3)
     if dayAverage != 0:
-      if relativeDifference >= 0.1:
+      if flowDifference >= 0.1:
         scaledDiff = min((diff / dayAverage) + 1, 3)
-        if scaledDiff >= 1 and relativeDifference >= 1:
-          scaledDifference = min(scaledDiff, relativeDifference)
+        if scaledDiff >= 1 and flowDifference >= 1:
+          normalizedDifference = min(scaledDiff, flowDifference)
         else:
-          scaledDifference = max(scaledDiff, relativeDifference)
+          normalizedDifference = max(scaledDiff, flowDifference)
       else:
-        scaledDifference = relativeDifference
+        normalizedDifference = flowDifference
     else:
-      scaledDifference = 1
-  scaledDifference = round(scaledDifference, 3)
-  relativeDifference = round(relativeDifference, 3)
+      normalizedDifference = 1
+  normalizedDifference = round(normalizedDifference, 3)
+  flowDifference = round(flowDifference, 3)
   resultTick = {}
-  resultTick["relativeDifference"] = relativeDifference
-  resultTick["scaledDifference"] = scaledDifference
+  resultTick["flowDifference"] = flowDifference
+  resultTick["normalizedDifference"] = normalizedDifference
   return resultTick

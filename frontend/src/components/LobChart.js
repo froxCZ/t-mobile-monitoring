@@ -17,8 +17,8 @@ import {
 const DAY_NR_TO_NAME = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 const COLORS = ["#FF0080", "#FF6600", "#028482"]
 const COLORS_MAP = {
-  "scaledDifference": "#FF0080",
-  "relativeDifference": "#4b4c4c",
+  "normalizedDifference": "#FF0080",
+  "flowDifference": "#4b4c4c",
   "expected": "#648dbd"
 }
 export default class LobChart extends Component {

@@ -18,7 +18,7 @@ class OutlierDetector():
     # todo use lazy days to lower alarm based on config
     hardLevel = self.flow["options"]["hardAlarmLevel"]
     softLevel = self.flow["options"]["softAlarmLevel"]
-    flowLevelDifference = flowLevel["scaledDifference"]
+    flowLevelDifference = flowLevel["normalizedDifference"]
     if flowLevelDifference < hardLevel:
       return self.HARD_OUTLIER
     elif flowLevelDifference < softLevel:
