@@ -235,7 +235,6 @@ export default class LobMonitoringDetail extends Component {
             <td>{flow.options.granularity}</td>
             <td>{flow.options.softAlarmLevel}</td>
             <td>{flow.options.hardAlarmLevel}</td>
-            <td>-- compare with parent --</td>
             <td>{this.getTrafficDifference(flowName)}</td>
             <td>
               <h4>{this.getStatusBadge(flowName)}</h4>
@@ -260,7 +259,6 @@ export default class LobMonitoringDetail extends Component {
             <td>{flow.options.granularity}</td>
             <td>{flow.options.softAlarmLevel}</td>
             <td>{flow.options.hardAlarmLevel}</td>
-            <td>--</td>
             <td>{this.getTrafficDifference(flowName)}</td>
             <td>
               <h4>{this.getStatusBadge(flowName)}</h4>
@@ -293,7 +291,6 @@ export default class LobMonitoringDetail extends Component {
                   <th>Granularity</th>
                   <th>Soft Alarm</th>
                   <th>Hard Alarm</th>
-                  <th>Override</th>
                   <th>Traffic level</th>
                   <th>Status</th>
                   <th>Enabled</th>
@@ -321,7 +318,6 @@ export default class LobMonitoringDetail extends Component {
                   <th>Granularity</th>
                   <th>Soft Alarm</th>
                   <th>Hard Alarm</th>
-                  <th>Override</th>
                   <th>Traffic level</th>
                   <th>Status</th>
                   <th>Enabled</th>
