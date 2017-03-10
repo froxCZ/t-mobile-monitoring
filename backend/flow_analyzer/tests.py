@@ -2,13 +2,13 @@ import unittest
 
 import config
 import util
-from lob_analyzer import LobAnalyzer
+from flow_analyzer import FlowAnalyzer
 
 
 class TestStringMethods(unittest.TestCase):
   def setUp(self):
     gsm = config.getLobConfig("CZ_GSM")
-    self.lobAnalyzer = LobAnalyzer(gsm["flows"]["MSSCEB1B"])
+    self.lobAnalyzer = FlowAnalyzer(gsm["flows"]["MSSCEB1B"])
 
   def test_getLatestClosedIntervalTime(self):
     testCases = [

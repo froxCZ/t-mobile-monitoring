@@ -1,7 +1,7 @@
 import datetime
 
 import data_query
-from lob_analyzer.OutlierDetector import OutlierDetector
+from flow_analyzer.OutlierDetector import OutlierDetector
 
 
 class OutageDetector():

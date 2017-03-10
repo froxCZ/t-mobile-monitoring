@@ -3,7 +3,7 @@ import logging
 
 from config import TIMEZONE
 from config import config
-from lob_analyzer import LobAnalyzer
+from flow_analyzer import FlowAnalyzer
 from scheduler.AbstractModuleScheduler import AbstractModuleScheduler
 from scheduler.lob.LobScheduleHistory import LobScheduleHistory
 
@@ -29,7 +29,7 @@ class LobScheduler(AbstractModuleScheduler):
     for gran, flowList in sorted(jobsToSchedule.items()):
       for flow in flowList:
         time = datetime.datetime.now().replace(tzinfo=TIMEZONE)
-        analyzer = LobAnalyzer(flow)
+        analyzer = FlowAnalyzer(flow)
         runResult = analyzer.run()
         if runResult == 0:
           lobScheduleHistory.saveSuccessfullExecution(flow, time)

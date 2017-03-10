@@ -4,11 +4,11 @@ import logging
 import config
 import data_query
 import util
-from lob_analyzer.OutageDetector import OutageDetector
-from lob_analyzer.OutlierDetector import OutlierDetector
+from flow_analyzer.OutageDetector import OutageDetector
+from flow_analyzer.OutlierDetector import OutlierDetector
 
 
-class LobAnalyzer:
+class FlowAnalyzer:
   def __init__(self, flow, time):
     super().__init__()
     self.flow = flow
@@ -45,7 +45,7 @@ class LobAnalyzer:
 if __name__ == "__main__":
   logging.basicConfig(format='%(levelname)s [%(module)s]: %(message)s', level=logging.DEBUG)
   gsm = config.getLobConfig("CZ_BVS")
-  analyzer = LobAnalyzer(gsm["flows"]["BVSCTX"], util.stringToTime("27.12.2016 11:00:00"))
+  analyzer = FlowAnalyzer(gsm["flows"]["BVSCTX"], util.stringToTime("27.12.2016 11:00:00"))
   analyzer.run()
   isOutage, traffic = analyzer.getResult()
   print(isOutage)
