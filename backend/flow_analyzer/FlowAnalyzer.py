@@ -2,27 +2,26 @@ import datetime
 import logging
 
 import config
-import data_query
 import util
 from flow_analyzer.OutageDetector import OutageDetector
 from flow_analyzer.OutlierDetector import OutlierDetector
 
 
 class FlowAnalyzer:
-  def __init__(self, flow, time):
+  def __init__(self, flow):
     super().__init__()
     self.flow = flow
     self.options = flow["options"]
     self.outlierDetector = OutlierDetector(self.flow)
-    self.time = time
+    self.precomputedData = {}
+    self.outageDetector = OutageDetector(self.flow)
 
-  def run(self):
+  def run(self, time):
     logging.info("analyzing " + self.flow["name"])
-    latestCompleteIntervalTime = self._getLatestCompleteIntervalTime(self.time)
-    tickTraffic = data_query.TickTrafficQuery(latestCompleteIntervalTime, self.flow).execute()
-    outageDetector = OutageDetector(self.flow)
-    self.isOutage = outageDetector.isOutage(tickTraffic)
-    self.tickTraffic = tickTraffic
+    latestCompleteIntervalTime = self._getLatestCompleteIntervalTime(time)
+    self.isOutage = self.outageDetector.isOutage(latestCompleteIntervalTime)
+    self.tickTraffic = self.outageDetector.getTickTraffic(latestCompleteIntervalTime)
+    assert self.tickTraffic is not None
 
     return 0
 
@@ -30,7 +29,7 @@ class FlowAnalyzer:
     granularity = self.options["granularity"]
     minuteOfDay = time.hour * 60 + time.minute
     minutesOverInterval = minuteOfDay % granularity
-    latestClosedIntervalTime = time - datetime.timedelta(minutes=minutesOverInterval + granularity)
+    latestClosedIntervalTime = time - datetime.timedelta(minutes=minutesOverInterval)
     latestClosedIntervalTime = latestClosedIntervalTime.replace(second=0, microsecond=0)
     return latestClosedIntervalTime
 
@@ -41,12 +40,16 @@ class FlowAnalyzer:
     """
     return self.isOutage, self.tickTraffic
 
+  def setPrecomputedData(self, precomputedData):
+    self.precomputedData = precomputedData
+    self.outageDetector.setPrecomputedData(self.precomputedData)
+
 
 if __name__ == "__main__":
   logging.basicConfig(format='%(levelname)s [%(module)s]: %(message)s', level=logging.DEBUG)
   gsm = config.getLobConfig("CZ_BVS")
-  analyzer = FlowAnalyzer(gsm["flows"]["BVSCTX"], util.stringToTime("27.12.2016 11:00:00"))
-  analyzer.run()
+  analyzer = FlowAnalyzer(gsm["flows"]["BVSCTX"])
+  analyzer.run(util.stringToTime("01.01.2017 11:00:00"))
   isOutage, traffic = analyzer.getResult()
   print(isOutage)
   print(traffic)

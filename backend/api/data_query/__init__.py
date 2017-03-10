@@ -39,10 +39,16 @@ def dataQueryV2():
   metricsList = mongoQuery.metrics
   metadata = mongoQuery.metadata
   if len(flows) == 1:
+    metric = metricsList[0]
     flowLevelQuery = data_query.FlowLevelDateRangeQuery(fromDate, toDate, flows, metadata["granularity"], data)
     flowLevelData = flowLevelQuery.execute()
     data = util.merge2DateLists(flowLevelData, None, data, None)
     metricsList.extend(flowLevelQuery.metrics)
+    outageQuery = data_query.OutageDateRangeQuery(fromDate, toDate, flows[0], metadata["granularity"])
+    outageQuery.setPrecomputedData(data, metric)
+    outageList = outageQuery.execute()
+    data = util.merge2DateLists(outageList, [outageQuery.metric], data, None)
+    metricsList.append(outageQuery.metric)
 
   if (len(data) > 10):
     validMetricName = metricsList[0]
@@ -60,6 +66,7 @@ def dataQueryV2():
   response["data"] = data
   response["metadata"] = {**{"metrics": metrics}, **metadata}
   return jsonify(response)
+
 
 @api_data_query.route('/best_correlations', methods=["GET"])
 def bestCorrelations():
