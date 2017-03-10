@@ -15,11 +15,11 @@ class OutlierDetector():
                                                        ticTraffic["expected"],
                                                        ticTraffic["dayAverage"])
     options = self.flow["options"]
-    ##todo use relative or scaled, based on config
+    differenceType = options["difference"] + "Difference"  # use relative or scaled, based on config
     # todo use lazy days to lower alarm based on config
     hardLevel = self.flow["options"]["hardAlarmLevel"]
     softLevel = self.flow["options"]["softAlarmLevel"]
-    flowLevelDifference = flowLevel["dayDifference"]
+    flowLevelDifference = flowLevel[differenceType]
     if flowLevelDifference < hardLevel:
       return self.HARD_OUTLIER
     elif flowLevelDifference < softLevel:
