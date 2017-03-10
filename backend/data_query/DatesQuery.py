@@ -20,6 +20,7 @@ class DatesQuery:
   def execute(self):
     self.prepare()
     result = list(self.coll.aggregate(self.query))
+    resultDict = {}
     for i in result:
       group = i["_id"]
       date = datetime.datetime(group["year"], group["month"], group["dayOfMonth"], int(group["hour"]),
@@ -27,8 +28,19 @@ class DatesQuery:
       from config import TIMEZONE
       date = date.replace(tzinfo=TIMEZONE)
       i["_id"] = date
+      resultDict[date] = i
+    granularityDelta = datetime.timedelta(minutes=self.granularity)
+    nullObject = {}
+    for metric in self.metrics:
+      nullObject[metric] = 0
+    for date in self.dates:
+      d = date
+      while d < date + datetime.timedelta(days=1):
+        if d not in resultDict:  # TODO: check if some results can have just few of the metrics.
+          resultDict[d] = {**nullObject, **{"_id": d}}
+        d += granularityDelta
 
-    result = sorted(result, key=lambda x: x["_id"])
+    result = sorted(resultDict.values(), key=lambda x: x["_id"])
     return result
 
   def createDataPathAndOutputs2(self):

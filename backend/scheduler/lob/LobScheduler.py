@@ -29,7 +29,7 @@ class LobScheduler(AbstractModuleScheduler):
     for gran, flowList in sorted(jobsToSchedule.items()):
       for flow in flowList:
         time = datetime.datetime.now().replace(tzinfo=TIMEZONE)
-        analyzer = FlowAnalyzer(flow)
+        analyzer = FlowAnalyzer(flow,datetime.datetime.now().replace(tzinfo=TIMEZONE))
         runResult = analyzer.run()
         if runResult == 0:
           lobScheduleHistory.saveSuccessfullExecution(flow, time)
