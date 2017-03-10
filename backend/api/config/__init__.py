@@ -8,10 +8,10 @@ from config import config
 from data_query import DiscoverQuery
 from mongo import mongo
 
-lobs = Blueprint('lobs', __name__)
+lobsConfig = Blueprint('lobs', __name__)
 
 
-@lobs.route('/', methods=["GET"])
+@lobsConfig.route('/', methods=["GET"])
 def lobsList():
   fullConfig = request.args.get('fullConfig')
   if fullConfig is None:
@@ -25,10 +25,10 @@ def lobsList():
 
   return jsonify(lobConfigs)
 
-@lobs.route('/discover', methods=["POST"])
+@lobsConfig.route('/discover', methods=["POST"])
 def discover():
   """
-  find new neids and forwards for the past 14 days and adds them to the config
+  find new inputs and forwards for the past 14 days and adds them to the config
   :return:
   """
   now = datetime.datetime.now()
@@ -46,28 +46,12 @@ def discover():
   res = mongo.config().update_many({"_id": "lobs"}, {"$set": setObj})
   return jsonify({"added": res.modified_count * addedCnt})
 
-
-@lobs.route('/configs', methods=["GET"])
-def lobsConfig():
-  fullConfig = request.args.get('fullConfig')
-  if fullConfig is None:
-    fullConfig = False
-  lobConfigs = config.getLobsConfig()
-  if fullConfig == False:
-    for lob in lobConfigs["lobs"]:
-      del lob["flows"]
-      del lob["inputs"]
-      del lob["forwards"]
-
-  return jsonify(lobConfigs)
-
-
-@lobs.route('/<string:lobName>', methods=["GET"])
+@lobsConfig.route('/<string:lobName>', methods=["GET"])
 def getLobConfig(lobName):
   return jsonify(config.getLobConfig(lobName))
 
 
-@lobs.route('/<string:lobName>/flow/<string:flowName>', methods=["PUT"])
+@lobsConfig.route('/<string:lobName>/flow/<string:flowName>', methods=["PUT"])
 def putLobFlowOptions(lobName, flowName):
   body = request.get_json()
   from config import config
@@ -76,7 +60,7 @@ def putLobFlowOptions(lobName, flowName):
   return jsonify(config.getLobConfig(lobName)["flows"][flowName]["options"])
 
 
-@lobs.route('/<string:lobName>/options', methods=["PUT"])
+@lobsConfig.route('/<string:lobName>/options', methods=["PUT"])
 def putLobOptions(lobName):
   from config import config
   body = request.get_json()
@@ -85,7 +69,7 @@ def putLobOptions(lobName):
   return jsonify(config.getLobConfig(lobName)["options"])
 
 
-@lobs.route('/<string:lobName>', methods=["POST"])
+@lobsConfig.route('/<string:lobName>', methods=["POST"])
 def updateLob(lobName):
   setObj = {}
   unsetObj = {}
@@ -105,7 +89,7 @@ def updateLob(lobName):
   return jsonify({})
 
 
-@lobs.route('/<string:lobName>/outage', methods=["POST"])
+@lobsConfig.route('/<string:lobName>/outage', methods=["POST"])
 def saveOutage(lobName):
   from mongo import mongo
   outagesColl = mongo.outages()
@@ -128,7 +112,7 @@ def saveOutage(lobName):
   return jsonify({})
 
 
-@lobs.route('/<string:lobName>/outages', methods=["GET"])
+@lobsConfig.route('/<string:lobName>/outages', methods=["GET"])
 def getOutages(lobName):
   fromDate = util.jsStringToDate(request.args.get('from'))
   toDate = util.jsStringToDate(request.args.get('to'))

@@ -16,7 +16,7 @@ class Api {
       method: 'POST',
       body: updateObj
     };
-    return this.fetch("/lobs/" + lobName, myInit);
+    return this.fetch("/lobs/config/" + lobName, myInit);
   }
 
   lobData(fromDate, toDate, lobName, neids, forwards, granularity) {

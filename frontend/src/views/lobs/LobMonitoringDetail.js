@@ -39,7 +39,7 @@ export default class LobMonitoringDetail extends Component {
 
   reloadLob(lobName) {
     this.setState({lobName: lobName});
-    Api.fetch("/lobs/" + lobName, {method: 'GET'}).then((response) => {
+    Api.fetch("/lobs/config/" + lobName, {method: 'GET'}).then((response) => {
       this.setState({lob: response, optionsString: JSON.stringify(response.options, null, 2)});
     });
   }
@@ -170,7 +170,7 @@ export default class LobMonitoringDetail extends Component {
       method: 'PUT',
       body: this.state.optionsString
     };
-    Api.fetch("/lobs/" + this.state.lobName + "/options", myInit);
+    Api.fetch("/lobs/config/" + this.state.lobName + "/options", myInit);
   }
 
   renderList() {
