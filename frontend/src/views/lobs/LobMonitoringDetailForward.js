@@ -57,14 +57,12 @@ export default class LobMonitoringDetailForward extends Component {
         forwards: forwards,
         status: null
       });
-      Api.fetch("/lobs/config/" + lobName, {method: 'GET'}).then((response) => {
-        //todolet flow= response[flowType][flowName]
+      Api.fetch("/lobs/config/" + lobName + "/flow/" + flowName, {method: 'GET'}).then((response) => {
         this.setState({
-          lob: response,
-          options: response[flowType][flowName].options,
-          flow: response[flowType][flowName],
-          flowName: flowName,
-          optionsString: JSON.stringify(response[flowType][flowName].options, null, 2)
+          options: response.options,
+          flow: response,
+          flowName: response.name,
+          optionsString: JSON.stringify(response.options, null, 2)
         });
       });
     }
@@ -196,7 +194,7 @@ export default class LobMonitoringDetailForward extends Component {
       body: this.state.optionsString
     };
     Api.fetch("/lobs/config/" + this.state.lobName +
-      "/flow/" + this.state.flow.name, myInit).then(response => {
+      "/flow/" + this.state.flow.name + "/options", myInit).then(response => {
       this.setState({
         options: response,
         optionsString: JSON.stringify(response, null, 2)

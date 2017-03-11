@@ -50,25 +50,23 @@ def discover():
 
 @lobsConfig.route('/<string:lobName>', methods=["GET"])
 def getLobConfig(lobName):
-  return jsonify(config.getLobConfig(lobName))
+  lobConfig = config.getLobConfig(lobName)
+  del lobConfig["flows"]
+  return jsonify(lobConfig)
+
+@lobsConfig.route('/<string:lobName>/flow/<string:flowName>', methods=["GET"])
+def getFlowConfig(lobName, flowName):
+  lobConfig = config.getLobConfig(lobName)
+  flowConfig = lobConfig["flows"][flowName]
+  return jsonify(flowConfig)
 
 
-@lobsConfig.route('/<string:lobName>/flow/<string:flowName>', methods=["PUT"])
+@lobsConfig.route('/<string:lobName>/flow/<string:flowName>/options', methods=["PUT"])
 def putLobFlowOptions(lobName, flowName):
   body = request.get_json()
   from config import config
   flow = config.getLobConfig(lobName)["flows"][flowName]
   config.configColl.update_one({"_id": "lobs"}, {"$set": {"lobs." + flow["dataPath"]: body}})
-  return jsonify(config.getLobConfig(lobName)["flows"][flowName]["options"])
-
-
-@lobsConfig.route('/<string:lobName>/flow/<string:flowName>/enable', methods=["PUT"])
-def lobFlowActivation(lobName, flowName):
-  body = request.get_json()
-  enable = body["enable"]
-  from config import config
-  flow = config.getLobConfig(lobName)["flows"][flowName]
-  config.configColl.update_one({"_id": "lobs"}, {"$set": {"lobs." + flow["dataPath"] + ".enabled": enable}})
   return jsonify(config.getLobConfig(lobName)["flows"][flowName]["options"])
 
 
@@ -79,6 +77,16 @@ def putLobOptions(lobName):
   optionsPath = "lobs." + lobName + ".options"
   config.configColl.update_one({"_id": "lobs"}, {"$set": {optionsPath: body}})
   return jsonify(config.getLobConfig(lobName)["options"])
+
+
+@lobsConfig.route('/<string:lobName>/flow/<string:flowName>/enable', methods=["PUT"])
+def lobFlowActivation(lobName, flowName):
+  body = request.get_json()
+  enable = body["enable"]
+  from config import config
+  flow = config.getLobConfig(lobName)["flows"][flowName]
+  config.configColl.update_one({"_id": "lobs"}, {"$set": {"lobs." + flow["dataPath"] + ".enabled": enable}})
+  return jsonify(config.getLobConfig(lobName)["flows"][flowName]["options"])
 
 
 @lobsConfig.route('/<string:lobName>', methods=["POST"])
