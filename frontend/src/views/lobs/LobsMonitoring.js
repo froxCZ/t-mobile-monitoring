@@ -37,29 +37,37 @@ class LobsMonitoring extends Component {
     let lobRows = [];
     if (this.state.lobs) {
       for (let lobName in this.state.lobs) {
+        let lob = this.state.lobs[lobName]
         let flowStatuses = null
         let statusSpan = [<span className="badge badge-primary"></span>]
         if (this.state.status) {
           let status = this.state.status[lobName]
           flowStatuses = (<div>
             <h5>
-              <span style={{minWidth:3+"em"}} className="badge badge-pill badge-success">{status.OK}</span>
+              <span style={{minWidth: 3 + "em"}} title="ok"
+                    className="badge badge-pill badge-success">{status.OK}</span>
               &nbsp;
-              <span style={{minWidth:3+"em"}} className="badge badge-pill badge-warning">{status.WARNING}</span>
+              <span style={{minWidth: 3 + "em"}} title="warning"
+                    className="badge badge-pill badge-warning">{status.WARNING}</span>
               &nbsp;
-              <span style={{minWidth:3+"em"}} className="badge badge-pill badge-danger">{status.OUTAGE}</span>
+              <span style={{minWidth: 3 + "em"}} title="outage"
+                    className="badge badge-pill badge-danger">{status.OUTAGE}</span>
               &nbsp;
-              <span style={{minWidth:3+"em"}} className="badge badge-pill badge-default">{status.N_A}</span>
+              <span style={{minWidth: 3 + "em"}} title="n/a"
+                    className="badge badge-pill badge-default">{status.N_A}</span>
+              &nbsp;
+              <span style={{minWidth: 3 + "em"}} title="Disabled"
+                    className="badge badge-pill badge-default">{status.DISABLED}</span>
             </h5>
           </div>)
-          if(status.OUTAGE > 0){
-            statusSpan = [<span style={{marginRight:"3px"}} className="badge badge-danger">outage</span>]
-          }else if(status.WARNING > 0){
-            statusSpan = [<span style={{marginRight:"3px"}} className="badge badge-warning">warning</span>]
-          }else if(status.OK > 0){
-            statusSpan = [<span style={{marginRight:"3px"}} className="badge badge-success">ok</span>]
+          if (status.OUTAGE > 0) {
+            statusSpan = [<span style={{marginRight: "3px"}} className="badge badge-danger">outage</span>]
+          } else if (status.WARNING > 0) {
+            statusSpan = [<span style={{marginRight: "3px"}} className="badge badge-warning">warning</span>]
+          } else if (status.OK > 0) {
+            statusSpan = [<span style={{marginRight: "3px"}} className="badge badge-success">ok</span>]
           }
-          if(status.N_A > 0){
+          if (status.N_A > 0) {
             statusSpan.push(<span className="badge badge-default">n/a</span>)
           }
         }

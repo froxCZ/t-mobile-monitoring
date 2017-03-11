@@ -13,7 +13,7 @@ class FlowStatusManager:
     lob = config.getLobConfig(lobName)
     allStatuses = self.getAll()
     lobFlowStatuses = {}
-    for flowName,flow in lob["flows"].items():
+    for flowName, flow in lob["flows"].items():
       lobFlowStatuses[flowName] = allStatuses[flow["gName"]]
 
     return lobFlowStatuses
@@ -21,13 +21,17 @@ class FlowStatusManager:
   def getLobsOverview(self):
     allStatuses = self.getAll()
     lobStatusDict = {}
-    for lobName, lob in config.getLobsConfig()["lobs"].items():
+    for lobName, lob in config.getLobs().items():
       ok = 0
       warning = 0
       outage = 0
       expired = 0
+      disabled = 0
       for flow in lob["flows"].values():
         gName = flow["gName"]
+        if flow["options"]["enabled"] is False:
+          disabled += 1
+          continue
         flowStatus = allStatuses.get(gName, {"status": status.NA})["status"]
         if flowStatus == status.NA:
           expired += 1
@@ -42,6 +46,7 @@ class FlowStatusManager:
         status.WARNING: warning,
         status.OUTAGE: outage,
         status.NA: expired,
+        status.DISABLED: disabled
       }
     return lobStatusDict
 

@@ -68,6 +68,20 @@ def getLobConfigByNameDict(fullName):
   return getLobsConfig()["lobs"][fullName]
 
 
+def getLobs():
+  return getLobsConfig()["lobs"]
+
+
+def getEnabledLobs():
+  lobs = getLobs()
+  for lobName, lob in lobs.items():
+    for flowName, flow in lob["flows"].copy().items():
+      if flow["options"]["enabled"] == False:
+        del lob["flows"][flowName]
+        del lob[flow["type"]][flowName]
+  return lobs
+
+
 def getLobsConfig():
   """
   returns config for all inputs and forwards. Config is derived from parent object.
