@@ -16,7 +16,7 @@ export default class LobsSettings extends Component {
   }
 
   loadSettings() {
-    Api.fetch("/lobs/config/countries", {method: 'GET'}).then(response => {
+    Api.fetch("/mediation/config/countries", {method: 'GET'}).then(response => {
       this.setState({countries: response});
     })
   }
@@ -26,7 +26,7 @@ export default class LobsSettings extends Component {
       method: 'PUT',
       body: this.state.countries
     };
-    Api.fetch("/lobs/config/countries", req).then(response => {
+    Api.fetch("/mediation/config/countries", req).then(response => {
       console.log(response)
       this.setState({countries: response});
     })

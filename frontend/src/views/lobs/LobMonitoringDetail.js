@@ -37,10 +37,10 @@ export default class LobMonitoringDetail extends Component {
 
   reloadLob(lobName) {
     this.setState({lobName: lobName});
-    Api.fetch("/lobs/config/" + lobName, {method: 'GET'}).then((response) => {
+    Api.fetch("/mediation/config/" + lobName, {method: 'GET'}).then((response) => {
       this.setState({lob: response, optionsString: JSON.stringify(response.options, null, 2)});
     });
-    Api.fetch("/lobs/status/lob/" + lobName, {method: 'GET'}).then((response) => {
+    Api.fetch("/mediation/status/lob/" + lobName, {method: 'GET'}).then((response) => {
       this.setState({status: response})
     });
   }
@@ -171,7 +171,7 @@ export default class LobMonitoringDetail extends Component {
       method: 'PUT',
       body: this.state.optionsString
     };
-    Api.fetch("/lobs/config/" + this.state.lobName + "/options", myInit);
+    Api.fetch("/mediation/config/" + this.state.lobName + "/options", myInit);
   }
 
   getTrafficDifference(flow) {
@@ -214,7 +214,7 @@ export default class LobMonitoringDetail extends Component {
       body: body
     };
     let type = flow.type
-    Api.fetch("/lobs/config/" + flow.lobName + "/flow/" + flow.name + "/enable", myInit)
+    Api.fetch("/mediation/config/" + flow.lobName + "/flow/" + flow.name + "/enable", myInit)
       .then(response => {
         let newState = _.extend({}, this.state);
         newState.lob[type][flow.name].options = response

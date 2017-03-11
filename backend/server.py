@@ -50,8 +50,8 @@ from api.data_query import api_data_query
 from api.config import lobsConfig
 from api.status import lobsStatus
 
-app.register_blueprint(api_data_query, url_prefix="/data_query")
-app.register_blueprint(lobsConfig, url_prefix="/lobs/config")
-app.register_blueprint(lobsStatus, url_prefix="/lobs/status")
+app.register_blueprint(api_data_query, url_prefix="/mediation/data_query")
+app.register_blueprint(lobsConfig, url_prefix="/mediation/config")
+app.register_blueprint(lobsStatus, url_prefix="/mediation/status")
 # SchedulerRunner().start()
 app.run(debug=True)

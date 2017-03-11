@@ -33,10 +33,10 @@ class LobsMonitoring extends Component {
 
   reloadData(country) {
     this.setState({country: country})
-    Api.fetch("/lobs/config/", {method: 'GET'}).then((response) => {
+    Api.fetch("/mediation/config/", {method: 'GET'}).then((response) => {
       this.setState({lobs: response.lobs});
     });
-    Api.fetch("/lobs/status/", {method: 'GET'}).then((response) => {
+    Api.fetch("/mediation/status/", {method: 'GET'}).then((response) => {
       this.setState({status: response});
     });
   }

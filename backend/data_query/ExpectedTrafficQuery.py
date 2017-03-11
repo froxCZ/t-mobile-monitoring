@@ -23,8 +23,6 @@ class ExpectedTrafficQuery:
           self.adjustment = lazyDayDifference
           break
 
-    pass
-
   def execute(self):
     from data_query.DatesQuery import DatesQuery
     datesQuery = DatesQuery(self.dates, self.flows, self.granularity)

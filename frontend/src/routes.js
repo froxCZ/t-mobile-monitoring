@@ -16,7 +16,7 @@ export default (
     <Route path="/" name="Home" component={Full}>
       <IndexRoute component={Dashboard}/>
       <Route path="dashboard" name="Dashboard" component={Dashboard}/>
-      <Route path="lobs" name="Lobs">
+      <Route path="mediation" name="Mediation">
         <IndexRedirect to="monitoring/CZ" />
         <Route path="monitoring/:country" name="Monitoring">
           <IndexRoute component={LobsMonitoring}/>

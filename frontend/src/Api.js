@@ -16,7 +16,7 @@ class Api {
       method: 'POST',
       body: updateObj
     };
-    return this.fetch("/lobs/config/" + lobName, myInit);
+    return this.fetch("/mediation/config/" + lobName, myInit);
   }
 
   lobData(fromDate, toDate, lobName, neids, forwards, granularity) {
@@ -31,21 +31,7 @@ class Api {
         "granularity": granularity || 0
       }
     };
-    return this.fetch("/data_query/v2", myInit);
-  }
-
-  lobInputs(fromDate, toDate, lobName, neids, granularity) {
-    var myInit = {
-      method: 'POST',
-      body: {
-        "from": fromDate,
-        "to": toDate,
-        "lobNames": [lobName],
-        "neids": neids,
-        "granularity": granularity || 0
-      }
-    };
-    return this.fetch("/data_query/v2", myInit);
+    return this.fetch("/mediation/data_query/flows", myInit);
   }
 
   fetch(url, myInit) {

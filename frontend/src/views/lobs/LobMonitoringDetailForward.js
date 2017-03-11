@@ -43,7 +43,7 @@ export default class LobMonitoringDetailForward extends Component {
         flowName: flowName,
         status: null
       });
-      Api.fetch("/lobs/config/" + lobName + "/flow/" + flowName, {method: 'GET'}).then((response) => {
+      Api.fetch("/mediation/config/" + lobName + "/flow/" + flowName, {method: 'GET'}).then((response) => {
         this.setState({
           options: response.options,
           flow: response,
@@ -181,7 +181,7 @@ export default class LobMonitoringDetailForward extends Component {
       method: 'PUT',
       body: this.state.optionsString
     };
-    Api.fetch("/lobs/config/" + this.state.lobName +
+    Api.fetch("/mediation/config/" + this.state.lobName +
       "/flow/" + this.state.flow.name + "/options", myInit).then(response => {
       this.setState({
         options: response,

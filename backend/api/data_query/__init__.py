@@ -11,7 +11,7 @@ from config import config
 api_data_query = Blueprint('data_query', __name__)
 
 
-@api_data_query.route('/v2', methods=["POST"])
+@api_data_query.route('/flows', methods=["POST"])
 def dataQueryV2():
   searchParam = request.get_json()
   fromDate = util.stringToDate(searchParam["from"])
