@@ -4,7 +4,7 @@ import _ from "lodash";
 import "react-datepicker/dist/react-datepicker.css";
 
 
-export default class DateListManager extends Component {
+export default class DateListEditor extends Component {
   constructor() {
     super();
     this.state = {dates: []}
