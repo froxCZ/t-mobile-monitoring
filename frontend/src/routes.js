@@ -2,10 +2,10 @@ import React from "react";
 import {Router, Route, IndexRoute, IndexRedirect, hashHistory} from "react-router";
 // Containers
 import Full from "./containers/Full/";
-import LobsMonitoring from "./views/lobs/LobsMonitoring";
-import LobMonitoringDetail from "./views/lobs/LobMonitoringDetail";
-import LobMonitoringDetailForward from "./views/lobs/LobMonitoringDetailForward";
-import LobsSettings from "./views/lobs/LobsSettings";
+import LobsMonitoring from "./views/mediation/LobsMonitoring";
+import LobMonitoringDetail from "./views/mediation/LobMonitoringDetail";
+import LobMonitoringDetailForward from "./views/mediation/LobMonitoringDetailForward";
+import LobsSettings from "./views/mediation/LobsSettings";
 import Incidents from "./views/incidents/Incidents";
 import UsersList from "./views/settings/UsersList";
 // import Simple from './containers/Simple/'
