@@ -1,13 +1,29 @@
 from statistics import median
 
+import util
+from config import config
+
 
 class ExpectedTrafficQuery:
   def __init__(self, date, flows, granularity=0):
     from data_util import SimilarPastDaysFinder
     self.flows = flows
+    self.flow = flows[0]
     self.date = date
     self.granularity = granularity
-    self.dates = SimilarPastDaysFinder(flows).findSimilarPastDays(date)
+    self.dates = SimilarPastDaysFinder(self.flow).findSimilarPastDays(date)
+    country = config.getCountryByName(self.flow["country"])
+    options = self.flow["options"]
+    self.adjustment = None
+    lazyDayDifference = self.flow["options"].get("lazyDayDifference", 1)
+    if lazyDayDifference != 1:
+      for lazyDayStr in country["lazyDays"]:
+        lazyDay = util.stringToDate(lazyDayStr)
+        if lazyDay.date() == date.date():
+          self.adjustment = lazyDayDifference
+          break
+
+    pass
 
   def execute(self):
     from data_query.DatesQuery import DatesQuery
@@ -15,7 +31,11 @@ class ExpectedTrafficQuery:
     data = datesQuery.execute()
     self.metadata = datesQuery.metadata
     self.metrics = datesQuery.metrics
-    dayMedians = _createMedians(data, datesQuery.metrics[0])
+    metric = datesQuery.metrics[0]
+    if self.adjustment is not None:
+      for tick in data:
+        tick[metric] = tick[metric] * self.adjustment
+    dayMedians = _createMedians(data, metric)
     self.dayAverage = 0
     if len(dayMedians.values()) != 0:
       self.dayAverage = sum(dayMedians.values()) / len(dayMedians.values())

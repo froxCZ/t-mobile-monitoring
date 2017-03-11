@@ -9,8 +9,7 @@ IGNORE_DAYS = [(24, 12), (31, 12), (1, 1)] #days with always unusual traffic. Do
 
 
 class SimilarPastDaysFinder():
-  def __init__(self, flows):
-    flow = flows[0]
+  def __init__(self, flow):
     self.options = flow["options"]
     self.independentdays = self.options.get("independentdays", [])
     self.country = config.getCountryByName(flow["country"])

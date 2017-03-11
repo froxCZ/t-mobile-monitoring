@@ -115,7 +115,7 @@ def getLobsConfig():
       config["forwards"] = {}
     config["flows"] = {}
     inputs = {}
-    country = getCountryFromLob(lobName)
+    country = _getCountryFromLob(lobName)
     for flowName, flowOptions in config["inputs"].items():
       flow = {"options": setFlowDefaultOptions(flowOptions, parentObj=config["options"])}
       flow["name"] = flowName
@@ -144,7 +144,7 @@ def getLobsConfig():
   return res
 
 
-def getCountryFromLob(lobName):
+def _getCountryFromLob(lobName):
   return lobName.split("_")[0]
 
 
