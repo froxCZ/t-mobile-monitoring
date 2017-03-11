@@ -1,60 +1,88 @@
 import React, {Component} from "react";
 import Api from "../../Api";
+import CountrySettings from "../../components/CountrySettings";
+import classnames from "classnames";
+import {TabContent, TabPane, Nav, NavItem, NavLink} from "reactstrap";
+import "react-datepicker/dist/react-datepicker.css";
+const COUNTRIES = ["CZ", "AT", "DE", "NL"]
 export default class LobsSettings extends Component {
-  LobsSettings() {
-
+  constructor() {
+    super();
+    this.state = {countries: null, activeTab: "CZ"}
   }
 
-  discover() {
-    Api.fetch("/lobs/discover", {method: 'GET'}).then(result => {
-      console.log(result)
-    })
+  componentDidMount() {
+    this.loadSettings();
+  }
 
+  loadSettings() {
+    Api.fetch("/lobs/config/countries", {method: 'GET'}).then(response => {
+      this.setState({countries: response});
+    })
+  }
+
+  saveSettings() {
+    let req = {
+      method: 'PUT',
+      body: this.state.countries
+    };
+    Api.fetch("/lobs/config/countries", req).then(response => {
+      console.log(response)
+      this.setState({countries: response});
+    })
+  }
+
+  toggle(tab) {
+    if (this.state.activeTab !== tab) {
+      this.setState({
+        activeTab: tab
+      });
+    }
   }
 
   render() {
-    return (
-      <div className="animated fadeIn">
+    if (!this.state.countries) {
+      return <p></p>
+    }
+    let navs = []
+    for (let c of COUNTRIES) {
+      navs.push(<NavItem>
+        <NavLink
+          className={classnames({active: this.state.activeTab === c})}
+          onClick={() => {
+            this.toggle(c);
+          }}
+        >
+          {c}
+        </NavLink>
+      </NavItem>)
+    }
+    let tabs = []
+    for (let c of COUNTRIES) {
+      tabs.push(<TabPane tabId={c}>
         <div className="row">
           <div className="col-lg-12">
-            <div className="card">
-              <div className="card-header">
-                <i className="fa fa-align-justify"></i> Lobs list
-              </div>
-              <div className="card-block">
-                <table className="table">
-                  <thead>
-                  <tr>
-                    <th>Lob Name</th>
-                    <th>Traffic Level</th>
-                    <th>Forwardings</th>
-                    <th>Status</th>
-                  </tr>
-                  </thead>
-                  <tbody>
-                  <tr>
-                    <td>CZ.SMS</td>
-                    <td>80%</td>
-                    <td>
-                      <span className="badge badge-pill badge-success">42</span>
-                      <span className="badge badge-pill badge-warning">3</span>
-                      <span className="badge badge-pill badge-danger">0</span>
-                    </td>
-                    <td>
-                      <span className="badge badge-success">OK</span>
-                      <span className="badge badge-warning">WARNING</span>
-                      <span className="badge badge-danger">ERROR</span>
-                    </td>
-                  </tr>
-                  </tbody>
-                </table>
-              </div>
+            <div className="card-block">
+              <CountrySettings
+                country={this.state.countries[c]}
+                onSave={this.saveSettings.bind(this)}
+              />
             </div>
           </div>
 
         </div>
+      </TabPane>)
+    }
+    return (<div className="row">
+      <div className="col-lg-12">
+        <Nav tabs>
+          {navs}
+        </Nav>
+        <TabContent activeTab={this.state.activeTab}>
+          {tabs}
+        </TabContent>
       </div>
+    </div>);
 
-    )
   }
 }

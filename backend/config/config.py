@@ -72,6 +72,15 @@ def getLobs():
   return getLobsConfig()["lobs"]
 
 
+def getCountries():
+  defaultParam = {"lazyDays": [], "holidays": []}
+  res = configColl.find_one({"_id": "lobs"})["countries"]
+  countries = {}
+  for countryName, country in res.items():
+    countries[countryName] = {**defaultParam, **country}
+  return countries
+
+
 def getEnabledLobs():
   lobs = getLobs()
   for lobName, lob in lobs.items():

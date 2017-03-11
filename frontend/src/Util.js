@@ -19,4 +19,14 @@ export default class Util {
   static setServerTimeDifference(serverTimeDiff) {
     Util.serverTimeDiff = serverTimeDiff
   }
+
+  static isValidJson(str) {
+    try {
+      JSON.parse(str);
+    } catch (e) {
+      return false;
+    }
+    return true;
+  }
+
 }

@@ -12,7 +12,7 @@ lobsConfig = Blueprint('lobs', __name__)
 
 
 @lobsConfig.route('/', methods=["GET"])
-def lobsList():
+def lobsListGET():
   fullConfig = request.args.get('fullConfig')
   if fullConfig is None:
     fullConfig = False
@@ -25,6 +25,17 @@ def lobsList():
 
   return jsonify(lobConfigs)
 
+
+@lobsConfig.route('/countries', methods=["GET"])
+def coutriesGET():
+  return jsonify(config.getCountries())
+
+@lobsConfig.route('/countries', methods=["PUT"])
+def coutriesPUT():
+  body = request.get_json()
+  from config import config
+  config.configColl.update_one({"_id": "lobs"}, {"$set": {"countries": body}})
+  return jsonify(config.getCountries())
 
 @lobsConfig.route('/discover', methods=["POST"])
 def discover():
@@ -53,6 +64,7 @@ def getLobConfig(lobName):
   lobConfig = config.getLobConfig(lobName)
   del lobConfig["flows"]
   return jsonify(lobConfig)
+
 
 @lobsConfig.route('/<string:lobName>/flow/<string:flowName>', methods=["GET"])
 def getFlowConfig(lobName, flowName):
