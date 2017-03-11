@@ -1,6 +1,9 @@
 import React, {Component} from "react";
 import {Dropdown, DropdownMenu, DropdownItem} from "reactstrap";
 import LoadingBar from "react-redux-loading-bar";
+import Util from "../../Util";
+import Api from "../../Api";
+import Moment from "moment";
 class Header extends Component {
 
   constructor(props) {
@@ -8,7 +11,7 @@ class Header extends Component {
 
     this.toggle = this.toggle.bind(this);
     this.state = {
-      dropdownOpen: false
+      dropdownOpen: false,
     };
   }
 
@@ -33,6 +36,31 @@ class Header extends Component {
     document.body.classList.toggle('aside-menu-hidden');
   }
 
+  componentDidMount() {
+    Api.fetch("/currentTime", {method: "GET"}).then(response => {
+      let serverTimeStr = response.currentTime
+      let serverTime = Util.parseIsoDateString(serverTimeStr)
+      let serverTimeDiff = Moment.duration(Moment().diff(serverTime))
+      this.setState({serverTimeDifference: serverTimeDiff})
+      this.timerID = setInterval(
+        () => this.tick(),
+        1000
+      );
+    })
+
+  }
+
+  componentWillUnmount() {
+    clearInterval(this.timerID);
+  }
+
+  tick() {
+    let serverTime = Moment().subtract(this.state.serverTimeDifference)
+    this.setState({
+      time: serverTime.format("LTS") + " " + serverTime.format("L")
+    });
+  }
+
   render() {
     return (
       <header className="app-header navbar">
@@ -47,6 +75,9 @@ class Header extends Component {
 
         </ul>
         <ul className="nav navbar-nav ml-auto">
+          <li style={{marginRight:"3em"}}>
+            <span style={{fontWeight:"bold",fontSize:"medium"}}>{this.state.time}</span>
+          </li>
           <li className="nav-item">
             <Dropdown isOpen={this.state.dropdownOpen} toggle={this.toggle}>
               <a onClick={this.toggle} className="nav-link dropdown-toggle nav-link" data-toggle="dropdown" href="#"

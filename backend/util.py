@@ -19,7 +19,7 @@ def stringToTime(dateTimeString):
 
 
 def dateToTimeString(date):
-  return date.strftime("%d.%m.%Y %H:%M:%S")
+  return date.replace(microsecond=0).isoformat()  # .strftime("%d.%m.%Y %H:%M:%S")
 
 
 def dateDataListToList(dateDataList, metricName):

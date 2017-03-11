@@ -35,7 +35,7 @@ def hello():
 
 @app.route("/currentTime")
 def currentTime():
-  return jsonify(util.dateToTimeString(config.getCurrentTime()))
+  return jsonify({"currentTime": util.dateToTimeString(config.getCurrentTime())})
 
 
 @app.errorhandler(Exception)
