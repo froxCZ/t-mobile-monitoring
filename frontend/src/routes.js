@@ -17,13 +17,12 @@ export default (
       <IndexRoute component={Dashboard}/>
       <Route path="dashboard" name="Dashboard" component={Dashboard}/>
       <Route path="lobs" name="Lobs">
-        <IndexRedirect to="monitoring" />
-        <Route path="monitoring" name="Monitoring">
+        <IndexRedirect to="monitoring/CZ" />
+        <Route path="monitoring/:country" name="Monitoring">
           <IndexRoute component={LobsMonitoring}/>
           <Route path=":lobName" name="Lob">
             <IndexRoute component={LobMonitoringDetail}/>
-            <Route path="neid/:neidName" name="Input" component={LobMonitoringDetailForward}/>
-            <Route path="forward/:forwardName" name="Forward" component={LobMonitoringDetailForward}/>
+            <Route path=":flowName" name="Input" component={LobMonitoringDetailForward}/>
           </Route>
         </Route>
 

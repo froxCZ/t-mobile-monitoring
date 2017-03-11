@@ -29,14 +29,34 @@ class Sidebar extends Component {
             <li className="nav-title">
               Lobs
             </li>
-            <li className="nav-item">
-              <Link to={'/lobs/monitoring'} className="nav-link" activeClassName="active">Monitoring</Link>
-            </li>
-            <li className="nav-item">
-              <Link to={'/lobs/tuning'} className="nav-link" activeClassName="active">Tuning</Link>
-            </li>
-            <li className="nav-item">
-              <Link to={'/lobs/settings'} className="nav-link" activeClassName="active">Settings</Link>
+            <li className="nav-item nav-dropdown open">
+              <ul className="nav-dropdown-items">
+                <li className="nav-item">
+                  <Link to={'/lobs/monitoring/CZ'} className="nav-link" activeClassName="active">
+                    <img src={'img/flags/Czech Republic.png'} alt="Czech Republic" style={{height: 15 + 'px'}}/>
+                    &nbsp; Monitoring
+                  </Link>
+                </li>
+                <li className="nav-item">
+                  <Link to={'/lobs/monitoring/AT'} className="nav-link" activeClassName="active">
+                    <img src={'img/flags/Austria.png'} alt="Czech Republic" style={{height: 15 + 'px'}}/>&nbsp;
+                    Monitoring</Link>
+                </li>
+                <li className="nav-item">
+                  <Link to={'/lobs/monitoring/NL'} className="nav-link" activeClassName="active">
+                    <img src={'img/flags/Netherlands.png'} alt="Czech Republic" style={{height: 15 + 'px'}}/>&nbsp;
+                    Monitoring</Link>
+                </li>
+                <li className="nav-item">
+                  <Link to={'/lobs/monitoring/DE'} className="nav-link" activeClassName="active">
+                    <img src={'img/flags/Germany.png'} alt="Czech Republic" style={{height: 15 + 'px'}}/>&nbsp;
+                    Monitoring</Link>
+                </li>
+                <li className="nav-item">
+                  <Link to={'/lobs/settings'} className="nav-link" activeClassName="active">
+                    <i className="icon-wrench"></i>Settings</Link>
+                </li>
+              </ul>
             </li>
             <li className="nav-title">
             </li>

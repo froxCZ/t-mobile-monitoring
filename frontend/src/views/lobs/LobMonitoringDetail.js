@@ -16,12 +16,8 @@ export default class LobMonitoringDetail extends Component {
 
   }
 
-  goToForwardDetail(forwardName) {
-    hashHistory.push(this.props.location.pathname + "/forward/" + forwardName);
-  }
-
-  goToNeidDetail(neidName) {
-    hashHistory.push(this.props.location.pathname + "/neid/" + neidName);
+  goToFlowDetail(flowName) {
+    hashHistory.push(this.props.location.pathname + "/" + flowName);
   }
 
   componentWillMount() {
@@ -234,7 +230,7 @@ export default class LobMonitoringDetail extends Component {
       for (let flowName in this.state.lob.inputs) {
         let flow = this.state.lob.inputs[flowName]
         neidRows.push(
-          <tr onClick={this.goToNeidDetail.bind(this, flowName)}>
+          <tr onClick={this.goToFlowDetail.bind(this, flowName)}>
             <td>{flowName}</td>
             <td>{flow.options.granularity}</td>
             <td>{flow.options.softAlarmLevel}</td>
@@ -258,7 +254,7 @@ export default class LobMonitoringDetail extends Component {
       for (let flowName in this.state.lob.forwards) {
         let flow = this.state.lob.forwards[flowName]
         forwardRows.push(
-          <tr onClick={this.goToForwardDetail.bind(this, flowName)}>
+          <tr onClick={this.goToFlowDetail.bind(this, flowName)}>
             <td>{flowName}</td>
             <td>{flow.options.granularity}</td>
             <td>{flow.options.softAlarmLevel}</td>

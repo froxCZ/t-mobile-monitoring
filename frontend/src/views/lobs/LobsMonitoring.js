@@ -24,13 +24,29 @@ class LobsMonitoring extends Component {
     hashHistory.push(this.props.location.pathname + "/" + lobName);
   }
 
-  componentDidMount() {
+  propChange(props) {
+    let country = props.params.country;
+    if (country != this.state.country) {
+      this.reloadData(country)
+    }
+  }
+
+  reloadData(country) {
+    this.setState({country: country})
     Api.fetch("/lobs/config/", {method: 'GET'}).then((response) => {
       this.setState({lobs: response.lobs});
     });
     Api.fetch("/lobs/status/", {method: 'GET'}).then((response) => {
       this.setState({status: response});
     });
+  }
+
+  componentWillMount() {
+    this.propChange(this.props)
+  }
+
+  componentWillReceiveProps(nextProps) {
+    this.propChange(nextProps)
   }
 
   render() {
@@ -85,16 +101,8 @@ class LobsMonitoring extends Component {
     return (
       <div className="animated fadeIn">
         <div className="row">
-          <div className="col-lg-2">
-            <div className="card">
-              <div className="card-block">
-                <div style={{fontSize: 2 + "em"}}>
-                  <span className="badge badge-pill badge-success">42</span>
-                  <span className="badge badge-pill badge-warning">3</span>
-                  <span className="badge badge-pill badge-danger">0</span>
-                </div>
-              </div>
-            </div>
+          <div className="col-lg-12">
+            <h2>{this.state.country} monitoring</h2>
           </div>
         </div>
         <div className="row">

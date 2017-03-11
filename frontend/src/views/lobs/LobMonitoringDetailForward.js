@@ -35,26 +35,12 @@ export default class LobMonitoringDetailForward extends Component {
 
   propChange(props) {
     let lobName = props.params.lobName;
-    let flowType = null;
-    let flowName = null;
-    let inputs = []
-    let forwards = []
-    if (this.props.params.forwardName) {
-      flowType = "forwards"
-      flowName = props.params.forwardName;
-      forwards.push(flowName)
-    } else {
-      flowType = "inputs"
-      flowName = props.params.neidName;
-      inputs.push(flowName)
-    }
+    let flowName = props.params.flowName;
+
     if (this.state.lobName != lobName || this.state.flowName != flowName) {
       this.setState({
         lobName: lobName,
         flowName: flowName,
-        flowType: flowType,
-        inputs: inputs,
-        forwards: forwards,
         status: null
       });
       Api.fetch("/lobs/config/" + lobName + "/flow/" + flowName, {method: 'GET'}).then((response) => {
@@ -70,12 +56,14 @@ export default class LobMonitoringDetailForward extends Component {
 
   loadData(controlSettings) {
     this.setState({controlSettings: controlSettings});
+    let flowObj = {inputs:[],forwards:[]};
+    flowObj[this.state.flow.type].push(this.state.flow.name);
     Api.lobData(
       controlSettings.fromDate,
       controlSettings.toDate,
       this.state.lobName,
-      this.state.inputs,
-      this.state.forwards,
+      flowObj.inputs,
+      flowObj.forwards,
       controlSettings.granularity)
       .then(response => {
         this.setState({data: response.data, metadata: response.metadata})
