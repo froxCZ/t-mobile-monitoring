@@ -41,7 +41,7 @@ class Header extends Component {
       let serverTimeStr = response.currentTime
       let serverTime = Util.parseIsoDateString(serverTimeStr)
       let serverTimeDiff = Moment.duration(Moment().diff(serverTime))
-      this.setState({serverTimeDifference: serverTimeDiff})
+      Util.setServerTimeDifference(serverTimeDiff)
       this.timerID = setInterval(
         () => this.tick(),
         1000
@@ -55,7 +55,7 @@ class Header extends Component {
   }
 
   tick() {
-    let serverTime = Moment().subtract(this.state.serverTimeDifference)
+    let serverTime = Util.getCurrentTime()
     this.setState({
       time: serverTime.format("LTS") + " " + serverTime.format("L")
     });

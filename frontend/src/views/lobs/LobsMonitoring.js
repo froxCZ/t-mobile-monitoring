@@ -53,8 +53,10 @@ class LobsMonitoring extends Component {
               <span style={{minWidth: 3 + "em"}} title="outage"
                     className="badge badge-pill badge-danger">{status.OUTAGE + status.N_A}</span>
               &nbsp;
+              {status.DISABLED > 0 &&
               <span style={{minWidth: 3 + "em"}} title="Disabled"
                     className="badge badge-pill badge-default">{status.DISABLED}</span>
+              }
             </h5>
           </div>)
           if (status.OUTAGE > 0) {

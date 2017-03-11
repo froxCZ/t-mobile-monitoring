@@ -13,4 +13,10 @@ export default class Util {
     return Moment(isoDateString, "YYYY-MM-DDThh:mm:ssTZD")
   }
 
+  static getCurrentTime(){
+    return Moment().subtract(Util.serverTimeDiff)
+  }
+  static setServerTimeDifference(serverTimeDiff) {
+    Util.serverTimeDiff = serverTimeDiff
+  }
 }

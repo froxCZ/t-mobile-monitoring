@@ -48,9 +48,9 @@ class FlowAnalyzer:
 
 if __name__ == "__main__":
   logging.basicConfig(format='%(levelname)s [%(module)s]: %(message)s', level=logging.DEBUG)
-  gsm = config.getLobConfig("CZ_BVS")
-  analyzer = FlowAnalyzer(gsm["flows"]["BVSCTX"])
-  analyzer.run(util.stringToTime("01.01.2017 11:00:00"))
+  gsm = config.getLobConfig("CZ_EPC")
+  analyzer = FlowAnalyzer(gsm["flows"]["CENTROTEX:CZFOX-EPCMTXE"])
+  analyzer.run(util.stringToTime("10.01.2017 15:00:00"))
   isOutage, traffic = analyzer.getResult()
   print(isOutage)
   print(traffic)

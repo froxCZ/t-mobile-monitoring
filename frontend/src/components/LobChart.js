@@ -1,6 +1,7 @@
 import React, {Component} from "react";
 import "react-datepicker/dist/react-datepicker.css";
 import Util from "../Util";
+import Moment from "moment";
 import {
   LineChart,
   Line,
@@ -11,19 +12,20 @@ import {
   Legend,
   ResponsiveContainer,
   ReferenceLine,
-  ReferenceArea
+  ReferenceArea,
+  ReferenceDot
 } from "recharts"; // Expects that Highcharts was loaded in the code.
 
 const DAY_NR_TO_NAME = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-const COLORS = ["#FF0080", "#FF6600", "#028482"]
+const COLORS = ["#FF0080", "#FF6600", "#028482"];
 const COLORS_MAP = {
   "dayDifference": "#FF0080",
   "ticDifference": "#4b4c4c",
   "expected": "#648dbd"
-}
+};
 export default class LobChart extends Component {
   constructor() {
-    super()
+    super();
     this.state = {}
   }
 
@@ -36,6 +38,8 @@ export default class LobChart extends Component {
   }
 
   propChange(props) {
+    let currentTimeLabel = LobChart.findCurrentTimeLabel(props.data);
+    this.setState({currentTimeLabel: currentTimeLabel});
     //this.setState({metrics: props.metrics, data: props.data})
   }
 
@@ -46,8 +50,8 @@ export default class LobChart extends Component {
     LobChart.adjustData(this.props.data);
     let referenceLines = [];
     if (this.props.difference) {
-      referenceLines.push(<ReferenceLine y={1} label="expected" stroke="gray"/>)
-      referenceLines.push(<ReferenceLine y={this.props.softAlarmLevel} label="expected" stroke="#bd8f1d"/>)
+      referenceLines.push(<ReferenceLine y={1} label="expected" stroke="gray"/>);
+      referenceLines.push(<ReferenceLine y={this.props.softAlarmLevel} label="expected" stroke="#bd8f1d"/>);
       referenceLines.push(<ReferenceLine y={this.props.hardAlarmLevel} label="expected" stroke="#bd3e39"/>)
     }
     return (
@@ -60,25 +64,28 @@ export default class LobChart extends Component {
           {referenceLines}
           {this.renderLines()}
           {this.renderOutages()}
+          {this.state.currentTimeLabel &&
+          <ReferenceDot x={this.state.currentTimeLabel} y={0}  r={5} label="now" fill="blue" stroke="none"/>
+          }
         </LineChart>
       </ResponsiveContainer>
     )
   }
 
   renderOutages() {
-    let outageLines = []
+    let outageLines = [];
     if (this.props.metrics["status"] == null) {
       return outageLines
     }
     let inOutage = false;
     let outageStart = null;
     let outageEnd = null;
-    let tick = null
+    let tick = null;
     for (let i = 0; i < this.props.data.length; i++) {
-      tick = this.props.data[i]
+      tick = this.props.data[i];
       if (tick.status == "OUTAGE") {
         if (!inOutage) {
-          outageStart = tick.tickValue
+          outageStart = tick.tickValue;
           inOutage = true;
         }
         outageEnd = tick.tickValue
@@ -88,13 +95,13 @@ export default class LobChart extends Component {
                          x2={outageEnd}
                          stroke="red"
                          strokeOpacity={0.3}/>
-        )
+        );
         outageStart = null;
         outageEnd = null;
         inOutage = false
       }
     }
-    if(inOutage){
+    if (inOutage) {
       outageLines.push(
         <ReferenceArea x1={outageStart}
                        x2={outageEnd}
@@ -108,7 +115,7 @@ export default class LobChart extends Component {
   }
 
   renderLines() {
-    let lines = []
+    let lines = [];
     let iColor = 0;
     for (let i in this.props.metrics) {
       if (i.includes("smoothed") && !this.props.smooth) {
@@ -123,7 +130,7 @@ export default class LobChart extends Component {
       if (this.props.difference && !i.includes("Difference")) {
         continue;
       }
-      let color = COLORS_MAP[i]
+      let color = COLORS_MAP[i];
       if (!color) {
         color = COLORS[iColor++]
       }
@@ -140,8 +147,26 @@ export default class LobChart extends Component {
     }
   }
 
+  static findCurrentTimeLabel(data) {
+    if (data == null || data.length == 0) {
+      return null;
+    }
+    let currentTime = Util.getCurrentTime();
+    let firstDate = Util.parseIsoDateString(data[0]._id);
+    let secondDate = Util.parseIsoDateString(data[1]._id);
+    let granularityDiff = Moment.duration(secondDate.diff(firstDate));
+    for (let i in data) {
+      let row = data[i];
+      let tickDate = Util.parseIsoDateString(row._id);
+      if (tickDate.isBefore(currentTime) && tickDate.add(granularityDiff).isAfter(currentTime)) {
+        return LobChart.dateToTickValue(row._id)
+      }
+    }
+    return null;
+  }
+
   static dateToTickValue(_id) {
-    return Util.formatIsoDateString(_id, "DD.MM.YYYY hh:mm a ddd");
+    return Util.formatIsoDateString(_id, "llll");
   }
 
 }
