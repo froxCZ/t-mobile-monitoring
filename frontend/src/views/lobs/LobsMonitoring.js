@@ -51,10 +51,7 @@ class LobsMonitoring extends Component {
                     className="badge badge-pill badge-warning">{status.WARNING}</span>
               &nbsp;
               <span style={{minWidth: 3 + "em"}} title="outage"
-                    className="badge badge-pill badge-danger">{status.OUTAGE}</span>
-              &nbsp;
-              <span style={{minWidth: 3 + "em"}} title="n/a"
-                    className="badge badge-pill badge-default">{status.N_A}</span>
+                    className="badge badge-pill badge-danger">{status.OUTAGE + status.N_A}</span>
               &nbsp;
               <span style={{minWidth: 3 + "em"}} title="Disabled"
                     className="badge badge-pill badge-default">{status.DISABLED}</span>
@@ -68,7 +65,7 @@ class LobsMonitoring extends Component {
             statusSpan = [<span style={{marginRight: "3px"}} className="badge badge-success">ok</span>]
           }
           if (status.N_A > 0) {
-            statusSpan.push(<span className="badge badge-default">n/a</span>)
+            statusSpan.push(<span className="badge badge-danger">n/a</span>)
           }
         }
         lobRows.push(

@@ -65,12 +65,14 @@ class FlowStatusManager:
           statuses[gName] = {"status": "N_A"}
     return statuses
 
-  def _setStatusMetadata(self, status, flow):
-    ticTime = status["ticTime"]
+  def _setStatusMetadata(self, flowStatus, flow):
+    ticTime = flowStatus["ticTime"]
     granDelta = datetime.timedelta(minutes=flow["options"]["granularity"])
+    if not flow["options"]["enabled"]:
+      return {"status": status.DISABLED}
     if ticTime + 2 * granDelta < config.getCurrentTime():
-      return {"status": "N_A"}
-    return status
+      return {"status": status.NA}
+    return flowStatus
 
   def getStatusForFlow(self, flow):
     gName = flow["gName"]

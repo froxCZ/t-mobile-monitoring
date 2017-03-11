@@ -178,7 +178,8 @@ export default class LobMonitoringDetail extends Component {
     Api.fetch("/lobs/config/" + this.state.lobName + "/options", myInit);
   }
 
-  getTrafficDifference(flowName) {
+  getTrafficDifference(flow) {
+    let flowName = flow.name
     if (this.state.status && flowName in this.state.status && this.state.status[flowName].difference) {
       return this.state.status[flowName].difference
     } else {
@@ -187,18 +188,21 @@ export default class LobMonitoringDetail extends Component {
   }
 
 
-  getStatusBadge(flowName) {
+  getStatusBadge(flow) {
+    let flowName = flow.name;
     if (this.state.status && flowName in this.state.status) {
       let flowStatus = this.state.status[flowName].status
       let badge = null;
-      if (flowStatus == "OK") {
+      if(flowStatus == "DISABLED"){
+        badge = <span className="badge badge-default">disabled</span>
+      }else if (flowStatus == "OK") {
         badge = <span className="badge badge-success">ok</span>
       } else if (flowStatus == "WARNING") {
         badge = <span className="badge badge-warning">warning</span>
       } else if (flowStatus == "OUTAGE") {
         badge = <span className="badge badge-danger">outage</span>
       } else if (flowStatus == "N_A") {
-        badge = <span className="badge badge-default">n/a</span>
+        badge = <span className="badge badge-danger">n/a</span>
       }
       return badge;
     } else {
@@ -235,9 +239,9 @@ export default class LobMonitoringDetail extends Component {
             <td>{flow.options.granularity}</td>
             <td>{flow.options.softAlarmLevel}</td>
             <td>{flow.options.hardAlarmLevel}</td>
-            <td>{this.getTrafficDifference(flowName)}</td>
+            <td>{this.getTrafficDifference(flow)}</td>
             <td>
-              <h4>{this.getStatusBadge(flowName)}</h4>
+              <h4>{this.getStatusBadge(flow)}</h4>
             </td>
             <td>
               <label className="switch switch-3d switch-primary" onClick={(e) => e.stopPropagation()}>
@@ -259,9 +263,9 @@ export default class LobMonitoringDetail extends Component {
             <td>{flow.options.granularity}</td>
             <td>{flow.options.softAlarmLevel}</td>
             <td>{flow.options.hardAlarmLevel}</td>
-            <td>{this.getTrafficDifference(flowName)}</td>
+            <td>{this.getTrafficDifference(flow)}</td>
             <td>
-              <h4>{this.getStatusBadge(flowName)}</h4>
+              <h4>{this.getStatusBadge(flow)}</h4>
             </td>
             <td>
               <label className="switch switch-3d switch-primary" onClick={(e) => e.stopPropagation()}>
