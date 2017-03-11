@@ -80,6 +80,9 @@ def getCountries():
     countries[countryName] = {**defaultParam, **country}
   return countries
 
+def getCountryByName(countryName):
+  return getCountries()[countryName]
+
 
 def getEnabledLobs():
   lobs = getLobs()
@@ -112,6 +115,7 @@ def getLobsConfig():
       config["forwards"] = {}
     config["flows"] = {}
     inputs = {}
+    country = getCountryFromLob(lobName)
     for flowName, flowOptions in config["inputs"].items():
       flow = {"options": setFlowDefaultOptions(flowOptions, parentObj=config["options"])}
       flow["name"] = flowName
@@ -119,6 +123,7 @@ def getLobsConfig():
       flow["lobName"] = lobName
       flow["dataPath"] = lobName + ".inputs." + flowName
       flow["gName"] = lobName + "_" + flowName
+      flow["country"] = country
       inputs[flowName] = flow
       config["flows"][flowName] = flow
     config["inputs"] = inputs
@@ -130,12 +135,17 @@ def getLobsConfig():
         flow["name"] = flowName
         flow["type"] = "forwards"
         flow["lobName"] = lobName
+        flow["country"] = country
         flow["dataPath"] = lobName + ".forwards." + flowName
         flow["gName"] = lobName + "_" + flowName
         forwards[flowName] = flow
         config["flows"][flowName] = flow
     config["forwards"] = forwards
   return res
+
+
+def getCountryFromLob(lobName):
+  return lobName.split("_")[0]
 
 
 def setFlowDefaultOptions(obj, parentObj):

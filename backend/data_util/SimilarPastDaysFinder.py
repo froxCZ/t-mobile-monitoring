@@ -1,39 +1,32 @@
 import datetime
 
 import util
-
-HOLIDAYS = [(1, 1),  # day, month
-            (1, 1),
-            (17, 4),
-            (14, 4),
-            (1, 5),
-            (8, 5),
-            (5, 7),
-            (6, 7),
-            (28, 9),
-            (28, 10),
-            (17, 11),
-            (24, 12),
-            (25, 12),
-            (26, 12), ]
+from config import config
 
 INITIAL_DATE = util.stringToDate("01.08.2016")
 
-IGNORE_DAYS = [(24, 12), (31, 12), (1, 1)]
+IGNORE_DAYS = [(24, 12), (31, 12), (1, 1)] #days with always unusual traffic. Do not use for expectations
 
 
 class SimilarPastDaysFinder():
   def __init__(self, flows):
-    self.options = flows[0]["options"]
+    flow = flows[0]
+    self.options = flow["options"]
     self.independentdays = self.options.get("independentdays", [])
+    self.country = config.getCountryByName(flow["country"])
+    self.HOLIDAYS = []
+    for holiday in self.country["holidays"]:
+      day, month = holiday.split(".")
+      self.HOLIDAYS.append((int(day), int(month)))
+    pass
 
   def findSimilarPastDays(self, date):
     self.date = date
-    if (_isWorkDay(self.date)):
+    if (self._isWorkDay(self.date)):
       return self._getPastWorkDays()
-    if (_isWeekendDay(self.date)):
+    if (self._isWeekendDay(self.date)):
       return self._getPastWeekends()
-    if (_isHoliday(self.date)):
+    if (self._isHoliday(self.date)):
       return self._getPastWeekends()
 
   def _getPastHolidays(self):
@@ -42,7 +35,7 @@ class SimilarPastDaysFinder():
     dayToTest = self.date
     while len(resultDays) < 4 and dayToTest > INITIAL_DATE:
       dayToTest -= datetime.timedelta(days=1)
-      if _isHoliday(dayToTest) and _isUsualDay(dayToTest):
+      if self._isHoliday(dayToTest) and self._isUsualDay(dayToTest):
         resultDays.append(dayToTest)
       i += 1
 
@@ -54,7 +47,7 @@ class SimilarPastDaysFinder():
     date = self.date
     while len(resultDays) < days:
       dayToTest = date - datetime.timedelta(days=i)
-      if _isWorkDay(dayToTest) and _isUsualDay(dayToTest) and self._satifiesIndependentDays(dayToTest):
+      if self._isWorkDay(dayToTest) and self._isUsualDay(dayToTest) and self._satifiesIndependentDays(dayToTest):
         resultDays.append(dayToTest)
       i += 1
     return resultDays
@@ -77,7 +70,7 @@ class SimilarPastDaysFinder():
     date = self.date
     while len(resultDays) < days:
       dayToTest = date - datetime.timedelta(days=i)
-      if _isWeekendDay(dayToTest) and _isUsualDay(dayToTest) and self._satifiesIndependentDays(dayToTest):
+      if self._isWeekendDay(dayToTest) and self._isUsualDay(dayToTest) and self._satifiesIndependentDays(dayToTest):
         resultDays.append(dayToTest)
       i += 1
     return resultDays
@@ -87,31 +80,27 @@ class SimilarPastDaysFinder():
     i = 1
     while len(resultDays) < days:
       dayToTest = self.date - datetime.timedelta(days=i)
-      if self.date.weekday() == dayToTest.weekday() and _isUsualDay(dayToTest):
+      if self.date.weekday() == dayToTest.weekday() and self._isUsualDay(dayToTest):
         resultDays.append(dayToTest)
       i += 1
     return resultDays
 
-
-def _isWorkDay(date):
-  if (date.weekday() >= 5):
-    return False
-  return not _isHoliday(date)
-
-
-def _isWeekendDay(date):
-  return date.weekday() >= 5
-
-
-def _isUsualDay(date):
-  for i in IGNORE_DAYS:
-    if date.day == i[0] and date.month == i[1]:
+  def _isWorkDay(self, date):
+    if (date.weekday() >= 5):
       return False
-  return True
+    return not self._isHoliday(date)
 
+  def _isWeekendDay(self, date):
+    return date.weekday() >= 5
 
-def _isHoliday(date):
-  for i in HOLIDAYS:
-    if date.day == i[0] and date.month == i[1]:
-      return True
-  return False
+  def _isUsualDay(self, date):
+    for i in IGNORE_DAYS:
+      if date.day == i[0] and date.month == i[1]:
+        return False
+    return True
+
+  def _isHoliday(self, date):
+    for i in self.HOLIDAYS:
+      if date.day == i[0] and date.month == i[1]:
+        return True
+    return False
