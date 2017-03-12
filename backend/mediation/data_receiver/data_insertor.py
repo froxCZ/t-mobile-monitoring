@@ -4,24 +4,35 @@ from mongo import mongo
 
 
 class DataInsertor():
-  def insertInputs(self, inputsList):
-    """
-    inserts inputsList into database.
-    :param inputsList: list of objects containing date and input data information.
-    :return:
-    """
+  def __init__(self):
+    super().__init__()
+
+  def insertRows(self, rowList):
     coll = mongo.lobs()
-    updates = _sumUpdates(list(map(_createInputUpdateDict, inputsList)))
-    print("Inserted " + str(len(inputsList)) + " neid inputs")
+    updates = _sumUpdates(list(map(_createRowUpdateDict, rowList)))
+    print("Inserted " + str(len(rowList)) + " rows")
     for key, value in updates.items():
       coll.update({'_id': key}, value, upsert=True)
 
-  def insertForwards(self, forwardsList):
-    coll = mongo.lobs()
-    updates = _sumUpdates(list(map(_createForwardUpdateDict, forwardsList)))
-    print("Inserted " + str(len(forwardsList)) + " forwards")
-    for key, value in updates.items():
-      coll.update({'_id': key}, value, upsert=True)
+def _createRowUpdateDict(row):
+  date = row["date"]
+  indexDate = date - timedelta(seconds=date.second)
+
+  updatePath = "data." + row["country"] + "." + row["lob"] + "." + row["type"] + "."
+  try:
+    dataSize = int(row["dataSize"])
+  except ValueError:
+    print("ValueError: " + row["dataSize"])
+    print(row)
+    dataSize = 0
+  update = {"$inc":
+              {updatePath + row["flowName"]: dataSize,
+               updatePath + "sum": dataSize,
+               updatePath + "updatesCnt": 1
+               }
+            }
+  return (indexDate, update)
+
 
 def _createForwardUpdateDict(row):
   date = row["date"]

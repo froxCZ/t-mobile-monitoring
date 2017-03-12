@@ -48,7 +48,7 @@ class _Mongo:
     ))
 
   def dataDb(self):
-    return _client["dev_data"]
+    return _client["mediation_data"]
 
   def db(self):
     return _client["dev"]
