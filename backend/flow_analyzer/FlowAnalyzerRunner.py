@@ -4,7 +4,10 @@ import logging
 import config
 from config import TIMEZONE
 from flow_analyzer import FlowAnalyzer
+from flow_analyzer import status
+from flow_analyzer.EventsManager import EventsManager
 from flow_analyzer.FlowStatusManager import FlowStatusManager
+from flow_analyzer.StatusChangeNotificator import StatusChangeNotificator
 from scheduler.AbstractModuleScheduler import AbstractModuleScheduler
 
 
@@ -14,38 +17,45 @@ class FlowAnalyzerRunner(AbstractModuleScheduler):
   def __init__(self):
     super().__init__()
     self.manager = FlowStatusManager()
-    self.manager.removeAll()
-    # delete status history
+    self.notificator = StatusChangeNotificator()
 
   def run(self):
     super(FlowAnalyzerRunner, self).run()
-    lobsConfig = config.getLobsConfig()["lobs"]
-
     self.lastExecutions = self.manager.getAll()
-    jobsToSchedule = {}
+
+    flowsToAnalyze = self._getFlowsToAnalyze()
+    if (len(flowsToAnalyze)) == 0:
+      logging.debug("no flows to analyze")
+
+    for flow in flowsToAnalyze:
+      self._analyzeFlow(flow)
+
+  def _analyzeFlow(self, flow):
+    analyzer = FlowAnalyzer(flow)
+    runResult = analyzer.run(config.getCurrentTime().replace(tzinfo=TIMEZONE))
+    previousStatus = self.lastExecutions[flow["gName"]]["status"]
+    newStatus = analyzer.status
+    if previousStatus != newStatus:
+      msg = "Changed from " + previousStatus + " to " + newStatus
+      EventsManager.logEvent(flow, msg, analyzer.ticTime)
+      self.notificator.statusChanged(flow, previousStatus, newStatus, analyzer.ticTime)
+    self.manager.saveStatus(flow, newStatus, analyzer.difference, analyzer.ticTime)
+
+  def _getFlowsToAnalyze(self):
+    flowsToAnalyze = []
+    lobsConfig = config.getEnabledLobs()
     for lobName, lob in lobsConfig.items():
-      for flow in {**lob["forwards"], **lob["inputs"]}.values():
+      for flow in lob["flows"].values():
         if self.shouldSchedule(flow):
-          granularity = flow["options"]["granularity"]
-          l = jobsToSchedule.get(granularity, [])
-          l.append(flow)
-          jobsToSchedule[granularity] = l
-    if (len(jobsToSchedule)) == 0:
-      logging.debug("no jobs to execute")
-    for gran, flowList in sorted(jobsToSchedule.items()):
-      for flow in flowList:
-        time = config.getCurrentTime()
-        analyzer = FlowAnalyzer(flow)
-        runResult = analyzer.run(config.getCurrentTime().replace(tzinfo=TIMEZONE))
-        if runResult == 0:
-          self.manager.saveStatus(flow, analyzer.status, analyzer.difference, analyzer.ticTime)
+          flowsToAnalyze.append(flow)
+    return flowsToAnalyze
 
   def shouldSchedule(self, flow):
-    lastTicTime = datetime.datetime.min.replace(tzinfo=TIMEZONE)
     granularity = flow["options"]["granularity"]
-    if flow["gName"] in self.lastExecutions:
-      lastExecution = self.lastExecutions[flow["gName"]]
-      lastTicTime = lastExecution["ticTime"]
+    lastExecution = self.lastExecutions[flow["gName"]]
+    if lastExecution["status"] == status.NA:
+      return True
+    lastTicTime = lastExecution["ticTime"]
     if lastTicTime < config.getCurrentTime() - datetime.timedelta(minutes=granularity):
       return True
     else:

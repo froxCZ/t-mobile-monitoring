@@ -23,6 +23,12 @@ class _Mongo:
       tzinfo=pytz.timezone('CET')
     ))
 
+  def events(self):
+    return self.db()["events"].with_options(codec_options=CodecOptions(
+      tz_aware=True,
+      tzinfo=pytz.timezone('CET')
+    ))
+
   def config(self):
     return self.db()["config"].with_options(codec_options=CodecOptions(
       tz_aware=True,

@@ -54,7 +54,7 @@ class FlowStatusManager:
     lobs = config.getLobsConfig()["lobs"]
     res = mongo.statuses().find_one({"_id": "lobs"}, {"_id": 0})
     if res is None:
-      return {}
+      res = {}
     statuses = {}
     for lobName, lob in lobs.items():
       for flowName, flow in lob["flows"].items():
@@ -64,15 +64,6 @@ class FlowStatusManager:
         else:
           statuses[gName] = {"status": "N_A"}
     return statuses
-
-  def _setStatusMetadata(self, flowStatus, flow):
-    ticTime = flowStatus["ticTime"]
-    granDelta = datetime.timedelta(minutes=flow["options"]["granularity"])
-    if not flow["options"]["enabled"]:
-      return {"status": status.DISABLED}
-    if ticTime + 2 * granDelta < config.getCurrentTime():
-      return {"status": status.NA}
-    return flowStatus
 
   def getStatusForFlow(self, flow):
     gName = flow["gName"]
@@ -88,6 +79,15 @@ class FlowStatusManager:
     setObj = {"$set": {flow["gName"]: statusDict}}
     mongo.statuses().update_one({"_id": "lobs"}, setObj, upsert=True)
     pass
+
+  def _setStatusMetadata(self, flowStatus, flow):
+    ticTime = flowStatus["ticTime"]
+    granDelta = datetime.timedelta(minutes=flow["options"]["granularity"])
+    if not flow["options"]["enabled"]:
+      return {"status": status.DISABLED}
+    if ticTime + 2 * granDelta < config.getCurrentTime():
+      return {"status": status.NA}
+    return flowStatus
 
   def removeAll(self):
     mongo.statuses().delete_one({"_id": "lobs"})
