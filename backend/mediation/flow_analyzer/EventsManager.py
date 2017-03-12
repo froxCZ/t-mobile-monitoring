@@ -2,6 +2,7 @@ import logging
 
 import config
 from mongo import mongo
+from .status import OK
 
 
 class EventsManager:
@@ -20,6 +21,9 @@ class EventsManager:
     mongo.events().insert_one(obj)
 
   @staticmethod
-  def getEvents(skip=0, limit=30):
-    events = list(mongo.events().find({}, {"_id": 0}).limit(limit).skip(skip).sort("_id", -1))
+  def getEvents(offset=0, omitOK=False, limit=30):
+    filter = {}
+    if omitOK is True:
+      filter["newStatus"] = {"$ne": OK}
+    events = list(mongo.events().find(filter, {"_id": 0}).limit(limit).skip(offset).sort("_id", -1))
     return events

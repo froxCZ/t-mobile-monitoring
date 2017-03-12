@@ -43,6 +43,8 @@ def listToDayMinutes(dataList, value="value"):
 def resetDateTimeMidnight(dateTime):
   return dateTime.replace(hour=0, minute=0, second=0, microsecond=0)
 
+def str2bool(value):
+  return {"True": True, "true": True}.get(value, False)
 
 def minuteDictToDateDict(baseDate, dict, valueName):
   """

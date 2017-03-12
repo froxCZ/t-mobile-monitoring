@@ -3,26 +3,39 @@ import Api from "../../Api";
 import Util from "../../Util";
 class Dashboard extends Component {
   constructor() {
-    super()
-    this.state = {}
+    super();
+    this.state = {events: [], omitOK: true}
   }
 
   componentDidMount() {
-    this.loadEvents()
+    this.loadEvents(0, this.state.omitOK)
   }
 
-  loadEvents() {
-    let req = {method: "GET"}
-    Api.fetch("/mediation/events", req).then(response => {
-      this.setState({events: response})
+  loadEvents(offset, omitOK) {
+    let req = {method: "GET"};
+    let events = this.state.events;
+    if (offset == 0) {
+      events = []
+    }
+    Api.fetch("/mediation/events?offset=" + offset + "&omitOK=" + omitOK, req).then(response => {
+      this.setState({events: events.concat(response)})
     })
+  }
+
+  loadMore() {
+    this.loadEvents(this.state.events.length, this.state.omitOK)
+  }
+
+  omitOKChanged(omitOK) {
+    this.loadEvents(0, omitOK);
+    this.setState({omitOK: omitOK})
   }
 
   renderEvents() {
     if (this.state.events == null) {
       return <p></p>
     }
-    let rows = []
+    let rows = [];
     for (let event of this.state.events) {
       let row = <tr>
         <td><img src={Util.countryToFlagPath(event.country)} alt="Czech Republic" style={{height: 15 + 'px'}}/></td>
@@ -33,14 +46,14 @@ class Dashboard extends Component {
         <td>{event.message}</td>
         <td>{event.newStatus}</td>
 
-      </tr>
+      </tr>;
       rows.push(row)
     }
     return <div className="row">
       <div className="col-lg-12">
         <div className="card">
           <div className="card-header">
-            <i className="fa fa-align-justify"></i> Simple Table
+            Events
           </div>
           <div className="card-block">
             <table className="table">
@@ -52,23 +65,26 @@ class Dashboard extends Component {
                 <th>Time</th>
                 <th>Tic time</th>
                 <th>Message</th>
-                <th>Status</th>
+                <th>Status&nbsp;&nbsp;<br/>
+                  <input type="checkbox"
+                         id="checkbox3"
+                         name="checkbox3"
+                         checked={this.state.omitOK}
+                         onChange={(e) => this.omitOKChanged(e.target.checked)}/>Omit OK
+                </th>
               </tr>
               </thead>
               <tbody>
               {rows}
               </tbody>
             </table>
-            <ul className="pagination">
-              <li className="page-item"><a className="page-link" href="#">Prev</a></li>
-              <li className="page-item active">
-                <a className="page-link" href="#">1</a>
-              </li>
-              <li className="page-item"><a className="page-link" href="#">2</a></li>
-              <li className="page-item"><a className="page-link" href="#">3</a></li>
-              <li className="page-item"><a className="page-link" href="#">4</a></li>
-              <li className="page-item"><a className="page-link" href="#">Next</a></li>
-            </ul>
+            <div style={{textAlign: "center"}}>
+              <button type="button" className="btn btn-primary btn-lg" onClick={() => {
+                this.loadMore()
+              }}>More...
+              </button>
+            </div>
+
           </div>
         </div>
       </div>
