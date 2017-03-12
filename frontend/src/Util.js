@@ -9,13 +9,19 @@ export default class Util {
     return Moment(isoDateString, "YYYY-MM-DDThh:mm:ssTZD").format(format)
   }
 
+  static formatIsoDateStrToDateTimeStr(isoDateString) {
+    let m = Moment(isoDateString, "YYYY-MM-DDThh:mm:ssTZD")
+    return m.format("L") + " " + m.format("LTS")
+  }
+
   static parseIsoDateString(isoDateString) {
     return Moment(isoDateString, "YYYY-MM-DDThh:mm:ssTZD")
   }
 
-  static getCurrentTime(){
+  static getCurrentTime() {
     return Moment().subtract(Util.serverTimeDiff)
   }
+
   static setServerTimeDifference(serverTimeDiff) {
     Util.serverTimeDiff = serverTimeDiff
   }
@@ -27,6 +33,16 @@ export default class Util {
       return false;
     }
     return true;
+  }
+
+  static countryToFlagPath(country) {
+    let COUNTRY_TO_FLAG = {
+      "CZ": "img/flags/Czech Republic.png",
+      "AT": "img/flags/Austria.png",
+      "NL": "img/flags/Netherlands.png",
+      "DE": "img/flags/Germany.png",
+    }
+    return COUNTRY_TO_FLAG[country]
   }
 
 }

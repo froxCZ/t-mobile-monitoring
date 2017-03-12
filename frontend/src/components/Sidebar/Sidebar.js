@@ -1,5 +1,6 @@
 import React, {Component} from "react";
 import {Link} from "react-router";
+import Util from "../../Util";
 
 class Sidebar extends Component {
 
@@ -33,23 +34,23 @@ class Sidebar extends Component {
               <ul className="nav-dropdown-items">
                 <li className="nav-item">
                   <Link to={'/mediation/monitoring/CZ'} className="nav-link" activeClassName="active">
-                    <img src={'img/flags/Czech Republic.png'} alt="Czech Republic" style={{height: 15 + 'px'}}/>
+                    <img src={Util.countryToFlagPath("CZ")} alt="Czech Republic" style={{height: 15 + 'px'}}/>
                     &nbsp; Monitoring
                   </Link>
                 </li>
                 <li className="nav-item">
                   <Link to={'/mediation/monitoring/AT'} className="nav-link" activeClassName="active">
-                    <img src={'img/flags/Austria.png'} alt="Czech Republic" style={{height: 15 + 'px'}}/>&nbsp;
+                    <img src={Util.countryToFlagPath("AT")} alt="Czech Republic" style={{height: 15 + 'px'}}/>&nbsp;
                     Monitoring</Link>
                 </li>
                 <li className="nav-item">
                   <Link to={'/mediation/monitoring/NL'} className="nav-link" activeClassName="active">
-                    <img src={'img/flags/Netherlands.png'} alt="Czech Republic" style={{height: 15 + 'px'}}/>&nbsp;
+                    <img src={Util.countryToFlagPath("NL")} alt="Czech Republic" style={{height: 15 + 'px'}}/>&nbsp;
                     Monitoring</Link>
                 </li>
                 <li className="nav-item">
                   <Link to={'/mediation/monitoring/DE'} className="nav-link" activeClassName="active">
-                    <img src={'img/flags/Germany.png'} alt="Czech Republic" style={{height: 15 + 'px'}}/>&nbsp;
+                    <img src={Util.countryToFlagPath("DE")} alt="Czech Republic" style={{height: 15 + 'px'}}/>&nbsp;
                     Monitoring</Link>
                 </li>
                 <li className="nav-item">

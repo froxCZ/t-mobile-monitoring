@@ -4,11 +4,11 @@ import logging
 import config
 from config import TIMEZONE
 from mediation.flow_analyzer import status
+from mediation.flow_analyzer.EventsManager import EventsManager
+from mediation.flow_analyzer.FlowAnalyzer import FlowAnalyzer
 from mediation.flow_analyzer.FlowStatusManager import FlowStatusManager
+from mediation.flow_analyzer.StatusChangeNotificator import StatusChangeNotificator
 from scheduler.AbstractModuleScheduler import AbstractModuleScheduler
-from .EventsManager import EventsManager
-from .FlowAnalyzer import FlowAnalyzer
-from .StatusChangeNotificator import StatusChangeNotificator
 
 
 class FlowAnalyzerRunner(AbstractModuleScheduler):
@@ -37,7 +37,7 @@ class FlowAnalyzerRunner(AbstractModuleScheduler):
     newStatus = analyzer.status
     if previousStatus != newStatus:
       msg = "Changed from " + previousStatus + " to " + newStatus
-      EventsManager.logEvent(flow, msg, analyzer.ticTime)
+      EventsManager.logStatusChangeEvent(flow, msg, analyzer.ticTime, newStatus)
       self.notificator.statusChanged(flow, previousStatus, newStatus, analyzer.ticTime)
     self.manager.saveStatus(flow, newStatus, analyzer.difference, analyzer.ticTime)
 

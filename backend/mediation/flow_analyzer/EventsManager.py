@@ -6,7 +6,7 @@ from mongo import mongo
 
 class EventsManager:
   @staticmethod
-  def logEvent(flow, message, ticTime=None):
+  def logStatusChangeEvent(flow, message, ticTime, newStatus):
     currentTime = config.getCurrentTime()
     obj = {"_id": currentTime,
            "flowName": flow["name"],
@@ -14,6 +14,7 @@ class EventsManager:
            "country": flow["country"],
            "time": currentTime,
            "message": message,
+           "newStatus": newStatus,
            "ticTime": ticTime}
     logging.debug("flow: " + flow["gName"] + " message:" + message)
     mongo.events().insert_one(obj)
