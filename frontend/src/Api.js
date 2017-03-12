@@ -1,5 +1,5 @@
 import {showLoading, hideLoading} from "react-redux-loading-bar";
-import {Store} from "./Store";
+import {Store, state, AUTH} from "./Store";
 function delayPromise(duration) {
   return function (...args) {
     return new Promise(function (resolve, reject) {
@@ -9,6 +9,7 @@ function delayPromise(duration) {
     });
   };
 }
+
 class Api {
 
   updateLobConfig(lobName, updateObj) {
@@ -37,6 +38,10 @@ class Api {
   fetch(url, myInit) {
     let myHeaders = new Headers();
     myHeaders.append("Content-Type", "application/json");
+    let apiKey = (state(AUTH).user || {}).apiKey;
+    if (apiKey) {
+      myHeaders.append("X-API-KEY", apiKey)
+    }
     myInit.headers = myHeaders;
     if (typeof myInit.body != 'string' || !myInit.body instanceof String) {
       myInit.body = JSON.stringify(myInit.body)
@@ -60,5 +65,4 @@ class Api {
       });
   }
 }
-
 export default Api = new Api();
