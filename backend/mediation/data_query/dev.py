@@ -1,10 +1,10 @@
 import util
 from config import config
-from data_util import SimilarPastDaysFinder
 from mediation.data_query import DateRangeGroupQuery
 from mediation.data_query import DatesQuery
 from mediation.data_query import ExpectedTrafficQuery
 from mediation.data_query import medianDateRange
+from past.data_util import SimilarPastDaysFinder
 
 dates = [util.stringToDate("22.01.2017"), util.stringToDate("02.02.2017")]
 gsm = config.getLobConfig("CZ_GSM")

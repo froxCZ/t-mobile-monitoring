@@ -72,7 +72,7 @@ def dataQueryV2():
 def bestCorrelations():
   lobName = request.args.get('lobName')
   granularity = int(request.args.get('granularity'))
-  from data_util import correlation
+  from past.data_util import correlation
   bestCorrelations = correlation.getBestCorrelations(lobName, granularity=granularity)
   return jsonify(bestCorrelations)
 
@@ -80,7 +80,7 @@ def bestCorrelations():
 @api_data_query.route('/averages', methods=["GET"])
 def getDayAverages():
   lobName = request.args.get('lobName')
-  from data_util.moving_average import DayAverageExecutor
+  from past.data_util.moving_average import DayAverageExecutor
   return jsonify(DayAverageExecutor.getDayAverages(lobName))
 
 
