@@ -24,7 +24,7 @@ class ExpectedTrafficQuery:
           break
 
   def execute(self):
-    from data_query.DatesQuery import DatesQuery
+    from mediation.data_query import DatesQuery
     datesQuery = DatesQuery(self.dates, self.flows, self.granularity)
     data = datesQuery.execute()
     self.metadata = datesQuery.metadata

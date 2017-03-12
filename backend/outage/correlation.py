@@ -1,8 +1,8 @@
 import matplotlib.pyplot as plt
 from numpy.matlib import corrcoef, arange
 
-import data_query
 from config import config
+from mediation import data_query
 from mediation.api import util
 
 lobsData = [

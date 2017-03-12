@@ -3,10 +3,10 @@ import datetime
 from flask import Blueprint, jsonify
 from flask import request
 
-import data_query
 import smooth
 import util
 from config import config
+from mediation import data_query
 
 api_data_query = Blueprint('data_query', __name__)
 

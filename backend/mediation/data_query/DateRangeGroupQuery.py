@@ -1,6 +1,6 @@
 import datetime
 
-from data_query.DatesQuery import DatesQuery
+from .DatesQuery import DatesQuery
 
 
 class DateRangeGroupQuery(DatesQuery):

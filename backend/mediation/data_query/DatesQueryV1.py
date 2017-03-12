@@ -1,7 +1,7 @@
 import datetime
 
 from config import config
-from data_query.DatesQuery import DatesQuery
+from mediation.data_query import DatesQuery
 from mongo import mongo
 
 

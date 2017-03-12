@@ -1,5 +1,5 @@
-import data_query
 import util
+from mediation import data_query
 
 
 class TicTrafficQuery():

@@ -1,6 +1,6 @@
 import datetime
 
-import data_query
+from mediation import data_query
 from mediation.flow_analyzer import status
 from mediation.flow_analyzer.OutlierDetector import OutlierDetector
 

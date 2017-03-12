@@ -7,7 +7,7 @@ from pylab import pcolor, show, colorbar, xticks, yticks
 from scipy.stats import linregress
 
 from config import config
-from data_query import DateRangeGroupQuery
+from mediation.data_query import DateRangeGroupQuery
 
 # CZ_LOBS = config.getLobsConfig()["lobs"]["CZ"]
 CZ_LOBS = ["SMS","GSM","MMS"]

@@ -4,8 +4,8 @@ from flask import Blueprint, jsonify
 from flask import request
 
 from config import config
-from data_query import DiscoverQuery
 from mediation.api import util
+from mediation.data_query import DiscoverQuery
 from mongo import mongo
 
 lobsConfig = Blueprint('lobs', __name__)
