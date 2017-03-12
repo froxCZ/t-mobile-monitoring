@@ -5,6 +5,7 @@ from flask import Flask, jsonify
 from flask.ext.cors import CORS
 from flask.json import JSONEncoder
 
+import common.api.auth as auth
 import config
 import util
 
@@ -34,6 +35,7 @@ def hello():
 
 
 @app.route("/currentTime")
+@auth.require_root
 def currentTime():
   return jsonify({"currentTime": util.dateToTimeString(config.getCurrentTime())})
 
@@ -50,10 +52,13 @@ from mediation.api.data_query import api_data_query
 from mediation.api.config import lobsConfig
 from mediation.api.status import lobsStatus
 from mediation.api.mediation import mediation
+from common.api import common
 
 app.register_blueprint(api_data_query, url_prefix="/mediation/data_query")
 app.register_blueprint(lobsConfig, url_prefix="/mediation/config")
 app.register_blueprint(lobsStatus, url_prefix="/mediation/status")
 app.register_blueprint(mediation, url_prefix="/mediation")
+app.register_blueprint(common, url_prefix="/app")
+
 # SchedulerRunner().start()
 app.run(debug=True)

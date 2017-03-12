@@ -4,6 +4,17 @@ import LoadingBar from "react-redux-loading-bar";
 import Util from "../../Util";
 import Api from "../../Api";
 import Moment from "moment";
+import {bindActionCreators} from "redux";
+import {connect} from "react-redux";
+import {Actions as AuthActions} from "../../Store";
+import {browserHistory} from "react-router";
+
+function mapStateToProps(state) {
+  return {auth: state.auth};
+}
+function mapDispatchToProps(dispatch) {
+  return bindActionCreators(AuthActions, dispatch);
+}
 class Header extends Component {
 
   constructor(props) {
@@ -75,8 +86,8 @@ class Header extends Component {
 
         </ul>
         <ul className="nav navbar-nav ml-auto">
-          <li style={{marginRight:"3em"}}>
-            <span style={{fontWeight:"bold",fontSize:"medium"}}>{this.state.time}</span>
+          <li style={{marginRight: "3em"}}>
+            <span style={{fontWeight: "bold", fontSize: "medium"}}>{this.state.time}</span>
           </li>
           <li className="nav-item">
             <Dropdown isOpen={this.state.dropdownOpen} toggle={this.toggle}>
@@ -88,7 +99,12 @@ class Header extends Component {
 
               <DropdownMenu className="dropdown-menu-right">
                 <DropdownItem><i className="fa fa-wrench"></i> Settings</DropdownItem>
-                <DropdownItem><i className="fa fa-lock"></i> Logout</DropdownItem>
+                <DropdownItem>
+                  <div onClick={() => {
+                    this.props.logout();
+                  }}><i className="fa fa-lock"></i> Logout
+                  </div>
+                </DropdownItem>
               </DropdownMenu>
             </Dropdown>
           </li>
@@ -98,4 +114,5 @@ class Header extends Component {
   }
 }
 
-export default Header;
+Header = connect(mapStateToProps, mapDispatchToProps)(Header);
+export default Header

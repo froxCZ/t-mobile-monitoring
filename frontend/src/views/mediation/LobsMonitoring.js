@@ -1,5 +1,5 @@
 import React, {Component} from "react";
-import {Link, hashHistory} from "react-router";
+import {Link, browserHistory} from "react-router";
 import {bindActionCreators} from "redux";
 import {connect} from "react-redux";
 import {showLoading, hideLoading} from "react-redux-loading-bar";
@@ -23,7 +23,7 @@ class LobsMonitoring extends Component {
   }
 
   goToLobDetail(lobName) {
-    hashHistory.push(this.props.location.pathname + "/" + lobName);
+    browserHistory.push(this.props.location.pathname + "/" + lobName);
   }
 
   propChange(props) {

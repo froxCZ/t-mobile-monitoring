@@ -11,6 +11,12 @@ codec_options = CodecOptions(
 
 
 class _Mongo:
+  def users(self):
+    return self.db()["users"].with_options(codec_options=CodecOptions(
+      tz_aware=True,
+      tzinfo=pytz.timezone('CET')
+    ))
+
   def lobs(self):
     return self.dataDb()["lobs"].with_options(codec_options=CodecOptions(
       tz_aware=True,
@@ -51,7 +57,7 @@ class _Mongo:
     return _client["mediation_data"]
 
   def db(self):
-    return _client["dev"]
+    return _client["mediation"]
 
 
 mongo = _Mongo()

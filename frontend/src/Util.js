@@ -37,10 +37,10 @@ export default class Util {
 
   static countryToFlagPath(country) {
     let COUNTRY_TO_FLAG = {
-      "CZ": "img/flags/Czech Republic.png",
-      "AT": "img/flags/Austria.png",
-      "NL": "img/flags/Netherlands.png",
-      "DE": "img/flags/Germany.png",
+      "CZ": "/img/flags/Czech Republic.png",
+      "AT": "/img/flags/Austria.png",
+      "NL": "/img/flags/Netherlands.png",
+      "DE": "/img/flags/Germany.png",
     }
     return COUNTRY_TO_FLAG[country]
   }

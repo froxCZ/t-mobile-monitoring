@@ -1,5 +1,5 @@
 import React, {Component} from "react";
-import {hashHistory} from "react-router";
+import {browserHistory} from "react-router";
 import Api from "../../Api";
 import classnames from "classnames";
 import {TabContent, TabPane, Nav, NavItem, NavLink} from "reactstrap";
@@ -18,7 +18,7 @@ export default class LobMonitoringDetail extends Component {
   }
 
   goToFlowDetail(flowName) {
-    hashHistory.push(this.props.location.pathname + "/" + flowName);
+    browserHistory.push(this.props.location.pathname + "/" + flowName);
   }
 
   componentWillMount() {

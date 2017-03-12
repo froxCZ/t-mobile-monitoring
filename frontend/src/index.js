@@ -1,6 +1,6 @@
 import React from "react";
 import ReactDOM from "react-dom";
-import {Router, hashHistory} from "react-router";
+import {Router, browserHistory} from "react-router";
 import routes from "./routes";
 import {Store} from "./Store";
 import {Provider} from "react-redux";
@@ -17,6 +17,6 @@ Promise.prototype.finally = function(cb) {
 ReactDOM.render(
   <Provider store={Store}>
     <div id="container">
-      <Router routes={routes} history={hashHistory}/></div>
+      <Router routes={routes} history={browserHistory}/></div>
   </Provider>, document.getElementById('root')
 );
