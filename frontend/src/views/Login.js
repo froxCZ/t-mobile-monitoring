@@ -3,7 +3,7 @@ import {bindActionCreators} from "redux";
 import {connect} from "react-redux";
 import {Actions as AuthActions} from "../Store";
 import {browserHistory} from "react-router";
-
+import Api from "../Api";
 function mapStateToProps(state) {
   return {auth: state.auth};
 }
@@ -11,6 +11,11 @@ function mapDispatchToProps(dispatch) {
   return bindActionCreators(AuthActions, dispatch);
 }
 class Login extends Component {
+  constructor() {
+    super()
+    this.state = {errorMessage: null}
+  }
+
   componentWillMount() {
     this.checkUser(this.props);
   }
@@ -26,12 +31,17 @@ class Login extends Component {
   }
 
   login() {
-    //request
-    this.loggedIn({"name": "vojta"})
-  }
-
-  loggedIn(user) {
-    this.props.loggedIn(user)
+    let req = {
+      method: "POST",
+      body: {username: this.refs.username.value, password: this.refs.password.value}
+    }
+    Api.fetch("/app/login", req).then(response => {
+      this.props.loggedIn(response)
+    }).catch(e => {
+      e.json.then(json => {
+        this.setState({errorMessage: json.message})
+      })
+    })
   }
 
   render() {
@@ -47,12 +57,13 @@ class Login extends Component {
                   <p className="text-muted">Sign In to your account</p>
                   <div className="input-group mb-1">
                     <span className="input-group-addon"><i className="icon-user"></i></span>
-                    <input type="text" className="form-control" placeholder="Username"/>
+                    <input type="text" ref="username" className="form-control" placeholder="Username"/>
                   </div>
                   <div className="input-group mb-2">
                     <span className="input-group-addon"><i className="icon-lock"></i></span>
-                    <input type="password" className="form-control" placeholder="Password"/>
+                    <input type="password" ref="password" className="form-control" placeholder="Password"/>
                   </div>
+                  {this.state.errorMessage && <p className="text-muted">{this.state.errorMessage}</p>}
                   <div className="row">
                     <div className="col-6">
                       <button type="button" className="btn btn-primary px-2" onClick={() => {

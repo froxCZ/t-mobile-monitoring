@@ -43,7 +43,16 @@ class Api {
     }
     let request = new Request(url, myInit);
     Store.dispatch(showLoading());
-    return fetch(request).then((response) => response.json())
+    return fetch(request).then((response) => {
+      if (response.status >= 200 && response.status < 300) {
+        return response.json();
+      } else {
+        let error = new Error(response.status);
+        error.status = response.status
+        error.json = response.json()
+        return Promise.reject(error)
+      }
+    })
       .then(x => {
         return x
       }).finally(x => {
