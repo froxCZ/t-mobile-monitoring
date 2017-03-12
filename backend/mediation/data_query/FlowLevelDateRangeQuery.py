@@ -1,8 +1,8 @@
 import datetime
 
 import util
-from data_util import calculateFlowLevelDifference
 from mediation.data_query import ExpectedTrafficQuery
+from .flow_level_difference import calculateFlowLevelDifference
 
 
 class FlowLevelDateRangeQuery:

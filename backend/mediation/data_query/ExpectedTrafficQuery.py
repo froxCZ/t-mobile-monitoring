@@ -2,11 +2,11 @@ from statistics import median
 
 import util
 from config import config
+from .SimilarPastDaysFinder import SimilarPastDaysFinder
 
 
 class ExpectedTrafficQuery:
   def __init__(self, date, flows, granularity=0):
-    from data_util import SimilarPastDaysFinder
     self.flows = flows
     self.flow = flows[0]
     self.date = date

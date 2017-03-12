@@ -6,3 +6,4 @@ from .ExpectedTrafficQuery import ExpectedTrafficQuery
 from .FlowLevelDateRangeQuery import FlowLevelDateRangeQuery
 from .OutageDateRangeQuery import OutageDateRangeQuery
 from .TicTrafficQuery import TicTrafficQuery
+from .flow_level_difference import calculateFlowLevelDifference
