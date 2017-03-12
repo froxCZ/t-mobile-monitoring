@@ -1,7 +1,7 @@
 import datetime
 
 import util
-from flow_analyzer import FlowAnalyzer
+from mediation.flow_analyzer import FlowAnalyzer
 
 
 class OutageDateRangeQuery():

@@ -1,8 +1,8 @@
 import datetime
 
 import data_query
-from flow_analyzer import status
-from flow_analyzer.OutlierDetector import OutlierDetector
+from mediation.flow_analyzer import status
+from mediation.flow_analyzer.OutlierDetector import OutlierDetector
 
 
 class OutageDetector():

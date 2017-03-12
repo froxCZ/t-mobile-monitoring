@@ -3,8 +3,8 @@ import logging
 
 import config
 import util
-from flow_analyzer.OutageDetector import OutageDetector
-from flow_analyzer.OutlierDetector import OutlierDetector
+from mediation.flow_analyzer.OutageDetector import OutageDetector
+from mediation.flow_analyzer.OutlierDetector import OutlierDetector
 
 
 class FlowAnalyzer:

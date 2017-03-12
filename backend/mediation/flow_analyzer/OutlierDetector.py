@@ -1,5 +1,6 @@
 import data_util
-import flow_analyzer.status as status
+from mediation.flow_analyzer import status
+
 
 class OutlierDetector():
 

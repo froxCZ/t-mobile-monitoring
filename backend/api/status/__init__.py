@@ -1,6 +1,6 @@
 from flask import Blueprint, jsonify
 
-from flow_analyzer import FlowStatusManager
+from mediation.flow_analyzer import FlowStatusManager
 
 lobsStatus = Blueprint('status', __name__)
 

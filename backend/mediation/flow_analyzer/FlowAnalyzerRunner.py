@@ -3,12 +3,12 @@ import logging
 
 import config
 from config import TIMEZONE
-from flow_analyzer import FlowAnalyzer
-from flow_analyzer import status
-from flow_analyzer.EventsManager import EventsManager
-from flow_analyzer.FlowStatusManager import FlowStatusManager
-from flow_analyzer.StatusChangeNotificator import StatusChangeNotificator
+from mediation.flow_analyzer import status
+from mediation.flow_analyzer.FlowStatusManager import FlowStatusManager
 from scheduler.AbstractModuleScheduler import AbstractModuleScheduler
+from .EventsManager import EventsManager
+from .FlowAnalyzer import FlowAnalyzer
+from .StatusChangeNotificator import StatusChangeNotificator
 
 
 class FlowAnalyzerRunner(AbstractModuleScheduler):

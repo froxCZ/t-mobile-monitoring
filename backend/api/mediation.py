@@ -1,7 +1,7 @@
 from flask import Blueprint, jsonify
 from flask import request
 
-from flow_analyzer import EventsManager
+from mediation.flow_analyzer import EventsManager
 
 mediation = Blueprint('mediation', __name__)
 
