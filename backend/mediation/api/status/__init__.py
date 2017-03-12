@@ -14,3 +14,8 @@ def getLobsOverview():
 def getLobStatusDetail(lobName):
   lobStatusDetail = FlowStatusManager().getLobDetail(lobName)
   return jsonify(lobStatusDetail)
+
+@lobsStatus.route('/countries', methods=["GET"])
+def getCountriesOverview():
+  countries = FlowStatusManager().getCountriesOverview()
+  return jsonify(countries)

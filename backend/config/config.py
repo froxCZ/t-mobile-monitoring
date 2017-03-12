@@ -71,6 +71,9 @@ def getLobConfigByNameDict(fullName):
 def getLobs():
   return getLobsConfig()["lobs"]
 
+def getCountryList():
+  return ["CZ","AT","NL","DE"]
+
 
 def getCountries():
   defaultParam = {"lazyDays": [], "holidays": []}

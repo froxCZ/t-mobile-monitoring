@@ -91,3 +91,37 @@ class FlowStatusManager:
 
   def removeAll(self):
     mongo.statuses().delete_one({"_id": "lobs"})
+
+  def getCountriesOverview(self):
+    allStatuses = self.getAll()
+    countries = {}
+    for country in config.getCountryList():
+      ok = 0
+      warning = 0
+      outage = 0
+      expired = 0
+      disabled = 0
+      for lobName, lob in config.getLobs().items():  # getlobs per country
+        for flow in lob["flows"].values():
+          gName = flow["gName"]
+          if flow["options"]["enabled"] is False:
+            disabled += 1
+            continue
+          flowStatus = allStatuses.get(gName, {"status": status.NA})["status"]
+          if flowStatus == status.NA:
+            expired += 1
+          elif flowStatus == status.OK:
+            ok += 1
+          elif flowStatus == status.WARNING:
+            warning += 1
+          elif flowStatus == status.OUTAGE:
+            outage += 1
+      countries[country] = {
+        status.OK: ok,
+        status.WARNING: warning,
+        status.OUTAGE: outage,
+        status.NA: expired,
+        status.DISABLED: disabled
+      }
+
+    return countries

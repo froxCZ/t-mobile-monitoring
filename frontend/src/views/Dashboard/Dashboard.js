@@ -2,14 +2,22 @@ import React, {Component} from "react";
 import Api from "../../Api";
 import Util from "../../Util";
 import StatusBadge from "../../components/StatusBadge";
+import StatusCounterBadge from "../../components/StatusCounterBadge";
 class Dashboard extends Component {
   constructor() {
     super();
-    this.state = {events: [], omitOK: true}
+    this.state = {events: [], omitOK: true, countries: {}}
   }
 
   componentDidMount() {
     this.loadEvents(0, this.state.omitOK)
+    this.loadCountriesOverview()
+  }
+
+  loadCountriesOverview() {
+    Api.fetch("/mediation/status/countries", {method: "GET"}).then(response => {
+      this.setState({countries: response})
+    })
   }
 
   loadEvents(offset, omitOK) {
@@ -107,21 +115,11 @@ class Dashboard extends Component {
       <div className="col-sm-3">
         <div className="card">
           <div className="card-header">
-            <i><img src={'img/flags/Germany.png'} alt="Czech Republic"/></i>Overview
+            <i><img src={Util.countryToFlagPath("CZ")} alt="Czech Republic"/></i>Czech Republic
           </div>
           <div className="card-block">
             <h2>
-                  <span style={{minWidth: 3 + "em"}} title="ok"
-                        className="badge badge-pill badge-success">1</span>
-              &nbsp;
-              <span style={{minWidth: 3 + "em"}} title="warning"
-                    className="badge badge-pill badge-warning">3</span>
-              &nbsp;
-              <span style={{minWidth: 3 + "em"}} title="outage"
-                    className="badge badge-pill badge-danger">8</span>
-              &nbsp;
-              <span style={{minWidth: 3 + "em"}} title="Disabled"
-                    className="badge badge-pill badge-default">5</span>
+              <StatusCounterBadge statuses={this.state.countries.CZ}/>
             </h2>
           </div>
         </div>
@@ -129,21 +127,11 @@ class Dashboard extends Component {
       <div className="col-sm-3">
         <div className="card">
           <div className="card-header">
-            <i><img src={'img/flags/Germany.png'} alt="Czech Republic"/></i>Overview
+            <i><img src={Util.countryToFlagPath("DE")} alt="Germany"/></i>Germany
           </div>
           <div className="card-block">
             <h2>
-                  <span style={{minWidth: 3 + "em"}} title="ok"
-                        className="badge badge-pill badge-success">1</span>
-              &nbsp;
-              <span style={{minWidth: 3 + "em"}} title="warning"
-                    className="badge badge-pill badge-warning">3</span>
-              &nbsp;
-              <span style={{minWidth: 3 + "em"}} title="outage"
-                    className="badge badge-pill badge-danger">8</span>
-              &nbsp;
-              <span style={{minWidth: 3 + "em"}} title="Disabled"
-                    className="badge badge-pill badge-default">5</span>
+              <StatusCounterBadge statuses={this.state.countries.DE}/>
             </h2>
           </div>
         </div>
@@ -151,21 +139,11 @@ class Dashboard extends Component {
       <div className="col-sm-3">
         <div className="card">
           <div className="card-header">
-            <i><img src={'img/flags/Germany.png'} alt="Czech Republic"/></i>Overview
+            <i><img src={Util.countryToFlagPath("AT")} alt="Austria"/></i>Austria
           </div>
           <div className="card-block">
             <h2>
-                  <span style={{minWidth: 3 + "em"}} title="ok"
-                        className="badge badge-pill badge-success">1</span>
-              &nbsp;
-              <span style={{minWidth: 3 + "em"}} title="warning"
-                    className="badge badge-pill badge-warning">3</span>
-              &nbsp;
-              <span style={{minWidth: 3 + "em"}} title="outage"
-                    className="badge badge-pill badge-danger">8</span>
-              &nbsp;
-              <span style={{minWidth: 3 + "em"}} title="Disabled"
-                    className="badge badge-pill badge-default">5</span>
+              <StatusCounterBadge statuses={this.state.countries.DE}/>
             </h2>
           </div>
         </div>
@@ -173,21 +151,11 @@ class Dashboard extends Component {
       <div className="col-sm-3">
         <div className="card">
           <div className="card-header">
-            <i><img src={'img/flags/Germany.png'} alt="Czech Republic"/></i>Overview
+            <i><img src={Util.countryToFlagPath("NL")} alt="Netherlands"/></i>Netherlands
           </div>
           <div className="card-block">
             <h2>
-                  <span style={{minWidth: 3 + "em"}} title="ok"
-                        className="badge badge-pill badge-success">1</span>
-              &nbsp;
-              <span style={{minWidth: 3 + "em"}} title="warning"
-                    className="badge badge-pill badge-warning">3</span>
-              &nbsp;
-              <span style={{minWidth: 3 + "em"}} title="outage"
-                    className="badge badge-pill badge-danger">8</span>
-              &nbsp;
-              <span style={{minWidth: 3 + "em"}} title="Disabled"
-                    className="badge badge-pill badge-default">5</span>
+              <StatusCounterBadge statuses={this.state.countries.DE}/>
             </h2>
           </div>
         </div>

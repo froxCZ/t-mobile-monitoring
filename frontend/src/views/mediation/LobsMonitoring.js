@@ -5,6 +5,7 @@ import {connect} from "react-redux";
 import {showLoading, hideLoading} from "react-redux-loading-bar";
 import Api from "../../Api";
 import StatusBadge from "../../components/StatusBadge";
+import StatusCounterBadge from "../../components/StatusCounterBadge";
 
 
 function mapStateToProps(state) {
@@ -61,19 +62,7 @@ class LobsMonitoring extends Component {
           let status = this.state.status[lobName]
           flowStatuses = (<div>
             <h5>
-              <span style={{minWidth: 3 + "em"}} title="ok"
-                    className="badge badge-pill badge-success">{status.OK}</span>
-              &nbsp;
-              <span style={{minWidth: 3 + "em"}} title="warning"
-                    className="badge badge-pill badge-warning">{status.WARNING}</span>
-              &nbsp;
-              <span style={{minWidth: 3 + "em"}} title="outage"
-                    className="badge badge-pill badge-danger">{status.OUTAGE + status.N_A}</span>
-              &nbsp;
-              {status.DISABLED > 0 &&
-              <span style={{minWidth: 3 + "em"}} title="Disabled"
-                    className="badge badge-pill badge-default">{status.DISABLED}</span>
-              }
+              <StatusCounterBadge statuses={status}/>
             </h5>
           </div>)
           if (status.OUTAGE > 0) {
