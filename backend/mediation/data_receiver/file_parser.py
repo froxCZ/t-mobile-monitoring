@@ -2,9 +2,9 @@ import csv
 
 import pytz
 
-import data_receiver.util as util
+import mediation.data_receiver.util as util
 from config import config
-from data_receiver import data_insertor
+from .data_insertor import DataInsertor
 
 
 class FileParser:
@@ -13,7 +13,7 @@ class FileParser:
 
   def parseInputs(self, inputFile):
     inputsList = []
-    dataInsertor = data_insertor.DataInsertor()
+    dataInsertor = DataInsertor()
     with open(inputFile, 'r') as csvfile:
       spamreader = csv.reader(csvfile, delimiter=';', quotechar='"')
       for row in spamreader:
@@ -41,7 +41,7 @@ class FileParser:
 
   def parseForwards(self, country, file):
     forwards = []
-    dataInsertor = data_insertor.DataInsertor()
+    dataInsertor = DataInsertor()
     with open(file, 'r') as csvfile:
       spamreader = csv.reader(csvfile, delimiter='|', quotechar='"')
       for row in spamreader:

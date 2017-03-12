@@ -1,7 +1,7 @@
 import pytz
 from bson import CodecOptions
 
-import data_receiver.util as util
+import mediation.data_receiver.util as util
 
 dateTime = util.stringToDate("30.10.16 02:56:05").replace(tzinfo=pytz.timezone('CET'))
 

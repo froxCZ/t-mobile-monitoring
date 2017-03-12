@@ -1,4 +1,4 @@
-from smooth.smooth_fnc import savitzky
+from past.smooth.smooth_fnc import savitzky
 
 
 def smoothData(granularity, data):

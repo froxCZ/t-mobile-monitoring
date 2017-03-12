@@ -31,8 +31,9 @@ plt.plot( ewma( x, span=20 ), 'b', label='EWMA, span=20' )
 
 # "corrected" (?) EWMA
 plt.plot( c, 'r', label='Reversed-Recombined' )
-import smooth
-plt.plot( smooth.smoothData(15,lob1Data), 'g', label='Smooth' )
+from past import smooth
+
+plt.plot(smooth.smoothData(15, lob1Data), 'g', label='Smooth')
 
 plt.legend(loc=8)
 #savefig( 'ewma_correction.png', fmt='png', dpi=100 )

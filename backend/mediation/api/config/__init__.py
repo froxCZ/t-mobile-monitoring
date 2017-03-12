@@ -148,6 +148,6 @@ def saveOutage(lobName):
 def getOutages(lobName):
   fromDate = util.jsStringToDate(request.args.get('from'))
   toDate = util.jsStringToDate(request.args.get('to'))
-  from outage import OutageQuery
+  from past.outage import OutageQuery
   outages = OutageQuery(lobName).getOutages(fromDate, toDate)
   return jsonify(outages)
