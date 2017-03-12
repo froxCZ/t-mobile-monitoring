@@ -4,6 +4,7 @@ import {bindActionCreators} from "redux";
 import {connect} from "react-redux";
 import {showLoading, hideLoading} from "react-redux-loading-bar";
 import Api from "../../Api";
+import StatusBadge from "../../components/StatusBadge";
 
 
 function mapStateToProps(state) {
@@ -76,14 +77,14 @@ class LobsMonitoring extends Component {
             </h5>
           </div>)
           if (status.OUTAGE > 0) {
-            statusSpan = [<span style={{marginRight: "3px"}} className="badge badge-danger">outage</span>]
+            statusSpan = [<StatusBadge style={{marginRight:"3px"}} status="OUTAGE"/>]
           } else if (status.WARNING > 0) {
-            statusSpan = [<span style={{marginRight: "3px"}} className="badge badge-warning">warning</span>]
+            statusSpan = [<StatusBadge style={{marginRight:"3px"}} status="WARNING"/>]
           } else if (status.OK > 0) {
-            statusSpan = [<span style={{marginRight: "3px"}} className="badge badge-success">ok</span>]
+            statusSpan = [<StatusBadge style={{marginRight:"3px"}} status="OK"/>]
           }
           if (status.N_A > 0) {
-            statusSpan.push(<span className="badge badge-danger">n/a</span>)
+            statusSpan.push([<StatusBadge style={{marginRight:"3px"}} status="N_A"/>])
           }
         }
         lobRows.push(

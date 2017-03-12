@@ -47,7 +47,7 @@ export default class StatusBadge extends Component {
       return <span></span>
     }
     let statusProps = STATUS_MAP[this.state.status]
-    return <span className={"badge " + statusProps.class}>{statusProps.label}</span>
+    return <span className={"badge " + statusProps.class} style={this.props.style}>{statusProps.label}</span>
   }
 
 }

@@ -5,6 +5,7 @@ import classnames from "classnames";
 import {TabContent, TabPane, Nav, NavItem, NavLink} from "reactstrap";
 import LobOverviewCharts from "../../components/LobOverviewCharts";
 import _ from "lodash";
+import StatusBadge from "../../components/StatusBadge";
 
 const LIST_TAB = 'listTab'
 const CHART_TAB = 'chartTab'
@@ -188,19 +189,7 @@ export default class LobMonitoringDetail extends Component {
     let flowName = flow.name;
     if (this.state.status && flowName in this.state.status) {
       let flowStatus = this.state.status[flowName].status
-      let badge = null;
-      if(flowStatus == "DISABLED"){
-        badge = <span className="badge badge-default">disabled</span>
-      }else if (flowStatus == "OK") {
-        badge = <span className="badge badge-success">ok</span>
-      } else if (flowStatus == "WARNING") {
-        badge = <span className="badge badge-warning">warning</span>
-      } else if (flowStatus == "OUTAGE") {
-        badge = <span className="badge badge-danger">outage</span>
-      } else if (flowStatus == "N_A") {
-        badge = <span className="badge badge-danger">n/a</span>
-      }
-      return badge;
+      return <StatusBadge status={flowStatus}/>;
     } else {
       return "-"
     }
