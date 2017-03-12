@@ -3,9 +3,9 @@ import datetime
 from flask import Blueprint, jsonify
 from flask import request
 
-from api import util
 from config import config
 from data_query import DiscoverQuery
+from mediation.api import util
 from mongo import mongo
 
 lobsConfig = Blueprint('lobs', __name__)

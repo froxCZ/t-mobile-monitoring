@@ -2,8 +2,8 @@ import traceback
 
 from scipy.stats import linregress
 
-from api.data_query import DateRangeGroupQuery
 from config import config
+from mediation.api.data_query import DateRangeGroupQuery
 
 
 def _correlate2Lobs(lobName1, lobName2, granularity=0):
@@ -13,7 +13,7 @@ def _correlate2Lobs(lobName1, lobName2, granularity=0):
     if (lobConfig1.granularity < lobConfig2.granularity - 60):
       return -1
     granularity = max(lobConfig1.granularity, lobConfig2.granularity)
-  import api.util as util
+  import mediation.api.util as util
   fromDate = util.jsStringToDate("2016-10-24T10:00:00.000Z")
   toDate = util.jsStringToDate("2016-10-31T10:00:00.000Z")
 

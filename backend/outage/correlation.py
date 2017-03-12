@@ -2,8 +2,8 @@ import matplotlib.pyplot as plt
 from numpy.matlib import corrcoef, arange
 
 import data_query
-from api import util
 from config import config
+from mediation.api import util
 
 lobsData = [
   {"lobName": 'LTP',

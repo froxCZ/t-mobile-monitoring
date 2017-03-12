@@ -1,7 +1,8 @@
+import api.util as util
 import matplotlib.pyplot as plt
 
-import api.util as util
-from api.data_query import DateRangeGroupQuery
+from mediation.api.data_query import DateRangeGroupQuery
+
 fromDate = util.jsStringToDate("2016-10-24T00:00:00.000Z")
 toDate = util.jsStringToDate("2016-10-31T00:00:00.000Z")
 q = DateRangeGroupQuery(fromDate, toDate, ["CZ.SMS"], 5)

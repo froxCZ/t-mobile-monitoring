@@ -1,5 +1,5 @@
-from api import util
 from config import config
+from mediation.api import util
 
 
 class OutlierDetector:

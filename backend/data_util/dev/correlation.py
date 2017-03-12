@@ -19,7 +19,7 @@ def correlate2Lobs(lobName1, lobName2):
   if (lobConfig1.granularity < lobConfig2.granularity - 60):
     return -1,0
   granularity = max(lobConfig1.granularity, lobConfig2.granularity)
-  import api.util as util
+  import mediation.api.util as util
   fromDate = util.jsStringToDate("2016-10-03T10:00:00.000Z")
   toDate = util.jsStringToDate("2016-10-10T10:00:00.000Z")
 

@@ -1,8 +1,8 @@
+import api.util as util
 import matplotlib.pyplot as plt
 import numpy as np
 
-import api.util as util
-from api.data_query import DateRangeGroupQuery
+from mediation.api.data_query import DateRangeGroupQuery
 
 
 def running_mean(l, N):

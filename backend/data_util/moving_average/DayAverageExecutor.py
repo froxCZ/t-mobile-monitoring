@@ -1,7 +1,8 @@
 from statistics import median
 
 import api.util as util
-from api.data_query import DatesQuery
+
+from mediation.api.data_query import DatesQuery
 
 
 def getDayAverages(lobName):
