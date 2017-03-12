@@ -1,6 +1,7 @@
 import datetime
 
 import config
+from config import MediationConfig
 from mediation.flow_analyzer import status
 from mongo import mongo
 
@@ -10,18 +11,18 @@ class FlowStatusManager:
     pass
 
   def getLobDetail(self, lobName):
-    lob = config.getLobConfig(lobName)
-    allStatuses = self.getAll()
+    lob = MediationConfig.getLob(lobName)
+    allStatuses = self.getAll(lob["country"])
     lobFlowStatuses = {}
     for flowName, flow in lob["flows"].items():
       lobFlowStatuses[flowName] = allStatuses[flow["gName"]]
 
     return lobFlowStatuses
 
-  def getLobsOverview(self):
-    allStatuses = self.getAll()
+  def getLobsOverview(self, country):
+    allStatuses = self.getAll(country)
     lobStatusDict = {}
-    for lobName, lob in config.getLobs().items():
+    for lobName, lob in MediationConfig.getLobs(country).items():
       ok = 0
       warning = 0
       outage = 0
@@ -50,8 +51,8 @@ class FlowStatusManager:
       }
     return lobStatusDict
 
-  def getAll(self):
-    lobs = config.getLobsConfig()["lobs"]
+  def getAll(self,country):
+    lobs = MediationConfig.getLobs(country)
     res = mongo.statuses().find_one({"_id": "lobs"}, {"_id": 0})
     if res is None:
       res = {}
@@ -93,15 +94,15 @@ class FlowStatusManager:
     mongo.statuses().delete_one({"_id": "lobs"})
 
   def getCountriesOverview(self):
-    allStatuses = self.getAll()
     countries = {}
-    for country in config.getCountryList():
+    for country in MediationConfig.getCountryList():
+      allStatuses = self.getAll(country)
       ok = 0
       warning = 0
       outage = 0
       expired = 0
       disabled = 0
-      for lobName, lob in config.getLobs().items():  # getlobs per country
+      for lobName, lob in MediationConfig.getLobs(country).items():
         for flow in lob["flows"].values():
           gName = flow["gName"]
           if flow["options"]["enabled"] is False:

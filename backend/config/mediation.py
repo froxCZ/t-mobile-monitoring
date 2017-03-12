@@ -1,0 +1,95 @@
+from mongo import mongo
+
+configColl = mongo.config()
+
+
+class MediationConfig():
+  configColl = configColl
+
+  @staticmethod
+  def getLob(lobName):
+    return MediationConfig.getLobs(_getCountryFromLob(lobName))[lobName]
+
+  @staticmethod
+  def getCountries():
+    defaultParam = {"lazyDays": [], "holidays": []}
+    res = configColl.find_one({"_id": "lobs"})["countries"]
+    countries = {}
+    for countryName, country in res.items():
+      countries[countryName] = {**defaultParam, **country}
+    return countries
+
+  @staticmethod
+  def getCountryByName(countryName):
+    return MediationConfig.getCountries()[countryName]
+
+  @staticmethod
+  def getCountryList():
+    return ["CZ", "AT", "NL", "DE"]
+
+  @staticmethod
+  def getLobs(country, enabledOnly=False):
+    """
+    returns config for all inputs and forwards. Config is derived from parent object.
+    :return:
+    """
+    res = configColl.find_one({"_id": "lobs"})
+    defaultConfig = {
+      "granularity": 240,
+      "hardAlarmLevel": 0.5,
+      "softAlarmLevel": 0.75,
+      "difference": "day",
+    }
+    if country not in res["lobs"]:
+      return {}
+    for lobName, config in res["lobs"][country].items():
+      config["country"] = country
+      config["options"] = {**defaultConfig, **config["options"]}
+      if "inputs" not in config:
+        config["inputs"] = {}
+      if "forwards" not in config:
+        config["forwards"] = {}
+      config["flows"] = {}
+      inputs = {}
+      country = _getCountryFromLob(lobName)
+      for flowName, flowOptions in config["inputs"].items():
+        flow = {"options": setFlowDefaultOptions(flowOptions, parentObj=config["options"])}
+        flow["name"] = flowName
+        flow["type"] = "inputs"
+        flow["lobName"] = lobName
+        flow["dataPath"] = country + "." + lobName + ".inputs." + flowName
+        flow["gName"] = lobName + "_" + flowName
+        flow["country"] = country
+        inputs[flowName] = flow
+        config["flows"][flowName] = flow
+      config["inputs"] = inputs
+      forwards = {}
+      for flowName, flowOptions in config["forwards"].items():
+        inputName = flowName.split(":")[0]
+        if inputName in config["inputs"]:
+          flow = {"options": setFlowDefaultOptions(flowOptions, parentObj=config["options"])}
+          flow["name"] = flowName
+          flow["type"] = "forwards"
+          flow["lobName"] = lobName
+          flow["country"] = country
+          flow["dataPath"] = country + "." + lobName + ".forwards." + flowName
+          flow["gName"] = lobName + "_" + flowName
+          forwards[flowName] = flow
+          config["flows"][flowName] = flow
+      config["forwards"] = forwards
+    lobs = res["lobs"][country]
+    if enabledOnly:
+      for lobName, lob in lobs.items():
+        for flowName, flow in lob["flows"].copy().items():
+          if flow["options"]["enabled"] == False:
+            del lob["flows"][flowName]
+            del lob[flow["type"]][flowName]
+    return lobs
+
+
+def _getCountryFromLob(lobName):
+  return lobName.split("_")[0]
+
+
+def setFlowDefaultOptions(obj, parentObj):
+  return {**{"enabled": True}, **parentObj, **obj}

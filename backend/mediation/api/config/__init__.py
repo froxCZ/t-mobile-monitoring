@@ -3,72 +3,45 @@ import datetime
 from flask import Blueprint, jsonify
 from flask import request
 
-from config import config
+from config import MediationConfig
 from mediation.api import util
-from mediation.data_query import DiscoverQuery
-from mongo import mongo
 
 lobsConfig = Blueprint('lobs', __name__)
 
 
-@lobsConfig.route('/', methods=["GET"])
-def lobsListGET():
-  fullConfig = request.args.get('fullConfig')
-  if fullConfig is None:
-    fullConfig = False
-  lobConfigs = config.getLobsConfig()
-  if fullConfig == False:
-    for lob in lobConfigs["lobs"].values():
-      del lob["flows"]
-      del lob["inputs"]
-      del lob["forwards"]
-
+@lobsConfig.route('/lobs/<string:countryName>', methods=["GET"])
+def lobsListGET(countryName):
+  lobConfigs = MediationConfig.getLobs(countryName)
+  for lob in lobConfigs.values():
+    del lob["flows"]
+    del lob["inputs"]
+    del lob["forwards"]
   return jsonify(lobConfigs)
 
 
 @lobsConfig.route('/countries', methods=["GET"])
 def coutriesGET():
-  return jsonify(config.getCountries())
+  return jsonify(MediationConfig.getCountries())
+
 
 @lobsConfig.route('/countries', methods=["PUT"])
 def coutriesPUT():
   body = request.get_json()
-  from config import config
-  config.configColl.update_one({"_id": "lobs"}, {"$set": {"countries": body}})
-  return jsonify(config.getCountries())
+  MediationConfig.configColl.update_one({"_id": "lobs"}, {"$set": {"countries": body}})
+  return jsonify(MediationConfig.getCountries())
 
-@lobsConfig.route('/discover', methods=["POST"])
-def discover():
-  """
-  find new inputs and forwards for the past 14 days and adds them to the config
-  :return:
-  """
-  now = datetime.datetime.now()
-  fromDate = now - datetime.timedelta(days=14)
-  newLobNeids = DiscoverQuery(fromDate, now).execute()
-  setObj = {}
-  addedCnt = 0
-  for lobName, newConfig in newLobNeids.items():
-    for neidName, neid in newConfig["neids"].items():
-      setObj["lobs." + lobName + ".neids." + neidName] = neid
-      addedCnt += 1
-    for forwardName, forward in newConfig["forwards"].items():
-      setObj["lobs." + lobName + ".forwards." + forwardName] = forward
-      addedCnt += 1
-  res = mongo.config().update_many({"_id": "lobs"}, {"$set": setObj})
-  return jsonify({"added": res.modified_count * addedCnt})
 
 
 @lobsConfig.route('/<string:lobName>', methods=["GET"])
 def getLobConfig(lobName):
-  lobConfig = config.getLobConfig(lobName)
+  lobConfig = MediationConfig.getLob(lobName)
   del lobConfig["flows"]
   return jsonify(lobConfig)
 
 
 @lobsConfig.route('/<string:lobName>/flow/<string:flowName>', methods=["GET"])
 def getFlowConfig(lobName, flowName):
-  lobConfig = config.getLobConfig(lobName)
+  lobConfig = MediationConfig.getLob(lobName)
   flowConfig = lobConfig["flows"][flowName]
   return jsonify(flowConfig)
 
@@ -76,29 +49,26 @@ def getFlowConfig(lobName, flowName):
 @lobsConfig.route('/<string:lobName>/flow/<string:flowName>/options', methods=["PUT"])
 def putLobFlowOptions(lobName, flowName):
   body = request.get_json()
-  from config import config
-  flow = config.getLobConfig(lobName)["flows"][flowName]
-  config.configColl.update_one({"_id": "lobs"}, {"$set": {"lobs." + flow["dataPath"]: body}})
-  return jsonify(config.getLobConfig(lobName)["flows"][flowName]["options"])
+  flow = MediationConfig.getLob(lobName)["flows"][flowName]
+  res = MediationConfig.configColl.update_one({"_id": "lobs"}, {"$set": {"lobs." + flow["dataPath"]: body}})
+  return jsonify(MediationConfig.getLob(lobName)["flows"][flowName]["options"])
 
 
 @lobsConfig.route('/<string:lobName>/options', methods=["PUT"])
 def putLobOptions(lobName):
-  from config import config
   body = request.get_json()
   optionsPath = "lobs." + lobName + ".options"
-  config.configColl.update_one({"_id": "lobs"}, {"$set": {optionsPath: body}})
-  return jsonify(config.getLobConfig(lobName)["options"])
+  MediationConfig.configColl.update_one({"_id": "lobs"}, {"$set": {optionsPath: body}})
+  return jsonify(MediationConfig.getLob(lobName)["options"])
 
 
 @lobsConfig.route('/<string:lobName>/flow/<string:flowName>/enable', methods=["PUT"])
 def lobFlowActivation(lobName, flowName):
   body = request.get_json()
   enable = body["enable"]
-  from config import config
-  flow = config.getLobConfig(lobName)["flows"][flowName]
-  config.configColl.update_one({"_id": "lobs"}, {"$set": {"lobs." + flow["dataPath"] + ".enabled": enable}})
-  return jsonify(config.getLobConfig(lobName)["flows"][flowName]["options"])
+  flow = MediationConfig.getLob(lobName)["flows"][flowName]
+  MediationConfig.configColl.update_one({"_id": "lobs"}, {"$set": {"lobs." + flow["dataPath"] + ".enabled": enable}})
+  return jsonify(MediationConfig.getLob(lobName)["flows"][flowName]["options"])
 
 
 @lobsConfig.route('/<string:lobName>', methods=["POST"])
@@ -106,7 +76,6 @@ def updateLob(lobName):
   setObj = {}
   unsetObj = {}
   body = request.get_json()
-  from config.config import configColl
   for key, value in body.items():
     if value == None:
       unsetObj["lobs." + lobName + "." + key] = value
@@ -117,7 +86,7 @@ def updateLob(lobName):
     updateObj["$set"] = setObj
   if (len(unsetObj)):
     updateObj["$unset"] = unsetObj
-  configColl.update_one({"_id": "lobs"}, updateObj)
+  MediationConfig.configColl.update_one({"_id": "lobs"}, updateObj)
   return jsonify({})
 
 
@@ -151,3 +120,27 @@ def getOutages(lobName):
   from past.outage import OutageQuery
   outages = OutageQuery(lobName).getOutages(fromDate, toDate)
   return jsonify(outages)
+
+
+
+#
+# @lobsConfig.route('/discover', methods=["POST"])
+# def discover():
+#   """
+#   find new inputs and forwards for the past 14 days and adds them to the config
+#   :return:
+#   """
+#   now = datetime.datetime.now()
+#   fromDate = now - datetime.timedelta(days=14)
+#   newLobNeids = DiscoverQuery(fromDate, now).execute()
+#   setObj = {}
+#   addedCnt = 0
+#   for lobName, newConfig in newLobNeids.items():
+#     for neidName, neid in newConfig["neids"].items():
+#       setObj["lobs." + lobName + ".neids." + neidName] = neid
+#       addedCnt += 1
+#     for forwardName, forward in newConfig["forwards"].items():
+#       setObj["lobs." + lobName + ".forwards." + forwardName] = forward
+#       addedCnt += 1
+#   res = mongo.config().update_many({"_id": "lobs"}, {"$set": setObj})
+#   return jsonify({"added": res.modified_count * addedCnt})

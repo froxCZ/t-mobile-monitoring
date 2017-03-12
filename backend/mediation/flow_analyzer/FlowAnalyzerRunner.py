@@ -2,6 +2,7 @@ import datetime
 import logging
 
 import config
+from config import MediationConfig
 from config import TIMEZONE
 from mediation.flow_analyzer import status
 from mediation.flow_analyzer.EventsManager import EventsManager
@@ -18,10 +19,11 @@ class FlowAnalyzerRunner(AbstractModuleScheduler):
     super().__init__()
     self.manager = FlowStatusManager()
     self.notificator = StatusChangeNotificator()
+    self.country = "CZ"
 
   def run(self):
     super(FlowAnalyzerRunner, self).run()
-    self.lastExecutions = self.manager.getAll()
+    self.lastExecutions = self.manager.getAll(self.country)
 
     flowsToAnalyze = self._getFlowsToAnalyze()
     if (len(flowsToAnalyze)) == 0:
@@ -43,7 +45,7 @@ class FlowAnalyzerRunner(AbstractModuleScheduler):
 
   def _getFlowsToAnalyze(self):
     flowsToAnalyze = []
-    lobsConfig = config.getEnabledLobs()
+    lobsConfig = MediationConfig.getLobs(self.country,enabledOnly=True)
     for lobName, lob in lobsConfig.items():
       for flow in lob["flows"].values():
         if self.shouldSchedule(flow):

@@ -4,6 +4,7 @@ from flask import Blueprint, jsonify
 from flask import request
 
 import util
+from config import MediationConfig
 from config import config
 from mediation import data_query
 from past import smooth
@@ -17,7 +18,7 @@ def dataQueryV2():
   fromDate = util.stringToDate(searchParam["from"])
   toDate = util.stringToDate(searchParam["to"])
   lobName = searchParam["lobNames"][0]
-  lobConfig = config.getLobConfig(lobName)
+  lobConfig = MediationConfig.getLob(lobName)
   flows = []
   granularity = searchParam.get("granularity", 0)
   if "neids" in searchParam:

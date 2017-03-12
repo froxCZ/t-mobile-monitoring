@@ -1,7 +1,7 @@
 from statistics import median
 
 import util
-from config import config
+from config import MediationConfig
 from .SimilarPastDaysFinder import SimilarPastDaysFinder
 
 
@@ -12,7 +12,7 @@ class ExpectedTrafficQuery:
     self.date = date
     self.granularity = granularity
     self.dates = SimilarPastDaysFinder(self.flow).findSimilarPastDays(date)
-    country = config.getCountryByName(self.flow["country"])
+    country = MediationConfig.getCountryByName(self.flow["country"])
     options = self.flow["options"]
     self.adjustment = None
     lazyDayDifference = self.flow["options"].get("lazyDayDifference", 1)

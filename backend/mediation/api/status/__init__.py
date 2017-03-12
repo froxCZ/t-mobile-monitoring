@@ -5,9 +5,9 @@ from mediation.flow_analyzer import FlowStatusManager
 lobsStatus = Blueprint('status', __name__)
 
 
-@lobsStatus.route('/', methods=["GET"])
-def getLobsOverview():
-  lobsOverview = FlowStatusManager().getLobsOverview()
+@lobsStatus.route('/lobs/<string:country>', methods=["GET"])
+def getLobsOverview(country):
+  lobsOverview = FlowStatusManager().getLobsOverview(country)
   return jsonify(lobsOverview)
 
 @lobsStatus.route('/lob/<string:lobName>', methods=["GET"])

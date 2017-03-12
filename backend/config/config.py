@@ -56,48 +56,7 @@ CZ_LOBS = {"SIS": Lob("CZ", "SIS", 180),
 LOBS = {"CZ": CZ_LOBS}
 
 
-def getLobConfigByName(fullName):
-  res = configColl.find_one({"_id": "lobs"}, {"lobs." + fullName: 1})
-  tmp = fullName.split("_")
-  country = tmp[0]
-  granularity = res["lobs"][fullName]["options"]["granularity"]
-  return Lob(country, fullName, granularity)
-
-
-def getLobConfigByNameDict(fullName):
-  return getLobsConfig()["lobs"][fullName]
-
-
-def getLobs():
-  return getLobsConfig()["lobs"]
-
-def getCountryList():
-  return ["CZ","AT","NL","DE"]
-
-
-def getCountries():
-  defaultParam = {"lazyDays": [], "holidays": []}
-  res = configColl.find_one({"_id": "lobs"})["countries"]
-  countries = {}
-  for countryName, country in res.items():
-    countries[countryName] = {**defaultParam, **country}
-  return countries
-
-def getCountryByName(countryName):
-  return getCountries()[countryName]
-
-
-def getEnabledLobs():
-  lobs = getLobs()
-  for lobName, lob in lobs.items():
-    for flowName, flow in lob["flows"].copy().items():
-      if flow["options"]["enabled"] == False:
-        del lob["flows"][flowName]
-        del lob[flow["type"]][flowName]
-  return lobs
-
-
-def getLobsConfig():
+def getLobsConfig(country ="CZ"):
   """
   returns config for all inputs and forwards. Config is derived from parent object.
   :return:
@@ -110,7 +69,7 @@ def getLobsConfig():
     "difference": "day",
   }
   flowDefaultConfig = {"enabled": True}
-  for lobName, config in res["lobs"].items():
+  for lobName, config in res["lobs"][country].items():
     config["options"] = {**defaultConfig, **config["options"]}
     if "inputs" not in config:
       config["inputs"] = {}
@@ -144,17 +103,19 @@ def getLobsConfig():
         forwards[flowName] = flow
         config["flows"][flowName] = flow
     config["forwards"] = forwards
-  return res
+  x = {}
+  x["lobs"] = res["lobs"][country]
+  return x
 
-
+#
 def _getCountryFromLob(lobName):
   return lobName.split("_")[0]
 
-
+#
 def setFlowDefaultOptions(obj, parentObj):
   return {**{"enabled": True}, **parentObj, **obj}
 
-
+#used by new query
 def createMergedFlowsObject(lobName, flowType):
   flow = {}
   flow["name"] = lobName + "-" + flowType
@@ -168,25 +129,3 @@ def createMergedFlowsObject(lobName, flowType):
 
 def getLobConfig(lobName):
   return getLobsConfig()["lobs"][lobName]
-
-
-def getOptionsByFullFlowName(fullFlowName):
-  if fullFlowName.count(".") > 0:
-    lob, type, flow = fullFlowName.split(".")
-    return getLobConfig(lob)[type][flow]["options"]
-  else:
-    return getLobConfig(fullFlowName)["options"]
-
-
-def getOptions(lobName, input=None, forward=None):
-  lobConfig = getLobConfig(lobName)
-  if (input == None and forward == None) or input == "*" or forward == "*":
-    return lobConfig["options"]
-  elif forward == None:
-    return lobConfig["inputs"][input]["options"]
-  else:
-    return lobConfig["forwards"][forward]["options"]
-
-
-def updateLob(lobName, lobUpdate):
-  return configColl.update_one({"_id": "lobs"}, lobUpdate)

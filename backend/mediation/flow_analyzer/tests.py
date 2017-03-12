@@ -1,13 +1,13 @@
 import unittest
 
-import config
 import util
+from config import MediationConfig
 from mediation.flow_analyzer import FlowAnalyzer
 
 
 class TestStringMethods(unittest.TestCase):
   def setUp(self):
-    gsm = config.getLobConfig("CZ_GSM")
+    gsm = MediationConfig.getLob("CZ_GSM")
     self.lobAnalyzer = FlowAnalyzer(gsm["flows"]["MSSCEB1B"])
 
   def test_getLatestClosedIntervalTime(self):

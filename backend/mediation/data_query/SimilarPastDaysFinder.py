@@ -1,7 +1,7 @@
 import datetime
 
 import util
-from config import config
+from config import MediationConfig
 
 INITIAL_DATE = util.stringToDate("01.08.2016")
 
@@ -12,7 +12,7 @@ class SimilarPastDaysFinder():
   def __init__(self, flow):
     self.options = flow["options"]
     self.independentdays = self.options.get("independentdays", [])
-    self.country = config.getCountryByName(flow["country"])
+    self.country = MediationConfig.getCountryByName(flow["country"])
     self.HOLIDAYS = []
     for holiday in self.country["holidays"]:
       day, month = holiday.split(".")
