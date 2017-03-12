@@ -1,6 +1,7 @@
 import React, {Component} from "react";
 import Api from "../../Api";
 import Util from "../../Util";
+import StatusBadge from "../../components/StatusBadge";
 class Dashboard extends Component {
   constructor() {
     super();
@@ -38,13 +39,13 @@ class Dashboard extends Component {
     let rows = [];
     for (let event of this.state.events) {
       let row = <tr>
-        <td><img src={Util.countryToFlagPath(event.country)} alt="Czech Republic" style={{height: 15 + 'px'}}/></td>
+        <td><img src={Util.countryToFlagPath(event.country)} style={{height: 15 + 'px'}}/></td>
         <td>{event.lobName}</td>
         <td>{event.flowName}</td>
+        <td>{event.message}</td>
         <td>{Util.formatIsoDateStrToDateTimeStr(event.time)}</td>
         <td>{Util.formatIsoDateStrToDateTimeStr(event.ticTime)}</td>
-        <td>{event.message}</td>
-        <td>{event.newStatus}</td>
+        <td><h5><StatusBadge status={event.newStatus}/></h5></td>
 
       </tr>;
       rows.push(row)
@@ -62,9 +63,9 @@ class Dashboard extends Component {
                 <th>Country</th>
                 <th>Lob</th>
                 <th>Flow</th>
+                <th>Message</th>
                 <th>Time</th>
                 <th>Tic time</th>
-                <th>Message</th>
                 <th>Status&nbsp;&nbsp;<br/>
                   <input type="checkbox"
                          id="checkbox3"
