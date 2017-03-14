@@ -30,7 +30,7 @@ class FlowAnalyzer:
     granularity = self.options["granularity"]
     minuteOfDay = time.hour * 60 + time.minute
     minutesOverInterval = minuteOfDay % granularity
-    latestClosedIntervalTime = time - datetime.timedelta(minutes=minutesOverInterval)
+    latestClosedIntervalTime = time - datetime.timedelta(minutes=minutesOverInterval + granularity)
     latestClosedIntervalTime = latestClosedIntervalTime.replace(second=0, microsecond=0)
     return latestClosedIntervalTime
 

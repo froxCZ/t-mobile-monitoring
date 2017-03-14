@@ -158,7 +158,7 @@ export default class LobChart extends Component {
     for (let i in data) {
       let row = data[i];
       let tickDate = Util.parseIsoDateString(row._id);
-      if (tickDate.isBefore(currentTime) && tickDate.add(granularityDiff).isAfter(currentTime)) {
+      if (tickDate.isBefore(currentTime) && tickDate.add(granularityDiff).add(granularityDiff).isAfter(currentTime)) {
         return LobChart.dateToTickValue(row._id)
       }
     }
