@@ -30,44 +30,45 @@ class Sidebar extends Component {
             <li className="nav-title">
               Mediation
             </li>
-            <li className="nav-item nav-dropdown open">
-              <ul className="nav-dropdown-items">
-                <li className="nav-item">
-                  <Link to={'/mediation/monitoring/CZ'} className="nav-link" activeClassName="active">
-                    <img src={Util.countryToFlagPath("CZ")} alt="Czech Republic" style={{height: 15 + 'px'}}/>
-                    &nbsp; Monitoring
-                  </Link>
-                </li>
-                <li className="nav-item">
-                  <Link to={'/mediation/monitoring/AT'} className="nav-link" activeClassName="active">
-                    <img src={Util.countryToFlagPath("AT")} alt="Czech Republic" style={{height: 15 + 'px'}}/>&nbsp;
-                    Monitoring</Link>
-                </li>
-                <li className="nav-item">
-                  <Link to={'/mediation/monitoring/NL'} className="nav-link" activeClassName="active">
-                    <img src={Util.countryToFlagPath("NL")} alt="Czech Republic" style={{height: 15 + 'px'}}/>&nbsp;
-                    Monitoring</Link>
-                </li>
-                <li className="nav-item">
-                  <Link to={'/mediation/monitoring/DE'} className="nav-link" activeClassName="active">
-                    <img src={Util.countryToFlagPath("DE")} alt="Czech Republic" style={{height: 15 + 'px'}}/>&nbsp;
-                    Monitoring</Link>
-                </li>
-                <li className="nav-item">
-                  <Link to={'/mediation/settings'} className="nav-link" activeClassName="active">
-                    <i className="icon-wrench"></i>Settings</Link>
-                </li>
-              </ul>
+
+
+            <li className="nav-item">
+              <Link to={'/mediation/monitoring/CZ'} className="nav-link" activeClassName="active">
+                <img src={Util.countryToFlagPath("CZ")} alt="Czech Republic" style={{height: 15 + 'px'}}/>
+                &nbsp; Monitoring
+              </Link>
             </li>
+            <li className="nav-item">
+              <Link to={'/mediation/monitoring/AT'} className="nav-link" activeClassName="active">
+                <img src={Util.countryToFlagPath("AT")} alt="Czech Republic" style={{height: 15 + 'px'}}/>&nbsp;
+                Monitoring</Link>
+            </li>
+            <li className="nav-item">
+              <Link to={'/mediation/monitoring/NL'} className="nav-link" activeClassName="active">
+                <img src={Util.countryToFlagPath("NL")} alt="Czech Republic" style={{height: 15 + 'px'}}/>&nbsp;
+                Monitoring</Link>
+            </li>
+            <li className="nav-item">
+              <Link to={'/mediation/monitoring/DE'} className="nav-link" activeClassName="active">
+                <img src={Util.countryToFlagPath("DE")} alt="Czech Republic" style={{height: 15 + 'px'}}/>&nbsp;
+                Monitoring</Link>
+            </li>
+            <li className="nav-item">
+              <Link to={'/mediation/settings'} className="nav-link" activeClassName="active">
+                <i className="icon-wrench"></i>Settings</Link>
+            </li>
+
+
             <li className="nav-title">
             </li>
             <li className="nav-title">
               Big data tools
             </li>
+
             <li className="nav-item">
               <Link to={'/zookeeper'} className="nav-link" activeClassName="active">Zookeeper</Link>
-              <Link to={'/hadoop'} className="nav-link" activeClassName="active">Hadoop</Link>
             </li>
+
             <li className="nav-title">
             </li>
             <li className="nav-title">

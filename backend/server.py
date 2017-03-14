@@ -2,8 +2,8 @@ import traceback
 from datetime import datetime
 
 from flask import Flask, jsonify
-from flask.ext.cors import CORS
 from flask.json import JSONEncoder
+from flask_cors import CORS
 
 import common.api.auth as auth
 import config
@@ -53,12 +53,14 @@ from mediation.api.config import lobsConfig
 from mediation.api.status import lobsStatus
 from mediation.api.mediation import mediation
 from common.api import common
+from zookeeper.api import zookeeperApi
 
 app.register_blueprint(api_data_query, url_prefix="/mediation/data_query")
 app.register_blueprint(lobsConfig, url_prefix="/mediation/config")
 app.register_blueprint(lobsStatus, url_prefix="/mediation/status")
 app.register_blueprint(mediation, url_prefix="/mediation")
 app.register_blueprint(common, url_prefix="/app")
+app.register_blueprint(zookeeperApi, url_prefix="/zookeeper")
 
 # SchedulerRunner().start()
-app.run(debug=True)
+app.run(debug=True, host="0.0.0.0",port=5000,threaded=True)

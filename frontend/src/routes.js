@@ -7,7 +7,7 @@ import LobsMonitoring from "./views/mediation/LobsMonitoring";
 import LobMonitoringDetail from "./views/mediation/LobMonitoringDetail";
 import LobMonitoringDetailForward from "./views/mediation/LobMonitoringDetailForward";
 import LobsSettings from "./views/mediation/LobsSettings";
-import Incidents from "./views/incidents/Incidents";
+import Zookeeper from "./views/zookeeper/Zookeeper";
 import UsersList from "./views/settings/UsersList";
 // import Simple from './containers/Simple/'
 import Dashboard from "./views/Dashboard/";
@@ -34,10 +34,8 @@ export default (
 
         <Route path="settings" name="Settings" component={LobsSettings}/>
       </Route>
-      <Route path="incidents/" name="Incidents">
-        <IndexRoute component={Incidents}/>
-        <Route path="active" name="Active" component={Incidents}/>
-        <Route path="archive" name="Archive" component={Incidents}/>
+      <Route path="zookeeper" name="Zookeeper">
+        <IndexRoute component={Zookeeper}/>
       </Route>
       <Route path="settings/" name="Incidents">
         <Route path="users" name="Users" component={UsersList}/>

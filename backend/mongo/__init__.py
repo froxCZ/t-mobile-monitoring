@@ -60,4 +60,26 @@ class _Mongo:
     return _client["mediation"]
 
 
+class _ZookeeperMongo:
+  def config(self):
+    return self.db()["zookeeper_config"].with_options(codec_options=CodecOptions(
+      tz_aware=True,
+      tzinfo=pytz.timezone('CET')
+    ))
+
+  def statuses(self):
+    return self.db()["statuses"].with_options(codec_options=CodecOptions(
+      tz_aware=True,
+      tzinfo=pytz.timezone('CET')
+    ))
+
+  def dataDb(self):
+    return _client["mediation_data"]
+
+  def db(self):
+    return _client["mediation"]
+
+
 mongo = _Mongo()
+
+zookeeperMongo = _ZookeeperMongo()

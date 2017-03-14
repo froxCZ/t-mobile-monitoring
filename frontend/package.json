@@ -3,7 +3,6 @@
   "version": "1.0.0-alpha.4",
   "private": true,
   "homepage": ".",
-  "proxy": "http://localhost:5000",
   "devDependencies": {
     "babel-plugin-root-import": "^5.0.0",
     "gulp": "^3.9.1",

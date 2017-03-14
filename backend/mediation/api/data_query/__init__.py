@@ -7,7 +7,6 @@ import util
 from config import MediationConfig
 from config import config
 from mediation import data_query
-from past import smooth
 
 api_data_query = Blueprint('data_query', __name__)
 
@@ -50,11 +49,11 @@ def dataQueryV2():
     outageList = outageQuery.execute()
     data = util.merge2DateLists(outageList, [outageQuery.metric], data, None)
     metricsList.append(outageQuery.metric)
-
-  if (len(data) > 10):
-    validMetricName = metricsList[0]
-    smoothData(data, metadata["granularity"], validMetricName)
-    metricsList.append(validMetricName + "_smoothed")
+  #
+  # if (len(data) > 10):
+  #   validMetricName = metricsList[0]
+  #   smoothData(data, metadata["granularity"], validMetricName)
+  #   metricsList.append(validMetricName + "_smoothed")
 
   for metric in metricsList:
     # maxx = 0
@@ -105,10 +104,10 @@ def getDayMedians():
   return jsonify(response)
 
 
-def smoothData(data, granularity, validMetricName):
-  dataList = []
-  for row in data:
-    dataList.append(row[validMetricName])
-  smoothedData = smooth.smoothData(granularity, dataList)
-  for index, elem in enumerate(smoothedData):
-    data[index][validMetricName + "_smoothed"] = elem
+# def smoothData(data, granularity, validMetricName):
+#   dataList = []
+#   for row in data:
+#     dataList.append(row[validMetricName])
+#   smoothedData = smooth.smoothData(granularity, dataList)
+#   for index, elem in enumerate(smoothedData):
+#     data[index][validMetricName + "_smoothed"] = elem

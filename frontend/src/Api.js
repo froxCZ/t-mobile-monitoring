@@ -10,6 +10,7 @@ function delayPromise(duration) {
   };
 }
 
+const API_URL = "http://localhost:5000";
 class Api {
 
   updateLobConfig(lobName, updateObj) {
@@ -46,7 +47,7 @@ class Api {
     if (typeof myInit.body != 'string' || !myInit.body instanceof String) {
       myInit.body = JSON.stringify(myInit.body)
     }
-    let request = new Request(url, myInit);
+    let request = new Request(API_URL+url, myInit);
     Store.dispatch(showLoading());
     return fetch(request).then((response) => {
       if (response.status >= 200 && response.status < 300) {
