@@ -1,5 +1,6 @@
 import React, {Component} from "react";
 import Api from "../../Api";
+import StatusBadge from "../../components/StatusBadge";
 export default class Zookeeper extends Component {
 
   constructor() {
@@ -11,6 +12,33 @@ export default class Zookeeper extends Component {
     Api.fetch("/zookeeper/cluster", {method: "GET"}).then(response => {
       this.setState({cluster: response})
     })
+  }
+
+  componentWillUpdate(nextProps, nextState) {
+    if (nextState.cluster) {
+      if (nextState.cluster.enabled && !this.timerID) {
+        this.timerID = setInterval(
+          () => this.fetchStatus(),
+          5000
+        );
+        this.fetchStatus();
+      } else if (!nextState.cluster.enabled && this.timerID) {
+        clearInterval(this.timerID);
+        this.timerID = null;
+      }
+
+    }
+  }
+
+
+  fetchStatus() {
+    Api.fetch("/zookeeper/status", {method: "GET"}).then(response => {
+      this.setState({status: response})
+    })
+  }
+
+  componentWillUnmount() {
+    clearInterval(this.timerID);
   }
 
   removeNode(socketAddress) {
@@ -40,6 +68,7 @@ export default class Zookeeper extends Component {
     } else {
       path = "disable"
     }
+    this.setState({status: null})
     Api.fetch("/zookeeper/cluster/" + path, {method: "POST"}).then(response => {
       this.setState({cluster: response})
     })
@@ -50,14 +79,26 @@ export default class Zookeeper extends Component {
       return <p></p>
     }
     let rows = []
+    let clusterStatus = "unknown"
     if (this.state.cluster) {
+      if (!this.state.cluster.enabled) {
+        clusterStatus = "disabled"
+      } else if (this.state.status) {
+        clusterStatus = this.state.status.status
+      }
       for (let socket in this.state.cluster.nodes) {
         let instance = this.state.cluster.nodes[socket]
-        let mode = "unknown"
-        if (this.state.status) {
+        let mode = "unknown";
+        let status = "unknown";
+        if (!this.state.cluster.enabled) {
+          mode = "disabled";
+          status = "disabled"
+        } else if (this.state.status) {
+          console.log(this.state.status)
           let nodeStatus = this.state.status.nodes[socket]
           if (nodeStatus) {
-            mode = nodeStatus.mode
+            status = nodeStatus.status
+            mode = nodeStatus.mode || "unknown"
           }
         }
         rows.push(
@@ -65,7 +106,7 @@ export default class Zookeeper extends Component {
             <td>{socket}</td>
             <td>{mode}</td>
             <td>
-              <span className="badge badge-success">OK</span>
+              <StatusBadge status={status}/>
             </td>
             <td><i className="icon-trash icons font-2xl d-block" style={{cursor: 'pointer'}}
                    onClick={() => this.removeNode(socket)}></i></td>
@@ -100,19 +141,27 @@ export default class Zookeeper extends Component {
                 <i className="fa fa-align-justify"></i> Monitorig
               </div>
               <div className="card-block">
-                enabled:<label className="switch switch-3d switch-primary" onClick={(e) => e.stopPropagation()}>
-                <input type="checkbox" className="switch-input"
-                       checked={this.state.cluster.enabled}
-                       onChange={(e) => {
-                         this.monitoringEnabledChange(e.target.checked)
-                       }}
-                />
-                <span className="switch-label"></span>
-                <span className="switch-handle"></span>
-              </label>
-                <br/>
-                status:asd<br/>
-
+                <div className="form-group row">
+                  <label className="col-md-3 form-control-label" for="text-input">Status</label>
+                  <div className="col-md-9">
+                    <h3 style={{display: "inline"}}><StatusBadge status={clusterStatus}/></h3>
+                  </div>
+                </div>
+                <div className="form-group row">
+                  <label className="col-md-3 form-control-label" for="text-input">Enabled</label>
+                  <div className="col-md-9">
+                    <label className="switch switch-3d switch-primary" onClick={(e) => e.stopPropagation()}>
+                      <input type="checkbox" className="switch-input"
+                             checked={this.state.cluster.enabled}
+                             onChange={(e) => {
+                               this.monitoringEnabledChange(e.target.checked)
+                             }}
+                      />
+                      <span className="switch-label"></span>
+                      <span className="switch-handle"></span>
+                    </label>
+                  </div>
+                </div>
               </div>
             </div>
           </div>

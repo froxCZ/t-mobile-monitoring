@@ -13,6 +13,10 @@ const STATUS_MAP = {
     class: "badge-danger",
     label: "outage"
   },
+  "OFFLINE": {
+    class: "badge-danger",
+    label: "offline"
+  },
   "N_A": {
     class: "badge-danger",
     label: "n/a"
@@ -20,6 +24,10 @@ const STATUS_MAP = {
   "DISABLED": {
     class: "badge-default",
     label: "disabled"
+  },
+  "UNKNOWN": {
+    class: "badge-default",
+    label: "unknown"
   },
 }
 export default class StatusBadge extends Component {
@@ -46,7 +54,7 @@ export default class StatusBadge extends Component {
     if (!this.state.status) {
       return <span></span>
     }
-    let statusProps = STATUS_MAP[this.state.status]
+    let statusProps = STATUS_MAP[this.state.status.toUpperCase()]
     return <span className={"badge " + statusProps.class} style={this.props.style}>{statusProps.label}</span>
   }
 

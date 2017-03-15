@@ -3,14 +3,15 @@ import socket
 
 
 class Communicator():
-  offlineStat = {"mode": "offline"}
+  offline = {"status": "OFFLINE", "mode":None}
+  notServing = {"status": "OK","mode":None}
 
   @staticmethod
   def getStatus(host, port):
     try:
       statResult = send_cmd(host, port, b"stat")
     except Exception:
-      return Communicator.offlineStat
+      return Communicator.offline
     return parseStatResult(statResult)
 
 
@@ -25,6 +26,9 @@ connectionsFinder = {"regexp": r"Connections: (.*)", "group": 1}
 
 def parseStatResult(statCmdResult):
   stat = {}
+  stat["status"] = "OK"
+  if "This ZooKeeper instance is not currently serving requests" in statCmdResult:
+    return Communicator.notServing
   stat["mode"] = getFinderValue(modeFinder, statCmdResult)
   stat["latency"] = getFinderValue(latencyFinder, statCmdResult)
   stat["latency"] = getFinderValue(latencyFinder, statCmdResult)

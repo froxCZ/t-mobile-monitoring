@@ -11,7 +11,7 @@ class Analyzer():
     if cluster == None:
       cluster = ZookeeperConfig.getCluster()
     if cluster["enabled"] == False:
-      return "disabled"
+      return {}
     numberOfNodes = len(cluster["nodes"])
     onlineNodes = 0
     nodeStatus = {}
@@ -19,7 +19,7 @@ class Analyzer():
       host, port = ZooUtil.socketAddressToHostAndPort(socketAddress)
       res = Communicator.getStatus(host, port)
       nodeStatus[socketAddress] = res
-      if res["mode"] != "offline":
+      if res["status"] == "OK" and res["mode"] is not None:
         onlineNodes += 1
     status = "OUTAGE"
     if onlineNodes == numberOfNodes:

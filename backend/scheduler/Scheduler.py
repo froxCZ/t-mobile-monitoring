@@ -15,7 +15,7 @@ class Scheduler(threading.Thread):
     logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.DEBUG)
     from mediation.flow_analyzer import FlowAnalyzerRunner
     MODULE_SCHEDULERS = {
-      15:[ZookeeperAnalyzerRunner()],
+      5:[ZookeeperAnalyzerRunner()],
       5*60: [FlowAnalyzerRunner()],
 
     }
