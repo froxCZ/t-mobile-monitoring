@@ -72,20 +72,7 @@ class Sidebar extends Component {
             <li className="nav-title">
             </li>
             <li className="nav-title">
-              Incidents
-            </li>
-
-            <li className="nav-item">
-              <Link to={'/incidents/active'} className="nav-link" activeClassName="active">Active</Link>
-            </li>
-            <li className="nav-item">
-              <Link to={'/incidents/archive'} className="nav-link" activeClassName="active">Archive</Link>
-            </li>
-
-            <li className="nav-title">
-            </li>
-            <li className="nav-title">
-              Settings
+              System
             </li>
             <li className="nav-item">
               <Link to={'/settings/users'} className="nav-link" activeClassName="active">Users</Link>

@@ -21,7 +21,7 @@ def require_root(func):
     user = _getUserByApiKey()
     if user is None:
       abort(make_response(jsonify(message="Unauthorized"), 401))
-    if user["role"] != "root":
+    if user["permission"] != "root":
       abort(make_response(jsonify(message="Not enough permissions"), 403))
     return func(*args, **kwargs)
 

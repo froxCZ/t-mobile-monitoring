@@ -28,3 +28,7 @@ def login():
     return _invalidLoginResponse()
   del user["passwordHash"]
   return jsonify(user)
+
+@common.route('/users', methods=["GET"])
+def usersGET():
+  return jsonify(UserManager.getUsers())
