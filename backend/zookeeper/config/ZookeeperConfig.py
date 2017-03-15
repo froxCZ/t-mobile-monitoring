@@ -6,7 +6,13 @@ configColl = zookeeperMongo.config()
 class ZookeeperConfig():
   @staticmethod
   def getCluster():
-    return configColl.find_one({"_id": "cluster"}, {"_id": 0})
+    default = {"enabled": False, "nodes": {}}
+    res = configColl.find_one({"_id": "cluster"}, {"_id": 0})
+    if res is None:
+      res = default
+    else:
+      res = {**default, **res}
+    return res
 
   @staticmethod
   def upsertNode(socketAddress, body):
