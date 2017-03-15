@@ -4,6 +4,7 @@
 import Moment from "moment";
 Moment.locale('cs')
 
+
 export default class Util {
   static formatIsoDateString(isoDateString, format) {
     return Moment(isoDateString, "YYYY-MM-DDThh:mm:ssTZD").format(format)
@@ -16,6 +17,22 @@ export default class Util {
 
   static parseIsoDateString(isoDateString) {
     return Moment(isoDateString, "YYYY-MM-DDThh:mm:ssTZD")
+  }
+
+  static timeAgo(momentTime) {
+    let seconds = Math.floor(Moment.duration(Util.getCurrentTime().diff(momentTime)).asMilliseconds() / 1000)
+    if (seconds < 60) {
+      return seconds+ "s ago"
+    }else if(seconds<60*60){
+      let minutes = Math.floor(seconds/(60));
+      let sec = Math.floor(seconds-minutes*60);
+      return minutes+"m "+sec+"s ago";
+    }else{
+      let hours = Math.floor(seconds/(60*60))
+      let minutes = Math.floor((seconds-hours*60*60)/60)
+      return hours+"h "+minutes+"m ago";
+    }
+
   }
 
   static getCurrentTime() {

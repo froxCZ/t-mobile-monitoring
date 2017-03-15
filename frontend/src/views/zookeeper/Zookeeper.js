@@ -1,5 +1,6 @@
 import React, {Component} from "react";
 import Api from "../../Api";
+import Util from "../../Util";
 import StatusBadge from "../../components/StatusBadge";
 export default class Zookeeper extends Component {
 
@@ -12,6 +13,10 @@ export default class Zookeeper extends Component {
     Api.fetch("/zookeeper/cluster", {method: "GET"}).then(response => {
       this.setState({cluster: response})
     })
+    this.timeRefresh = setInterval(
+      () => this.forceUpdate(),
+      1000
+    );
   }
 
   componentWillUpdate(nextProps, nextState) {
@@ -39,6 +44,7 @@ export default class Zookeeper extends Component {
 
   componentWillUnmount() {
     clearInterval(this.timerID);
+    clearInterval(this.timeRefresh);
   }
 
   removeNode(socketAddress) {
@@ -145,6 +151,9 @@ export default class Zookeeper extends Component {
                   <label className="col-md-3 form-control-label" for="text-input">Status</label>
                   <div className="col-md-9">
                     <h3 style={{display: "inline"}}><StatusBadge status={clusterStatus}/></h3>
+                    &nbsp;
+                    {this.state.status &&
+                    Util.timeAgo(Util.parseIsoDateString(this.state.status.time))}
                   </div>
                 </div>
                 <div className="form-group row">

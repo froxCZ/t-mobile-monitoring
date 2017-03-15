@@ -51,7 +51,8 @@ class Dashboard extends Component {
         <td>{event.lobName}</td>
         <td>{event.flowName}</td>
         <td>{event.message}</td>
-        <td>{Util.formatIsoDateStrToDateTimeStr(event.time)}</td>
+        <td>{Util.formatIsoDateStrToDateTimeStr(event.time)}&nbsp;
+          ({Util.timeAgo(Util.parseIsoDateString(event.time))})</td>
         <td>{Util.formatIsoDateStrToDateTimeStr(event.ticTime)}</td>
         <td><h5><StatusBadge status={event.newStatus}/></h5></td>
 
@@ -74,6 +75,7 @@ class Dashboard extends Component {
                 <th>Message</th>
                 <th>Time</th>
                 <th>Tic time</th>
+                <th>Time ago</th>
                 <th>Status&nbsp;&nbsp;<br/>
                   <input type="checkbox"
                          id="checkbox3"
