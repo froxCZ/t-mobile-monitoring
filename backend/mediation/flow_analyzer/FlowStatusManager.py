@@ -10,6 +10,15 @@ class FlowStatusManager:
   def __init__(self):
     pass
 
+  def getLobDetailWithCountry(self, country, lobName):
+    lob = MediationConfig.getLobWithCountry(country, lobName)
+    allStatuses = self.getAll(lob["country"])
+    lobFlowStatuses = {}
+    for flowName, flow in lob["flows"].items():
+      lobFlowStatuses[flowName] = allStatuses[flow["gName"]]
+
+    return lobFlowStatuses
+
   def getLobDetail(self, lobName):
     lob = MediationConfig.getLob(lobName)
     allStatuses = self.getAll(lob["country"])
@@ -51,7 +60,7 @@ class FlowStatusManager:
       }
     return lobStatusDict
 
-  def getAll(self,country):
+  def getAll(self, country):
     lobs = MediationConfig.getLobs(country)
     res = mongo.statuses().find_one({"_id": "lobs"}, {"_id": 0})
     if res is None:

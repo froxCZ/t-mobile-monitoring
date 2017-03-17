@@ -114,6 +114,14 @@ class MediationConfig():
     dataPath = "lobs." + lob["country"] + "." + lob["name"]
     return configColl.update_one({"_id": "lobs"}, {"$unset": {dataPath: {}}})
 
+  @staticmethod
+  def getLobWithCountry(country, lobName):
+    lobs = MediationConfig.getLobs(country)
+    if lobName in lobs:
+      return lobs[lobName]
+    else:
+      return None
+
 
 def _getCountryFromLob(lobName):
   return lobName.split("_")[0]
