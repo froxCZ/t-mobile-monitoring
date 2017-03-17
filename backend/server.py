@@ -42,8 +42,12 @@ def currentTime():
 
 @app.errorhandler(Exception)
 def handle_invalid_usage(error):
-  response = jsonify({"message": str(error)})
-  response.status_code = 500
+  if (type(error) == StatusException):
+    response = jsonify({"message": error.message})
+    response.status_code = error.status
+  else:
+    response = jsonify({"message": str(error)})
+    response.status_code = 500
   traceback.print_exc()
   return response
 
@@ -52,7 +56,7 @@ from mediation.api.data_query import api_data_query
 from mediation.api.config import lobsConfig
 from mediation.api.status import lobsStatus
 from mediation.api.mediation import mediation
-from common.api import common
+from common.api import common, StatusException
 from zookeeper.api import zookeeperApi
 
 app.register_blueprint(api_data_query, url_prefix="/mediation/data_query")
@@ -63,4 +67,4 @@ app.register_blueprint(common, url_prefix="/app")
 app.register_blueprint(zookeeperApi, url_prefix="/zookeeper")
 
 # SchedulerRunner().start()
-app.run(debug=True, host="0.0.0.0",port=5000,threaded=True)
+app.run(debug=True, host="0.0.0.0", port=5000, threaded=True)
