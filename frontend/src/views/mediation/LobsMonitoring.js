@@ -35,10 +35,10 @@ class LobsMonitoring extends Component {
 
   reloadData(country) {
     this.setState({country: country})
-    Api.fetch("/mediation/config/lobs/"+country, {method: 'GET'}).then((response) => {
+    Api.fetch("/mediation/config/lobs/" + country, {method: 'GET'}).then((response) => {
       this.setState({lobs: response});
     });
-    Api.fetch("/mediation/status/lobs/"+country, {method: 'GET'}).then((response) => {
+    Api.fetch("/mediation/status/lobs/" + country, {method: 'GET'}).then((response) => {
       this.setState({status: response});
     });
   }
@@ -66,14 +66,14 @@ class LobsMonitoring extends Component {
             </h5>
           </div>)
           if (status.OUTAGE > 0) {
-            statusSpan = [<StatusBadge style={{marginRight:"3px"}} status="OUTAGE"/>]
+            statusSpan = [<StatusBadge style={{marginRight: "3px"}} status="OUTAGE"/>]
           } else if (status.WARNING > 0) {
-            statusSpan = [<StatusBadge style={{marginRight:"3px"}} status="WARNING"/>]
+            statusSpan = [<StatusBadge style={{marginRight: "3px"}} status="WARNING"/>]
           } else if (status.OK > 0) {
-            statusSpan = [<StatusBadge style={{marginRight:"3px"}} status="OK"/>]
+            statusSpan = [<StatusBadge style={{marginRight: "3px"}} status="OK"/>]
           }
           if (status.N_A > 0) {
-            statusSpan.push([<StatusBadge style={{marginRight:"3px"}} status="N_A"/>])
+            statusSpan.push([<StatusBadge style={{marginRight: "3px"}} status="N_A"/>])
           }
         }
         lobRows.push(
@@ -88,6 +88,23 @@ class LobsMonitoring extends Component {
           </tr>)
       }
     }
+    if (this.props.params) {
+      lobRows.push(<tr>
+          <td>
+            {this.props.params.country}_<input type="text"
+                                               id="text-input"
+                                               name="text-input"
+                                               className="form-control col-lg-1"
+                                               style={{display: "inline"}}
+                                               ref="newLobName"
+                                               placeholder="Lob name"/>
+            &nbsp;
+            <button type="button" className="btn btn-primary active" onClick={() => this.addLob()}>Add</button>
+          </td>
+        </tr>
+      )
+    }
+    console.log(lobRows)
     return (
       <div className="animated fadeIn">
         <div className="row">
@@ -121,6 +138,20 @@ class LobsMonitoring extends Component {
       </div>
 
     )
+  }
+
+  addLob() {
+    let country = this.props.params.country;
+    let lobName = this.refs.newLobName.value;
+    if (lobName == null || lobName.length == 0)return;
+    let req = {
+      method: "POST",
+      body: {country: country, lobName: country + "_" + lobName}
+    }
+    Api.fetch("/mediation/config/", req).then(response => {
+      this.reloadData(this.props.params.country);
+    })
+
   }
 }
 
