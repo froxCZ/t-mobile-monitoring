@@ -2,7 +2,9 @@ from mongo import mongo
 
 configColl = mongo.config()
 
-MEDIATION_DOCUMENT = {"_id":"mediation"}
+MEDIATION_DOCUMENT = {"_id": "mediation"}
+
+
 class MediationConfig():
   configColl = configColl
 
@@ -74,15 +76,17 @@ class MediationConfig():
       for flowName, flowOptions in config["forwards"].items():
         inputName = flowName.split(":")[0]
         if inputName in config["inputs"]:
+          flow = {"options": setFlowDefaultOptions(flowOptions, parentObj=config["inputs"][inputName]["options"])}
+        else:
           flow = {"options": setFlowDefaultOptions(flowOptions, parentObj=config["options"])}
-          flow["name"] = flowName
-          flow["type"] = "forwards"
-          flow["lobName"] = lobName
-          flow["country"] = country
-          flow["dataPath"] = country + "." + lobName + ".forwards." + flowName
-          flow["gName"] = lobName + "_" + flowName
-          forwards[flowName] = flow
-          config["flows"][flowName] = flow
+        flow["name"] = flowName
+        flow["type"] = "forwards"
+        flow["lobName"] = lobName
+        flow["country"] = country
+        flow["dataPath"] = country + "." + lobName + ".forwards." + flowName
+        flow["gName"] = lobName + "_" + flowName
+        forwards[flowName] = flow
+        config["flows"][flowName] = flow
       config["forwards"] = forwards
     lobs = res["lobs"][country]
     if enabledOnly:

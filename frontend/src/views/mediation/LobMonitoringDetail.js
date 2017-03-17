@@ -2,11 +2,21 @@ import React, {Component} from "react";
 import {browserHistory} from "react-router";
 import Api from "../../Api";
 import classnames from "classnames";
-import {TabContent, TabPane, Nav, NavItem, NavLink} from "reactstrap";
+import {
+  TabContent,
+  TabPane,
+  Nav,
+  NavItem,
+  NavLink,
+  Button,
+  Modal,
+  ModalHeader,
+  ModalBody,
+  ModalFooter
+} from "reactstrap";
 import LobOverviewCharts from "../../components/LobOverviewCharts";
 import _ from "lodash";
 import StatusBadge from "../../components/StatusBadge";
-
 const LIST_TAB = 'listTab'
 const CHART_TAB = 'chartTab'
 const CONFIG_TAB = 'configTab'
@@ -14,7 +24,7 @@ export default class LobMonitoringDetail extends Component {
   constructor() {
     super()
     this.state = {activeTab: LIST_TAB, optionsString: ''}
-
+    this.closeModal = this.closeModal.bind(this);
   }
 
   goToFlowDetail(flowName) {
@@ -201,8 +211,8 @@ export default class LobMonitoringDetail extends Component {
       for (let flowName in this.state.lob.inputs) {
         let flow = this.state.lob.inputs[flowName]
         neidRows.push(
-          <tr onClick={this.goToFlowDetail.bind(this, flowName)}>
-            <td>{flowName}</td>
+          <tr>
+            <td onClick={this.goToFlowDetail.bind(this, flowName)}>{flowName}</td>
             <td>{flow.options.granularity}</td>
             <td>{flow.options.softAlarmLevel}</td>
             <td>{flow.options.hardAlarmLevel}</td>
@@ -220,13 +230,33 @@ export default class LobMonitoringDetail extends Component {
                 <span className="switch-handle"></span>
               </label>
             </td>
+            <td>
+              <i className="icon-trash icons font-2xl d-block" style={{cursor: 'pointer'}}
+                 onClick={() => this.setState({flowToDelete: flow})}></i>
+            </td>
           </tr>)
       }
+      neidRows.push(<tr>
+          <td><input type="text"
+                     id="text-input"
+                     name="text-input"
+                     className="form-control col-lg-2"
+                     style={{display: "inline"}}
+                     ref="addFlowinputs"
+                     placeholder="Input name"/>
+            &nbsp;
+            <button type="button"
+                    className="btn btn-primary active"
+                    onClick={() => this.addFlow("inputs")}>Add
+            </button>
+          </td>
+        </tr>
+      )
       for (let flowName in this.state.lob.forwards) {
         let flow = this.state.lob.forwards[flowName]
         forwardRows.push(
-          <tr onClick={this.goToFlowDetail.bind(this, flowName)}>
-            <td>{flowName}</td>
+          <tr>
+            <td >{flowName}</td>
             <td>{flow.options.granularity}</td>
             <td>{flow.options.softAlarmLevel}</td>
             <td>{flow.options.hardAlarmLevel}</td>
@@ -244,10 +274,30 @@ export default class LobMonitoringDetail extends Component {
                 <span className="switch-handle"></span>
               </label>
             </td>
+            <td><i className="icon-trash icons font-2xl d-block" style={{cursor: 'pointer'}}
+                   onClick={() => this.setState({flowToDelete: flow})}></i>
+            </td>
           </tr>)
       }
+      forwardRows.push(<tr>
+          <td><input type="text"
+                     id="text-input"
+                     name="text-input"
+                     className="form-control col-lg-2"
+                     style={{display: "inline"}}
+                     ref="addFlowforwards"
+                     placeholder="Foward name"/>
+            &nbsp;
+            <button type="button"
+                    className="btn btn-primary active"
+                    onClick={() => this.addFlow("forwards")}>Add
+            </button>
+          </td>
+        </tr>
+      )
     }
     return (<div>
+      {this.createDeleteModal()}
       <div className="row">
         <div className="col-lg-12">
           <div className="card">
@@ -265,6 +315,7 @@ export default class LobMonitoringDetail extends Component {
                   <th>Traffic level</th>
                   <th>Status</th>
                   <th>Enabled</th>
+                  <th>Delete</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -292,6 +343,7 @@ export default class LobMonitoringDetail extends Component {
                   <th>Traffic level</th>
                   <th>Status</th>
                   <th>Enabled</th>
+                  <th>Delete</th>
 
                 </tr>
                 </thead>
@@ -304,5 +356,55 @@ export default class LobMonitoringDetail extends Component {
         </div>
       </div>
     </div>)
+  }
+
+  createDeleteModal() {
+    if (!this.state.flowToDelete) {
+      return <div></div>
+    }
+    let flowToDelete = this.state.flowToDelete;
+    return <Modal isOpen={flowToDelete != null}
+                  toggle={this.closeModal} className={'modal-primary ' + this.props.className}>
+      <ModalHeader toggle={this.closeModal}>Delete User</ModalHeader>
+      <ModalBody>
+        Do you want to delete flow {flowToDelete.name}?
+      </ModalBody>
+      <ModalFooter>
+        <Button color="danger" onClick={() => this.deleteFlow(flowToDelete)}>Delete</Button>{' '}
+        <Button color="secondary" onClick={this.closeModal}>Cancel</Button>
+      </ModalFooter>
+    </Modal>
+  }
+
+  addFlow(type) {
+    let country = this.state.country;
+    let lobName = this.state.lobName;
+    let name = this.refs["addFlow" + type].value;
+    let req = {
+      method: "POST",
+      body: {country: country, lobName: lobName, type: type, name: name}
+    };
+    Api.fetch("/mediation/flows/" + country + "/" + lobName, req).then(response => {
+      this.reloadLob(country, lobName)
+    })
+
+  }
+
+  deleteFlow(flowToDelete) {
+    let req = {
+      method: "DELETE"
+    };
+    Api.fetch("/mediation/flows/" + flowToDelete.country + "/" + flowToDelete.lobName + "/" + flowToDelete.name, req)
+      .then(response => {
+        this.setState({flowToDelete:null})
+        this.reloadLob(this.state.country, this.state.lobName);
+      })
+
+  }
+
+  closeModal() {
+    this.setState({
+      flowToDelete: null,
+    });
   }
 }
