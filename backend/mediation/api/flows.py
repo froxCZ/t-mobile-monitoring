@@ -3,6 +3,7 @@ from flask import request
 
 from common.api import StatusException
 from mediation import MediationConfig
+from mediation.MediationConfig import MEDIATION_DOCUMENT
 from mediation.flow_analyzer import FlowStatusManager
 
 flowsApi = Blueprint('flows', __name__)
@@ -69,7 +70,8 @@ def flowEnablePUT(country, lobName, flowName):
   body = request.get_json()
   enable = body["enable"]
   flow = MediationConfig.getLobWithCountry(country, lobName)["flows"][flowName]
-  MediationConfig.configColl.update_one({"_id": "lobs"}, {"$set": {"lobs." + flow["dataPath"] + ".enabled": enable}})
+  MediationConfig.configColl.update_one(
+    MEDIATION_DOCUMENT, {"$set": {"lobs." + flow["dataPath"] + ".enabled": enable}})
   return jsonify(MediationConfig.getLob(lobName)["flows"][flowName]["options"])
 
 
@@ -77,7 +79,7 @@ def flowEnablePUT(country, lobName, flowName):
 def lobOptionsPUT(country, lobName):
   body = request.get_json()
   optionsPath = "lobs." + country + "." + lobName + ".options"
-  MediationConfig.configColl.update_one({"_id": "lobs"}, {"$set": {optionsPath: body}})
+  MediationConfig.configColl.update_one(MEDIATION_DOCUMENT, {"$set": {optionsPath: body}})
   return jsonify(MediationConfig.getLob(lobName)["options"])
 
 
@@ -92,8 +94,9 @@ def flowOptionsGET(country, lobName, flowName):
 def flowOptionsPUT(country, lobName, flowName):
   body = request.get_json()
   flow = MediationConfig.getLobWithCountry(country, lobName)["flows"][flowName]
-  res = MediationConfig.configColl.update_one({"_id": "lobs"}, {"$set": {"lobs." + flow["dataPath"]: body}})
+  res = MediationConfig.configColl.update_one(MEDIATION_DOCUMENT, {"$set": {"lobs." + flow["dataPath"]: body}})
   return jsonify(MediationConfig.getLobWithCountry(country, lobName)["flows"][flowName]["options"])
+
 
 @flowsApi.route('/', methods=["POST"])
 def addLobPOST():

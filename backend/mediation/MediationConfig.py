@@ -2,7 +2,7 @@ from mongo import mongo
 
 configColl = mongo.config()
 
-
+MEDIATION_DOCUMENT = {"_id":"mediation"}
 class MediationConfig():
   configColl = configColl
 
@@ -17,7 +17,7 @@ class MediationConfig():
   @staticmethod
   def getCountries():
     defaultParam = {"lazyDays": [], "holidays": []}
-    res = configColl.find_one({"_id": "lobs"})["countries"]
+    res = configColl.find_one(MEDIATION_DOCUMENT)["countries"]
     countries = {}
     for countryName, country in res.items():
       countries[countryName] = {**defaultParam, **country}
@@ -37,7 +37,7 @@ class MediationConfig():
     returns config for all inputs and forwards. Config is derived from parent object.
     :return:
     """
-    res = configColl.find_one({"_id": "lobs"})
+    res = configColl.find_one(MEDIATION_DOCUMENT)
     defaultConfig = {
       "granularity": 240,
       "hardAlarmLevel": 0.5,
@@ -96,23 +96,23 @@ class MediationConfig():
   @staticmethod
   def addFlow(flow):
     dataPath = "lobs." + flow["country"] + "." + flow["lobName"] + "." + flow["type"] + "." + flow["name"]
-    configColl.update_one({"_id": "lobs"}, {"$set": {dataPath: {}}})
+    configColl.update_one(MEDIATION_DOCUMENT, {"$set": {dataPath: {}}})
     pass
 
   @staticmethod
   def deleteFlow(flow):
     dataPath = "lobs." + flow["country"] + "." + flow["lobName"] + "." + flow["type"] + "." + flow["name"]
-    return configColl.update_one({"_id": "lobs"}, {"$unset": {dataPath: {}}})
+    return configColl.update_one(MEDIATION_DOCUMENT, {"$unset": {dataPath: {}}})
 
   @staticmethod
   def addLob(country, name):
     dataPath = "lobs." + country + "." + name
-    return configColl.update_one({"_id": "lobs"}, {"$set": {dataPath: {}}})
+    return configColl.update_one(MEDIATION_DOCUMENT, {"$set": {dataPath: {}}})
 
   @staticmethod
   def deleteLob(lob):
     dataPath = "lobs." + lob["country"] + "." + lob["name"]
-    return configColl.update_one({"_id": "lobs"}, {"$unset": {dataPath: {}}})
+    return configColl.update_one(MEDIATION_DOCUMENT, {"$unset": {dataPath: {}}})
 
   @staticmethod
   def getLobWithCountry(country, lobName):
