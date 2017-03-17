@@ -6,7 +6,18 @@ import {showLoading, hideLoading} from "react-redux-loading-bar";
 import Api from "../../Api";
 import StatusBadge from "../../components/StatusBadge";
 import StatusCounterBadge from "../../components/StatusCounterBadge";
-
+import {
+  TabContent,
+  TabPane,
+  Nav,
+  NavItem,
+  NavLink,
+  Button,
+  Modal,
+  ModalHeader,
+  ModalBody,
+  ModalFooter
+} from "reactstrap";
 
 function mapStateToProps(state) {
   return {auth: state.auth};
@@ -19,6 +30,7 @@ class LobsMonitoring extends Component {
   constructor() {
     super();
     this.state = {}
+    this.closeModal = this.closeModal.bind(this);
 
   }
 
@@ -74,13 +86,17 @@ class LobsMonitoring extends Component {
         }
 
         lobRows.push(
-          <tr onClick={this.goToLobDetail.bind(this, lobName)}>
-            <td>{lobName}</td>
+          <tr >
+            <td onClick={this.goToLobDetail.bind(this, lobName)}  style={{cursor: 'pointer'}}>{lobName}</td>
             <td>
               {flowStatuses}
             </td>
             <td>
               <h4>{statusSpan}</h4>
+            </td>
+            <td>
+              <i className="icon-trash icons font-2xl d-block" style={{cursor: 'pointer'}}
+                 onClick={() => this.setState({lobToDelete: lob})}></i>
             </td>
           </tr>)
       }
@@ -101,9 +117,9 @@ class LobsMonitoring extends Component {
         </tr>
       )
     }
-    console.log(lobRows)
     return (
       <div className="animated fadeIn">
+        {this.createDeleteModal()}
         <div className="row">
           <div className="col-lg-12">
             <h2>{this.state.country} monitoring</h2>
@@ -122,6 +138,7 @@ class LobsMonitoring extends Component {
                     <th>Lob Name</th>
                     <th>Flows</th>
                     <th>Status</th>
+                    <th>Delete</th>
                   </tr>
                   </thead>
                   <tbody>
@@ -137,6 +154,24 @@ class LobsMonitoring extends Component {
     )
   }
 
+  createDeleteModal() {
+    if (!this.state.lobToDelete) {
+      return <div></div>
+    }
+    let lobToDelete = this.state.lobToDelete;
+    return <Modal isOpen={lobToDelete != null}
+                  toggle={this.closeModal} className={'modal-primary ' + this.props.className}>
+      <ModalHeader toggle={this.closeModal}>Delete Lob</ModalHeader>
+      <ModalBody>
+        Do you want to delete lob {lobToDelete.name}?
+      </ModalBody>
+      <ModalFooter>
+        <Button color="danger" onClick={() => this.deleteFlow(lobToDelete)}>Delete</Button>{' '}
+        <Button color="secondary" onClick={this.closeModal}>Cancel</Button>
+      </ModalFooter>
+    </Modal>
+  }
+
   addLob() {
     let country = this.props.params.country;
     let lobName = this.refs.newLobName.value;
@@ -149,6 +184,24 @@ class LobsMonitoring extends Component {
       this.reloadData(this.props.params.country);
     })
 
+  }
+
+  deleteFlow(lobToDelete) {
+    let req = {
+      method: "DELETE"
+    };
+    Api.fetch("/mediation/flows/" + lobToDelete.country + "/" + lobToDelete.name, req)
+      .then(response => {
+        this.setState({lobToDelete: null})
+        this.reloadData(this.state.country);
+      })
+
+  }
+
+  closeModal() {
+    this.setState({
+      lobToDelete: null,
+    });
   }
 }
 

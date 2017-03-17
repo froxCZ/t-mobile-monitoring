@@ -212,7 +212,7 @@ export default class LobMonitoringDetail extends Component {
         let flow = this.state.lob.inputs[flowName]
         neidRows.push(
           <tr>
-            <td onClick={this.goToFlowDetail.bind(this, flowName)}>{flowName}</td>
+            <td style={{cursor: 'pointer'}} onClick={this.goToFlowDetail.bind(this, flowName)}>{flowName}</td>
             <td>{flow.options.granularity}</td>
             <td>{flow.options.softAlarmLevel}</td>
             <td>{flow.options.hardAlarmLevel}</td>
@@ -256,7 +256,7 @@ export default class LobMonitoringDetail extends Component {
         let flow = this.state.lob.forwards[flowName]
         forwardRows.push(
           <tr>
-            <td >{flowName}</td>
+            <td style={{cursor: 'pointer'}} onClick={this.goToFlowDetail.bind(this, flowName)}>{flowName}</td>
             <td>{flow.options.granularity}</td>
             <td>{flow.options.softAlarmLevel}</td>
             <td>{flow.options.hardAlarmLevel}</td>
@@ -365,7 +365,7 @@ export default class LobMonitoringDetail extends Component {
     let flowToDelete = this.state.flowToDelete;
     return <Modal isOpen={flowToDelete != null}
                   toggle={this.closeModal} className={'modal-primary ' + this.props.className}>
-      <ModalHeader toggle={this.closeModal}>Delete User</ModalHeader>
+      <ModalHeader toggle={this.closeModal}>Delete Flow</ModalHeader>
       <ModalBody>
         Do you want to delete flow {flowToDelete.name}?
       </ModalBody>
@@ -396,7 +396,7 @@ export default class LobMonitoringDetail extends Component {
     };
     Api.fetch("/mediation/flows/" + flowToDelete.country + "/" + flowToDelete.lobName + "/" + flowToDelete.name, req)
       .then(response => {
-        this.setState({flowToDelete:null})
+        this.setState({flowToDelete: null})
         this.reloadLob(this.state.country, this.state.lobName);
       })
 
