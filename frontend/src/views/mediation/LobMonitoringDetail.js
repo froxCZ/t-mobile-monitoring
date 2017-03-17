@@ -30,19 +30,17 @@ export default class LobMonitoringDetail extends Component {
   }
 
   propChange(props) {
+    let country = props.params.country;
     let lobName = props.params.lobName;
-    if (this.state.lobName != lobName) {
-      this.reloadLob(lobName);
+    if (this.state.lobName != lobName || country != this.state.country) {
+      this.reloadLob(country, lobName);
     }
   }
 
-  reloadLob(lobName) {
-    this.setState({lobName: lobName});
-    Api.fetch("/mediation/config/" + lobName, {method: 'GET'}).then((response) => {
+  reloadLob(country, lobName) {
+    this.setState({lobName: lobName, country: country});
+    Api.fetch("/mediation/flows/" + country + "/" + lobName, {method: 'GET'}).then((response) => {
       this.setState({lob: response, optionsString: JSON.stringify(response.options, null, 2)});
-    });
-    Api.fetch("/mediation/status/lob/" + lobName, {method: 'GET'}).then((response) => {
-      this.setState({status: response})
     });
   }
 
@@ -172,27 +170,11 @@ export default class LobMonitoringDetail extends Component {
       method: 'PUT',
       body: this.state.optionsString
     };
-    Api.fetch("/mediation/config/" + this.state.lobName + "/options", myInit);
+    Api.fetch("/mediation/flows/" + this.state.country + "/" + this.state.lobName + "/options", myInit);
   }
-
-  getTrafficDifference(flow) {
-    let flowName = flow.name
-    if (this.state.status && flowName in this.state.status && this.state.status[flowName].difference) {
-      return this.state.status[flowName].difference
-    } else {
-      return "-"
-    }
-  }
-
 
   getStatusBadge(flow) {
-    let flowName = flow.name;
-    if (this.state.status && flowName in this.state.status) {
-      let flowStatus = this.state.status[flowName].status
-      return <StatusBadge status={flowStatus}/>;
-    } else {
-      return "-"
-    }
+    return <StatusBadge status={flow.status.status}/>
   }
 
 
@@ -203,7 +185,7 @@ export default class LobMonitoringDetail extends Component {
       body: body
     };
     let type = flow.type
-    Api.fetch("/mediation/config/" + flow.lobName + "/flow/" + flow.name + "/enable", myInit)
+    Api.fetch("/mediation/flows/" + flow.country + "/" + flow.lobName + "/" + flow.name + "/enable", myInit)
       .then(response => {
         let newState = _.extend({}, this.state);
         newState.lob[type][flow.name].options = response
@@ -224,7 +206,7 @@ export default class LobMonitoringDetail extends Component {
             <td>{flow.options.granularity}</td>
             <td>{flow.options.softAlarmLevel}</td>
             <td>{flow.options.hardAlarmLevel}</td>
-            <td>{this.getTrafficDifference(flow)}</td>
+            <td>{flow.status.difference}</td>
             <td>
               <h4>{this.getStatusBadge(flow)}</h4>
             </td>
@@ -248,7 +230,7 @@ export default class LobMonitoringDetail extends Component {
             <td>{flow.options.granularity}</td>
             <td>{flow.options.softAlarmLevel}</td>
             <td>{flow.options.hardAlarmLevel}</td>
-            <td>{this.getTrafficDifference(flow)}</td>
+            <td>{flow.status.difference}</td>
             <td>
               <h4>{this.getStatusBadge(flow)}</h4>
             </td>

@@ -34,6 +34,7 @@ export default class LobMonitoringDetailForward extends Component {
   }
 
   propChange(props) {
+    let country = props.params.country;
     let lobName = props.params.lobName;
     let flowName = props.params.flowName;
 
@@ -41,9 +42,10 @@ export default class LobMonitoringDetailForward extends Component {
       this.setState({
         lobName: lobName,
         flowName: flowName,
+        country: country,
         status: null
       });
-      Api.fetch("/mediation/config/" + lobName + "/flow/" + flowName, {method: 'GET'}).then((response) => {
+      Api.fetch("/mediation/flows/" + country + "/" + lobName + "/" + flowName, {method: 'GET'}).then((response) => {
         this.setState({
           options: response.options,
           flow: response,
@@ -56,7 +58,7 @@ export default class LobMonitoringDetailForward extends Component {
 
   loadData(controlSettings) {
     this.setState({controlSettings: controlSettings});
-    let flowObj = {inputs:[],forwards:[]};
+    let flowObj = {inputs: [], forwards: []};
     flowObj[this.state.flow.type].push(this.state.flow.name);
     Api.lobData(
       controlSettings.fromDate,
@@ -181,8 +183,8 @@ export default class LobMonitoringDetailForward extends Component {
       method: 'PUT',
       body: this.state.optionsString
     };
-    Api.fetch("/mediation/config/" + this.state.lobName +
-      "/flow/" + this.state.flow.name + "/options", myInit).then(response => {
+    Api.fetch("/mediation/flows/"+this.state.country+"/" + this.state.lobName +
+      "/" + this.state.flow.name + "/options", myInit).then(response => {
       this.setState({
         options: response,
         optionsString: JSON.stringify(response, null, 2)

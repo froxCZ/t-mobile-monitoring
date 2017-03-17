@@ -35,11 +35,8 @@ class LobsMonitoring extends Component {
 
   reloadData(country) {
     this.setState({country: country})
-    Api.fetch("/mediation/config/lobs/" + country, {method: 'GET'}).then((response) => {
+    Api.fetch("/mediation/flows/" + country, {method: 'GET'}).then((response) => {
       this.setState({lobs: response});
-    });
-    Api.fetch("/mediation/status/lobs/" + country, {method: 'GET'}).then((response) => {
-      this.setState({status: response});
     });
   }
 
@@ -58,24 +55,24 @@ class LobsMonitoring extends Component {
         let lob = this.state.lobs[lobName]
         let flowStatuses = null
         let statusSpan = [<span className="badge badge-primary"></span>]
-        if (this.state.status) {
-          let status = this.state.status[lobName]
-          flowStatuses = (<div>
-            <h5>
-              <StatusCounterBadge statuses={status}/>
-            </h5>
-          </div>)
-          if (status.OUTAGE > 0) {
-            statusSpan = [<StatusBadge style={{marginRight: "3px"}} status="OUTAGE"/>]
-          } else if (status.WARNING > 0) {
-            statusSpan = [<StatusBadge style={{marginRight: "3px"}} status="WARNING"/>]
-          } else if (status.OK > 0) {
-            statusSpan = [<StatusBadge style={{marginRight: "3px"}} status="OK"/>]
-          }
-          if (status.N_A > 0) {
-            statusSpan.push([<StatusBadge style={{marginRight: "3px"}} status="N_A"/>])
-          }
+
+        let status = lob.status
+        flowStatuses = (<div>
+          <h5>
+            <StatusCounterBadge statuses={status}/>
+          </h5>
+        </div>)
+        if (status.OUTAGE > 0) {
+          statusSpan = [<StatusBadge style={{marginRight: "3px"}} status="OUTAGE"/>]
+        } else if (status.WARNING > 0) {
+          statusSpan = [<StatusBadge style={{marginRight: "3px"}} status="WARNING"/>]
+        } else if (status.OK > 0) {
+          statusSpan = [<StatusBadge style={{marginRight: "3px"}} status="OK"/>]
         }
+        if (status.N_A > 0) {
+          statusSpan.push([<StatusBadge style={{marginRight: "3px"}} status="N_A"/>])
+        }
+
         lobRows.push(
           <tr onClick={this.goToLobDetail.bind(this, lobName)}>
             <td>{lobName}</td>
@@ -148,7 +145,7 @@ class LobsMonitoring extends Component {
       method: "POST",
       body: {country: country, lobName: country + "_" + lobName}
     }
-    Api.fetch("/mediation/config/", req).then(response => {
+    Api.fetch("/mediation/flows/", req).then(response => {
       this.reloadData(this.props.params.country);
     })
 
