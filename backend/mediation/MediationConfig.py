@@ -8,7 +8,11 @@ class MediationConfig():
 
   @staticmethod
   def getLob(lobName):
-    return MediationConfig.getLobs(_getCountryFromLob(lobName))[lobName]
+    lobs = MediationConfig.getLobs(_getCountryFromLob(lobName))
+    if lobName in lobs:
+      return lobs[lobName]
+    else:
+      return None
 
   @staticmethod
   def getCountries():
@@ -44,6 +48,9 @@ class MediationConfig():
       return {}
     for lobName, config in res["lobs"][country].items():
       config["country"] = country
+      config["name"] = lobName
+      if "options" not in config:
+        config["options"] = {}
       config["options"] = {**defaultConfig, **config["options"]}
       if "inputs" not in config:
         config["inputs"] = {}
@@ -85,6 +92,27 @@ class MediationConfig():
             del lob["flows"][flowName]
             del lob[flow["type"]][flowName]
     return lobs
+
+  @staticmethod
+  def addFlow(flow):
+    dataPath = "lobs." + flow["country"] + "." + flow["lobName"] + "." + flow["type"] + "." + flow["name"]
+    configColl.update_one({"_id": "lobs"}, {"$set": {dataPath: {}}})
+    pass
+
+  @staticmethod
+  def deleteFlow(flow):
+    dataPath = "lobs." + flow["country"] + "." + flow["lobName"] + "." + flow["type"] + "." + flow["name"]
+    return configColl.update_one({"_id": "lobs"}, {"$unset": {dataPath: {}}})
+
+  @staticmethod
+  def addLob(country, name):
+    dataPath = "lobs." + country + "." + name
+    return configColl.update_one({"_id": "lobs"}, {"$set": {dataPath: {}}})
+
+  @staticmethod
+  def deleteLob(lob):
+    dataPath = "lobs." + lob["country"] + "." + lob["name"]
+    return configColl.update_one({"_id": "lobs"}, {"$unset": {dataPath: {}}})
 
 
 def _getCountryFromLob(lobName):

@@ -3,6 +3,7 @@ import datetime
 from flask import Blueprint, jsonify
 from flask import request
 
+from common.api import StatusException
 from mediation import MediationConfig
 from mediation.api import util
 
@@ -30,6 +31,52 @@ def coutriesPUT():
   MediationConfig.configColl.update_one({"_id": "lobs"}, {"$set": {"countries": body}})
   return jsonify(MediationConfig.getCountries())
 
+
+@lobsConfig.route('/', methods=["POST"])
+def addLob():
+  """put under /lobs"""
+  addLobRequest = request.get_json()
+  country = addLobRequest["country"]
+  lobName = addLobRequest["lobName"]
+  if MediationConfig.getLob(lobName) is not None:
+    raise StatusException("Lob already exists", 400)
+  MediationConfig.addLob(country, lobName)
+  return lobsListGET(country)
+
+
+@lobsConfig.route('/<string:lobName>', methods=["DELETE"])
+def deleteLob(lobName):
+  lob = MediationConfig.getLob(lobName)
+  if lob is not None:
+    MediationConfig.deleteLob(lob)
+  else:
+    raise StatusException("lob does not exists", 400)
+  return jsonify(MediationConfig.getLobs(lob["country"]))
+
+
+@lobsConfig.route('/<string:lobName>/flow', methods=["POST"])
+def addFlow(lobName):
+  lob = MediationConfig.getLob(lobName)
+  addFlowRequest = request.get_json()
+  country = lob["country"]
+  flowName = addFlowRequest["flowName"]
+  if flowName in lob["flows"]:
+    raise StatusException("Flow already exists", 400)
+  if ":" in flowName:
+    type = "forwards"
+  else:
+    type = "inputs"
+  flow = {"country": country, "lobName": lobName, "type": type, "name": flowName}
+  MediationConfig.addFlow(flow)
+  return getLobConfig(lobName)
+
+
+@lobsConfig.route('/<string:lobName>/flow/<string:flowName>', methods=["DELETE"])
+def deleteFlow(lobName, flowName):
+  lob = MediationConfig.getLob(lobName)
+  if flowName in lob["flows"]:
+    MediationConfig.deleteFlow(lob["flows"][flowName])
+  return getLobConfig(lobName)
 
 
 @lobsConfig.route('/<string:lobName>', methods=["GET"])
@@ -120,8 +167,6 @@ def getOutages(lobName):
   from past.outage import OutageQuery
   outages = OutageQuery(lobName).getOutages(fromDate, toDate)
   return jsonify(outages)
-
-
 
 #
 # @lobsConfig.route('/discover', methods=["POST"])
