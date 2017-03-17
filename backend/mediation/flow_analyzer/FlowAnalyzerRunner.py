@@ -2,8 +2,8 @@ import datetime
 import logging
 
 import config
-from config import MediationConfig
-from config import TIMEZONE
+from config import AppConfig
+from mediation import MediationConfig
 from mediation.flow_analyzer import status
 from mediation.flow_analyzer.EventsManager import EventsManager
 from mediation.flow_analyzer.FlowAnalyzer import FlowAnalyzer
@@ -34,7 +34,7 @@ class FlowAnalyzerRunner(AbstractModuleScheduler):
 
   def _analyzeFlow(self, flow):
     analyzer = FlowAnalyzer(flow)
-    runResult = analyzer.run(config.getCurrentTime().replace(tzinfo=TIMEZONE))
+    runResult = analyzer.run(config.getCurrentTime().replace(tzinfo=AppConfig.getTimezone()))
     previousStatus = self.lastExecutions[flow["gName"]]["status"]
     newStatus = analyzer.status
     if previousStatus != newStatus:

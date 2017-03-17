@@ -3,7 +3,7 @@ import datetime
 from flask import Blueprint, jsonify
 from flask import request
 
-from config import MediationConfig
+from mediation import MediationConfig
 from mediation.api import util
 
 lobsConfig = Blueprint('lobs', __name__)

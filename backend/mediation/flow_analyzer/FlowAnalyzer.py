@@ -2,7 +2,7 @@ import datetime
 import logging
 
 import util
-from config import MediationConfig
+from mediation import MediationConfig
 from mediation.flow_analyzer.OutageDetector import OutageDetector
 from mediation.flow_analyzer.OutlierDetector import OutlierDetector
 

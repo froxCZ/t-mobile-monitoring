@@ -1,7 +1,7 @@
 import datetime
 
 import config
-from config import MediationConfig
+from mediation import MediationConfig
 from mediation.flow_analyzer import status
 from mongo import mongo
 

@@ -3,7 +3,7 @@ import datetime
 
 import dateutil.parser
 
-from config import TIMEZONE
+from config.AppConfig import TIMEZONE
 
 
 def jsStringToDate(string):

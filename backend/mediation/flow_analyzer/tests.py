@@ -1,7 +1,7 @@
 import unittest
 
 import util
-from config import MediationConfig
+from mediation import MediationConfig
 from mediation.flow_analyzer import FlowAnalyzer
 
 

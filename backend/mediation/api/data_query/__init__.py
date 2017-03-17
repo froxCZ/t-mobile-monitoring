@@ -4,8 +4,8 @@ from flask import Blueprint, jsonify
 from flask import request
 
 import util
-from config import MediationConfig
 from config import config
+from mediation import MediationConfig
 from mediation import data_query
 
 api_data_query = Blueprint('data_query', __name__)

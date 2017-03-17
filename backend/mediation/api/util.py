@@ -1,10 +1,10 @@
 import dateutil.parser
 
-from config import TIMEZONE
+from config import AppConfig
 
 
 def jsStringToDate(string):
-  return dateutil.parser.parse(string).replace(tzinfo=TIMEZONE)
+  return dateutil.parser.parse(string).replace(tzinfo=AppConfig.getTimezone())
 
 
 def dateToString(date):
