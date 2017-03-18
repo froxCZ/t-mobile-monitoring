@@ -33,47 +33,6 @@ def _createRowUpdateDict(row):
             }
   return (indexDate, update)
 
-
-def _createForwardUpdateDict(row):
-  date = row["date"]
-  indexDate = date - timedelta(seconds=date.second)
-
-  updatePath = "data." + row["lob"] + ".forwards."
-  try:
-    dataSize = int(row["dataSize"])
-  except ValueError:
-    print("ValueError: " + row["dataSize"])
-    print(row)
-    dataSize = 0
-  update = {"$inc":
-              {updatePath + row["forward"]: dataSize,
-               updatePath + "sum": dataSize,
-               updatePath + "updatesCnt": 1
-               }
-            }
-  return (indexDate, update)
-
-
-def _createInputUpdateDict(row):
-  date = row["date"]
-  indexDate = date - timedelta(seconds=date.second)
-
-  updatePath = "data." + row["lob"] + ".inputs."
-  try:
-    dataSize = int(row["dataSize"])
-  except ValueError:
-    print("ValueError: " + row["dataSize"])
-    print(row)
-    dataSize = 0
-  update = {"$inc":
-              {updatePath + row["neid"]: dataSize,
-               updatePath + "sum": dataSize,
-               updatePath + "updatesCnt": 1
-               }
-            }
-  return (indexDate, update)
-
-
 def _sumUpdates(updates):
   sums = {}
   for indexDate, update in updates:

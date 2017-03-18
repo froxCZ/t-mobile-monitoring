@@ -23,3 +23,8 @@ class AppConfig:
   @staticmethod
   def getTimezone():
     return TIMEZONE
+
+  @staticmethod
+  def kafkaServers():
+    return "127.0.0.2:9092"
+
