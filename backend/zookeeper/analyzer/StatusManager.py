@@ -2,6 +2,8 @@ from mongo import zookeeperMongo
 
 statusColl = zookeeperMongo.statuses()
 
+DEFAULT_CLUSTER_STATUS = {"nodes": {}, "status": None}
+
 
 class StatusManager:
   @staticmethod
@@ -9,7 +11,7 @@ class StatusManager:
     res = statusColl.find_one({"_id": "zookeeper"}, {"_id": 0})
     if res is None:
       res = {}
-    return res
+    return {**DEFAULT_CLUSTER_STATUS, **res}
 
   @staticmethod
   def saveClusterStatus(clusterStatus, time):

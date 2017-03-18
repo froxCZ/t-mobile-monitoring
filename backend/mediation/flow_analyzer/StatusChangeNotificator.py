@@ -1,4 +1,3 @@
-from config import AppConfig
 from integration import StatusProducer
 from mediation.flow_analyzer import EventsManager
 
@@ -17,7 +16,6 @@ class StatusChangeNotificator:
       "ticTime": ticTime,
       "newStatus": newStatus,
       "previousStatus": previousStatus,
-      "time": AppConfig.getCurrentTime(),
       "country": flow["country"]
     }
     self.statusProducer.send(msgDict)

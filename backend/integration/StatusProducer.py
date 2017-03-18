@@ -55,6 +55,7 @@ class StatusProducer(threading.Thread):
 
   def send(self, dictMsg):
     dictMsg["messageId"] = util.randomHash(10)
+    dictMsg["time"] = AppConfig.getCurrentTime()
     self.q.put(dictMsg)
     print("queued " + str(dictMsg))
 
