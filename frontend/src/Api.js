@@ -21,13 +21,13 @@ class Api {
     return this.fetch("/mediation/config/" + lobName, myInit);
   }
 
-  lobData(fromDate, toDate, lobName, neids, forwards, granularity) {
+  lobData(fromDate, toDate, lob, neids, forwards, granularity) {
     var myInit = {
       method: 'POST',
       body: {
         "from": fromDate,
         "to": toDate,
-        "lobNames": [lobName],
+        "lob": lob,
         "neids": neids,
         "forwards": forwards,
         "granularity": granularity || 0

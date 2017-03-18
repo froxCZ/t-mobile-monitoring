@@ -38,10 +38,13 @@ export default class LobOverviewCharts extends Component {
   }
 
   loadData(controlSettings) {
+    let lobRequest = {}
+    lobRequest.country = this.state.lob.country
+    lobRequest.name = this.state.lob.name
     Api.lobData(
       controlSettings.fromDate,
       controlSettings.toDate,
-      this.state.lobName, ["*"], [],
+      lobRequest, ["*"], [],
       controlSettings.granularity)
       .then(response => {
         this.setState({inputs: response})
@@ -49,7 +52,7 @@ export default class LobOverviewCharts extends Component {
     Api.lobData(
       controlSettings.fromDate,
       controlSettings.toDate,
-      this.state.lobName, [], ["*"],
+      lobRequest, [], ["*"],
       controlSettings.granularity)
       .then(response => {
         this.setState({forwards: response})

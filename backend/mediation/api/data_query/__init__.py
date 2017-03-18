@@ -16,20 +16,22 @@ def dataQueryV2():
   searchParam = request.get_json()
   fromDate = util.stringToDate(searchParam["from"])
   toDate = util.stringToDate(searchParam["to"])
-  lobName = searchParam["lobNames"][0]
-  lobConfig = MediationConfig.getLob(lobName)
+  lobRequest = searchParam["lob"]
+  country = lobRequest["country"]
+  lobName = lobRequest["name"]
+  lobConfig = MediationConfig.getLobWithCountry(country, lobName)
   flows = []
   granularity = searchParam.get("granularity", 0)
   if "neids" in searchParam:
     for neid in searchParam["neids"]:
       if neid == "*":
-        flows.append(config.createMergedFlowsObject(lobName, "inputs"))
+        flows.append(config.createMergedFlowsObject(country, lobName, "inputs"))
         break
       flows.append(lobConfig["flows"][neid])
   if "forwards" in searchParam:
     for forward in searchParam["forwards"]:
       if forward == "*":
-        flows.append(config.createMergedFlowsObject(lobName, "forwards"))
+        flows.append(config.createMergedFlowsObject(country, lobName, "forwards"))
         break
       flows.append(lobConfig["flows"][forward])
   response = {}
@@ -102,7 +104,6 @@ def getDayMedians():
   response["granularity"] = medianQuery.metadata["granularity"]
   response["metrics"] = ["median"]
   return jsonify(response)
-
 
 # def smoothData(data, granularity, validMetricName):
 #   dataList = []

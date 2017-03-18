@@ -75,7 +75,6 @@ class Dashboard extends Component {
                 <th>Message</th>
                 <th>Time</th>
                 <th>Tic time</th>
-                <th>Time ago</th>
                 <th>Status&nbsp;&nbsp;<br/>
                   <input type="checkbox"
                          id="checkbox3"

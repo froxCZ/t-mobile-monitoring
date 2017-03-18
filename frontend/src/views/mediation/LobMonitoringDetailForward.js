@@ -60,10 +60,11 @@ export default class LobMonitoringDetailForward extends Component {
     this.setState({controlSettings: controlSettings});
     let flowObj = {inputs: [], forwards: []};
     flowObj[this.state.flow.type].push(this.state.flow.name);
+    let lobReq = {country: this.state.country, name: this.state.lobName}
     Api.lobData(
       controlSettings.fromDate,
       controlSettings.toDate,
-      this.state.lobName,
+      lobReq,
       flowObj.inputs,
       flowObj.forwards,
       controlSettings.granularity)
@@ -183,7 +184,7 @@ export default class LobMonitoringDetailForward extends Component {
       method: 'PUT',
       body: this.state.optionsString
     };
-    Api.fetch("/mediation/flows/"+this.state.country+"/" + this.state.lobName +
+    Api.fetch("/mediation/flows/" + this.state.country + "/" + this.state.lobName +
       "/" + this.state.flow.name + "/options", myInit).then(response => {
       this.setState({
         options: response,

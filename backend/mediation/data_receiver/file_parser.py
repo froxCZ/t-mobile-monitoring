@@ -4,7 +4,14 @@ import pytz
 
 import mediation.data_receiver.config as config
 import mediation.data_receiver.util as util
+from config import AppConfig
 from .data_insertor import DataInsertor
+
+LATEST_DATE = util.stringToDate("20.02.16 00:00:00").replace(tzinfo=AppConfig.getTimezone())
+
+
+def isValidFlow(flow):
+  return flow["date"] > LATEST_DATE and flow["country"] in config.COUNTRIES and flow["lob"] not in config.IGNORE_LOBS
 
 
 class FileParser:
@@ -18,8 +25,9 @@ class FileParser:
       spamreader = csv.reader(csvfile, delimiter=';', quotechar='"')
       for row in spamreader:
         try:
-          if row[1] in config.LOBS and row[1] + "_" + row[2] in config.LOBS[row[1]]:
-            inputsList.append(self.createInputRow(row))
+          input = self.createInputRow(row)
+          if isValidFlow(input):
+            inputsList.append(input)
         except Exception as e:
           print("exception:")
           print(row)
@@ -33,7 +41,7 @@ class FileParser:
   def createInputRow(self, row):
     inputRow = {}
     inputRow["country"] = row[1]
-    inputRow["lob"] = row[1] + "_" + row[2]
+    inputRow["lob"] = row[2]
     inputRow["type"] = "inputs"
     inputRow["flowName"] = row[3]
     inputRow["dataSize"] = row[5]
@@ -48,7 +56,7 @@ class FileParser:
       for row in spamreader:
         try:
           forward = self.createForwardRow(country, row)
-          if forward["country"] in config.LOBS and forward["lob"] in config.LOBS[country]:
+          if isValidFlow(forward):
             forwards.append(forward)
         except Exception as e:
           print("exception:")
@@ -64,7 +72,7 @@ class FileParser:
     forward = {}
     forward["country"] = country
     forward["type"] = "forwards"
-    forward["lob"] = country + "_" + row[0].strip()
+    forward["lob"] = row[0].strip()
     forward["neid"] = row[1].strip()
     forward["target"] = row[2].strip()
     forward["flowName"] = forward["neid"] + ":" + forward["target"]

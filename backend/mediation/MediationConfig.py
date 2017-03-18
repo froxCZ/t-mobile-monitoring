@@ -60,14 +60,13 @@ class MediationConfig():
         config["forwards"] = {}
       config["flows"] = {}
       inputs = {}
-      country = _getCountryFromLob(lobName)
       for flowName, flowOptions in config["inputs"].items():
         flow = {"options": setFlowDefaultOptions(flowOptions, parentObj=config["options"])}
         flow["name"] = flowName
         flow["type"] = "inputs"
         flow["lobName"] = lobName
         flow["dataPath"] = country + "." + lobName + ".inputs." + flowName
-        flow["gName"] = lobName + "_" + flowName
+        flow["gName"] = country + "_" + lobName + "_" + flowName
         flow["country"] = country
         inputs[flowName] = flow
         config["flows"][flowName] = flow
@@ -84,7 +83,7 @@ class MediationConfig():
         flow["lobName"] = lobName
         flow["country"] = country
         flow["dataPath"] = country + "." + lobName + ".forwards." + flowName
-        flow["gName"] = lobName + "_" + flowName
+        flow["gName"] = country + "_" + lobName + "_" + flowName
         forwards[flowName] = flow
         config["flows"][flowName] = flow
       config["forwards"] = forwards
