@@ -87,7 +87,7 @@ class LobsMonitoring extends Component {
 
         lobRows.push(
           <tr >
-            <td onClick={this.goToLobDetail.bind(this, lobName)}  style={{cursor: 'pointer'}}>{lobName}</td>
+            <td onClick={this.goToLobDetail.bind(this, lobName)} style={{cursor: 'pointer'}}>{lobName}</td>
             <td>
               {flowStatuses}
             </td>
@@ -104,13 +104,13 @@ class LobsMonitoring extends Component {
     if (this.props.params) {
       lobRows.push(<tr>
           <td>
-            {this.props.params.country}_<input type="text"
-                                               id="text-input"
-                                               name="text-input"
-                                               className="form-control col-lg-1"
-                                               style={{display: "inline"}}
-                                               ref="newLobName"
-                                               placeholder="Lob name"/>
+            <input type="text"
+                   id="text-input"
+                   name="text-input"
+                   className="form-control col-lg-1"
+                   style={{display: "inline"}}
+                   ref="newLobName"
+                   placeholder="Lob name"/>
             &nbsp;
             <button type="button" className="btn btn-primary active" onClick={() => this.addLob()}>Add</button>
           </td>
@@ -178,7 +178,7 @@ class LobsMonitoring extends Component {
     if (lobName == null || lobName.length == 0)return;
     let req = {
       method: "POST",
-      body: {country: country, lobName: country + "_" + lobName}
+      body: {country: country, lobName: lobName}
     }
     Api.fetch("/mediation/flows/", req).then(response => {
       this.reloadData(this.props.params.country);

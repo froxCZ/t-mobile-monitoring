@@ -122,7 +122,7 @@ def deleteLob(country, lobName):
 
 @flowsApi.route('/<string:country>/<string:lobName>', methods=["POST"])
 def addFlow(country, lobName):
-  lob = MediationConfig.getLob(lobName)
+  lob = MediationConfig.getLobWithCountry(country,lobName)
   addFlowRequest = request.get_json()
   name = addFlowRequest["name"]
   type = addFlowRequest["type"]
