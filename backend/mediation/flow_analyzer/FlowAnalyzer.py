@@ -48,9 +48,9 @@ class FlowAnalyzer:
 
 if __name__ == "__main__":
   logging.basicConfig(format='%(levelname)s [%(module)s]: %(message)s', level=logging.DEBUG)
-  gsm = MediationConfig.getLob("CZ_EPC")
-  analyzer = FlowAnalyzer(gsm["flows"]["CENTROTEX:CZFOX-EPCMTXE"])
-  analyzer.run(util.stringToTime("10.01.2017 15:00:00"))
+  gsm = MediationConfig.getLobWithCountry("CZ","TIT")
+  analyzer = FlowAnalyzer(gsm["flows"]["CLH"])
+  analyzer.run(util.stringToTime("17.01.2017 15:00:00"))
   isOutage, traffic = analyzer.getResult()
   print(isOutage)
   print(traffic)

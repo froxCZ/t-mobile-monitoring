@@ -61,7 +61,7 @@ class FlowAnalyzerRunner(AbstractModuleScheduler):
     if lastExecution["status"] == status.NA:
       return True
     lastTicTime = lastExecution["ticTime"]
-    if lastTicTime < config.getCurrentTime() - datetime.timedelta(minutes=granularity):
+    if lastTicTime < config.getCurrentTime() - datetime.timedelta(minutes=2 * granularity):
       return True
     else:
       return False

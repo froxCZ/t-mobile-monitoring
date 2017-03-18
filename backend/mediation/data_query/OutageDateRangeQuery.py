@@ -19,19 +19,19 @@ class OutageDateRangeQuery():
     for tic in precomputedData:
       id = tic["_id"]
       self.ticDict[id] = {"_id": id,
-                           "value": tic[valueKey],
-                           "expected": tic["expected"],
-                           "dayAverage": tic["dayAverage"]
-                           }
+                          "value": tic[valueKey],
+                          "expected": tic["expected"],
+                          "dayAverage": tic["dayAverage"]
+                          }
     self.flowAnalyzer.setPrecomputedData(self.ticDict)
 
   def execute(self):
     granularityDelta = datetime.timedelta(minutes=self.granularity)
-    d = self.fromDate
+    d = self.fromDate + granularityDelta
     statusList = []
-    while d < self.toDate:
+    while d < self.toDate + granularityDelta:
       self.flowAnalyzer.run(d)
       status = self.flowAnalyzer.status
-      statusList.append({"_id": d, "status": status})
+      statusList.append({"_id": self.flowAnalyzer.ticTime, "status": status})
       d += granularityDelta
     return statusList
