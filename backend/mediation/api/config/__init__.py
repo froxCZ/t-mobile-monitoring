@@ -4,15 +4,16 @@ from flask import request
 from mediation import MediationConfig
 from mediation.MediationConfig import MEDIATION_DOCUMENT
 
-lobsConfig = Blueprint('lobs', __name__)
+configAPI = Blueprint('lobs', __name__)
 
-@lobsConfig.route('/countries', methods=["GET"])
-def coutriesGET():
+
+@configAPI.route('/countries', methods=["GET"])
+def getCountriesConfig():
   return jsonify(MediationConfig.getCountries())
 
 
-@lobsConfig.route('/countries', methods=["PUT"])
-def coutriesPUT():
+@configAPI.route('/countries', methods=["PUT"])
+def putCountriesConfig():
   body = request.get_json()
   MediationConfig.configColl.update_one(MEDIATION_DOCUMENT, {"$set": {"countries": body}})
   return jsonify(MediationConfig.getCountries())

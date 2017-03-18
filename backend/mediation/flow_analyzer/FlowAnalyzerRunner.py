@@ -19,13 +19,16 @@ class FlowAnalyzerRunner(AbstractModuleScheduler):
     super().__init__()
     self.manager = FlowStatusManager()
     self.notificator = StatusChangeNotificator()
-    self.country = "CZ"
 
   def run(self):
     super(FlowAnalyzerRunner, self).run()
-    self.lastExecutions = self.manager.getAll(self.country)
+    for country in MediationConfig.getCountryList():
+      self._analyzeContry(country)
 
-    flowsToAnalyze = self._getFlowsToAnalyze()
+  def _analyzeContry(self, country):
+    self.lastExecutions = self.manager.getAll(country)
+
+    flowsToAnalyze = self._getFlowsToAnalyze(country)
     if (len(flowsToAnalyze)) == 0:
       logging.debug("no flows to analyze")
 
@@ -43,9 +46,9 @@ class FlowAnalyzerRunner(AbstractModuleScheduler):
       self.notificator.statusChanged(flow, previousStatus, newStatus, analyzer.ticTime)
     self.manager.saveStatus(flow, newStatus, analyzer.difference, analyzer.ticTime)
 
-  def _getFlowsToAnalyze(self):
+  def _getFlowsToAnalyze(self, country):
     flowsToAnalyze = []
-    lobsConfig = MediationConfig.getLobs(self.country,enabledOnly=True)
+    lobsConfig = MediationConfig.getLobs(country, enabledOnly=True)
     for lobName, lob in lobsConfig.items():
       for flow in lob["flows"].values():
         if self.shouldSchedule(flow):

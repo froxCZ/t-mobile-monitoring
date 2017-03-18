@@ -59,7 +59,7 @@ def flowGET(country, lobName, flowName):
   return jsonify(flow)
 
 
-@flowsApi.route('/countries', methods=["GET"])
+@flowsApi.route('', methods=["GET"])
 def getCountriesOverview():
   countries = FlowStatusManager().getCountriesOverview()
   return jsonify(countries)

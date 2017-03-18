@@ -53,7 +53,7 @@ def handle_invalid_usage(error):
 
 
 from mediation.api.data_query import api_data_query
-from mediation.api.config import lobsConfig
+from mediation.api.config import configAPI
 from mediation.api.status import lobsStatus
 from mediation.api.flows import flowsApi
 from mediation.api.mediation import mediation
@@ -61,7 +61,7 @@ from common.api import common, StatusException
 from zookeeper.api import zookeeperApi
 
 app.register_blueprint(api_data_query, url_prefix="/mediation/data_query")
-app.register_blueprint(lobsConfig, url_prefix="/mediation/config")
+app.register_blueprint(configAPI, url_prefix="/mediation/config")
 app.register_blueprint(lobsStatus, url_prefix="/mediation/status")
 app.register_blueprint(flowsApi, url_prefix="/mediation/flows")
 app.register_blueprint(mediation, url_prefix="/mediation")

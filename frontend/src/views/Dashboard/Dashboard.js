@@ -15,7 +15,7 @@ class Dashboard extends Component {
   }
 
   loadCountriesOverview() {
-    Api.fetch("/mediation/status/countries", {method: "GET"}).then(response => {
+    Api.fetch("/mediation/flows", {method: "GET"}).then(response => {
       this.setState({countries: response})
     })
   }
@@ -144,7 +144,7 @@ class Dashboard extends Component {
           </div>
           <div className="card-block">
             <h2>
-              <StatusCounterBadge statuses={this.state.countries.DE}/>
+              <StatusCounterBadge statuses={this.state.countries.AT}/>
             </h2>
           </div>
         </div>
@@ -156,7 +156,7 @@ class Dashboard extends Component {
           </div>
           <div className="card-block">
             <h2>
-              <StatusCounterBadge statuses={this.state.countries.DE}/>
+              <StatusCounterBadge statuses={this.state.countries.NL}/>
             </h2>
           </div>
         </div>
