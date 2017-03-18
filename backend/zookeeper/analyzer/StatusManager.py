@@ -17,4 +17,3 @@ class StatusManager:
   def saveClusterStatus(clusterStatus, time):
     clusterStatus["time"] = time
     res = statusColl.update_one({"_id": "zookeeper"}, {"$set": clusterStatus}, upsert=True)
-    print(res)

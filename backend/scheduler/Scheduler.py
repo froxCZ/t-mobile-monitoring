@@ -12,17 +12,16 @@ class Scheduler(threading.Thread):
     super().__init__()
 
   def run(self):
-    logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.DEBUG)
+    logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.INFO)
     from mediation.flow_analyzer import FlowAnalyzerRunner
     MODULE_SCHEDULERS = {
       5:[ZookeeperAnalyzerRunner()],
-      5*60: [FlowAnalyzerRunner()],
+      15: [FlowAnalyzerRunner()],
 
     }
 
     for seconds, schedulers in MODULE_SCHEDULERS.items():
       for scheduler in schedulers:
-        scheduler.run()
         schedule.every(seconds).seconds.do(scheduler.run)
 
     while True:

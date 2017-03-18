@@ -8,10 +8,10 @@ from mediation.flow_analyzer import status
 from mediation.flow_analyzer.FlowAnalyzer import FlowAnalyzer
 from mediation.flow_analyzer.FlowStatusManager import FlowStatusManager
 from mediation.flow_analyzer.StatusChangeNotificator import StatusChangeNotificator
-from scheduler.AbstractModuleScheduler import AbstractModuleScheduler
+from scheduler.AbstractAnalyzerRunner import AbstractAnalyzerRunner
 
 
-class FlowAnalyzerRunner(AbstractModuleScheduler):
+class FlowAnalyzerRunner(AbstractAnalyzerRunner):
   name = "FlowAnalyzerRunner"
 
   def __init__(self):
@@ -19,8 +19,7 @@ class FlowAnalyzerRunner(AbstractModuleScheduler):
     self.manager = FlowStatusManager()
     self.notificator = StatusChangeNotificator()
 
-  def run(self):
-    super(FlowAnalyzerRunner, self).run()
+  def _runInternal(self):
     for country in MediationConfig.getCountryList():
       self._analyzeContry(country)
 

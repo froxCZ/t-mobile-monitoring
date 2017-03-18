@@ -1,19 +1,18 @@
 import config
 from integration import StatusProducer
-from scheduler.AbstractModuleScheduler import AbstractModuleScheduler
+from scheduler.AbstractAnalyzerRunner import AbstractAnalyzerRunner
 from zookeeper.analyzer import StatusManager
 from zookeeper.analyzer.Analyzer import Analyzer
 
 
-class ZookeeperAnalyzerRunner(AbstractModuleScheduler):
+class ZookeeperAnalyzerRunner(AbstractAnalyzerRunner):
   name = "ZookeeperAnalyzerRunner"
 
   def __init__(self):
     super().__init__()
     self.analyzer = Analyzer()
 
-  def run(self):
-    super().run()
+  def _runInternal(self):
     clusterStatus = self.analyzer.run()
     self.checkStatusChange(StatusManager.getClusterStatus(), clusterStatus)
     StatusManager.saveClusterStatus(clusterStatus, config.getCurrentTime())
