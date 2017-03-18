@@ -1,5 +1,7 @@
 import copy
 import datetime
+import random
+import string
 
 import dateutil.parser
 
@@ -43,8 +45,10 @@ def listToDayMinutes(dataList, value="value"):
 def resetDateTimeMidnight(dateTime):
   return dateTime.replace(hour=0, minute=0, second=0, microsecond=0)
 
+
 def str2bool(value):
   return {"True": True, "true": True}.get(value, False)
+
 
 def minuteDictToDateDict(baseDate, dict, valueName):
   """
@@ -125,3 +129,7 @@ def listToDateDict(l):
   for i in l:
     dateDict[i["_id"]] = i
   return dateDict
+
+
+def randomHash(size):
+  return ''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(size))

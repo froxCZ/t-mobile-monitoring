@@ -15,13 +15,15 @@ class MediationDataConsumer(threading.Thread):
   def run(self):
     consumer = KafkaConsumer(bootstrap_servers=AppConfig.kafkaServers(),
                              auto_offset_reset='latest',
-                             enable_auto_commit=False,
+                             enable_auto_commit=True,
                              group_id="mediationMonitoring")
     consumer.subscribe(['mediationData'])
 
     for message in consumer:
-      if self.processMessage(message):
-        consumer.commit()
+      try:
+        self.processMessage(message)
+      except Exception as e:
+        logging.warning(str(e))
 
   def processMessage(self, message):
     try:

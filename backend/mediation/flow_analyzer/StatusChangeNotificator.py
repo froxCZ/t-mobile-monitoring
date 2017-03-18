@@ -1,10 +1,23 @@
-import logging
+from config import AppConfig
+from integration import StatusProducer
+from mediation.flow_analyzer import EventsManager
 
 
 class StatusChangeNotificator:
   def __init__(self):
+    self.statusProducer = StatusProducer.instance()
     pass
 
   def statusChanged(self, flow, previousStatus, newStatus, ticTime):
-    logging.info("status change notification: " +
-                 flow["gName"] + " from " + previousStatus + " to " + newStatus + " tic: " + str(ticTime))
+    msg = "Changed from " + previousStatus + " to " + newStatus
+    EventsManager.logStatusChangeEvent(flow, msg, ticTime, newStatus)
+    msgDict = {
+      "system": "mediation",
+      "lobName": flow["lobName"],
+      "ticTime": ticTime,
+      "newStatus": newStatus,
+      "previousStatus": previousStatus,
+      "time": AppConfig.getCurrentTime(),
+      "country": flow["country"]
+    }
+    self.statusProducer.send(msgDict)
