@@ -9,6 +9,7 @@ from kafka import KafkaProducer
 import util
 from config import AppConfig
 from integration import EmailSender
+from integration import IntegrationConfig
 
 
 def jsonDictSerializer(dictToSend):
@@ -29,7 +30,7 @@ class StatusProducer(threading.Thread):
     super().__init__()
     self.q = Queue()
     self.kafkaProducer = KafkaProducer(
-      bootstrap_servers=AppConfig.kafkaServers(),
+      bootstrap_servers=IntegrationConfig.kafkaServers(),
       value_serializer=jsonDictSerializer,
       request_timeout_ms=3000
 

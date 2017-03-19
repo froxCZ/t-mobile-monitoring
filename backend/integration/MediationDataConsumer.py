@@ -5,7 +5,7 @@ import threading
 from kafka import KafkaConsumer
 
 import util
-from config import AppConfig
+from integration import IntegrationConfig
 from mongo import mongo
 
 
@@ -13,7 +13,7 @@ class MediationDataConsumer(threading.Thread):
   daemon = False
 
   def run(self):
-    consumer = KafkaConsumer(bootstrap_servers=AppConfig.kafkaServers(),
+    consumer = KafkaConsumer(bootstrap_servers=IntegrationConfig.kafkaServers(),
                              auto_offset_reset='latest',
                              enable_auto_commit=True,
                              group_id="mediationMonitoring")

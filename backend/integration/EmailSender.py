@@ -4,6 +4,7 @@ from email.mime.text import MIMEText
 
 import util
 from config import AppConfig
+from integration import IntegrationConfig
 
 MIN_DELAY = datetime.timedelta(minutes=5)
 
@@ -28,12 +29,13 @@ class EmailSender:
                    "\ntime:" + util.dateToTimeString(AppConfig.getCurrentTime()) +
                    "\ncomponent:" + component
                    )
+    emailConfig = IntegrationConfig.getEmailConfig()
     msg['Subject'] = 'Mediation monitoring: ' + component
-    msg['From'] = "mediation-monitoring@seznam.cz"
-    msg['To'] = "mediation-monitoring@seznam.cz"
+    msg['From'] = emailConfig["from"]
+    msg['To'] = emailConfig["to"]
 
-    s = smtplib.SMTP('smtp.seznam.cz')
-    s.login('mediation-monitoring@seznam.cz', 'mediation1.')
+    s = smtplib.SMTP(emailConfig["smtpHostname"])
+    s.login(emailConfig["login"], emailConfig["password"])
     s.send_message(msg)
     self.lastComponentEmailTime[component] = AppConfig.getCurrentTime()
     s.quit()

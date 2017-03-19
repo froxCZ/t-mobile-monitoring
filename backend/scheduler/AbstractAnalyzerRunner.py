@@ -10,7 +10,7 @@ class AbstractAnalyzerRunner:
   def run(self):
     try:
       self._runInternal()
-      # save success status
+      # todo: save success status
     except Exception as e:
       pass  # log exception
     return

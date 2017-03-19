@@ -3,14 +3,14 @@ import threading
 
 from kafka import KafkaConsumer
 
-from config import AppConfig
+from integration import IntegrationConfig
 
 
 class MediationDataConsumer(threading.Thread):
   daemon = False
 
   def run(self):
-    consumer = KafkaConsumer(bootstrap_servers=AppConfig.kafkaServers(),
+    consumer = KafkaConsumer(bootstrap_servers=IntegrationConfig.kafkaServers(),
                              auto_offset_reset='earliest',
                              enable_auto_commit=True,
                              group_id="demonstration")
