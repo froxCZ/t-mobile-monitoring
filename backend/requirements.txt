@@ -1,11 +1,7 @@
 pymongo==3.4.0
 Flask==0.12
-matplotlib==1.5.3
-networkx==1.11
-numpy==1.11.2
-pandas==0.19.2
-matplotlib==1.5.3
 pytz==2016.7
 schedule==0.4.2
-scipy==0.18.1
 simplejson==3.10.0
+flask_cors==3.0.2
+dateutil==2.6.0

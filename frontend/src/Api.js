@@ -9,9 +9,20 @@ function delayPromise(duration) {
     });
   };
 }
-
-const API_URL = "http://localhost:5000";
 class Api {
+  constructor() {
+    let host = window.location.host;
+    let API_PORT = "5000";
+    let apiUrl;
+    if (host.includes(":")) {
+      let port = host.split(":")[1];
+      apiUrl = host.replace(port, API_PORT)
+    } else {
+      apiUrl = host + ":" + API_PORT
+    }
+    this.API_URL = window.location.protocol + "//" + apiUrl
+  }
+
 
   updateLobConfig(lobName, updateObj) {
     var myInit = {
@@ -47,7 +58,7 @@ class Api {
     if (typeof myInit.body != 'string' || !myInit.body instanceof String) {
       myInit.body = JSON.stringify(myInit.body)
     }
-    let request = new Request(API_URL+url, myInit);
+    let request = new Request(this.API_URL + url, myInit);
     Store.dispatch(showLoading());
     return fetch(request).then((response) => {
       if (response.status >= 200 && response.status < 300) {
