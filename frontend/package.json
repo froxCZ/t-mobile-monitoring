@@ -2,7 +2,7 @@
   "name": "CoreUI",
   "version": "1.0.0-alpha.4",
   "private": true,
-  "homepage": ".",
+  "homepage": "/",
   "devDependencies": {
     "babel-plugin-root-import": "^5.0.0",
     "gulp": "^3.9.1",
@@ -34,7 +34,7 @@
   },
   "scripts": {
     "start": "react-scripts start",
-    "build": "react-scripts build",
+    "build": "react-scripts build && cp productionServer.js build",
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject"
   }
