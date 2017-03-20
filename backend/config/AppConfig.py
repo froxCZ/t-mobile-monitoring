@@ -39,8 +39,7 @@ class AppConfig:
 
   @staticmethod
   def loadConfigFile():
-    import util
-    for configFile in ["/config/backend.json", "config.json"]:
+    for configFile in ["/config/backend.json", os.path.join(os.path.dirname(__file__), "..", "config.json")]:
       if os.path.exists(configFile):
         with open(configFile) as json_data_file:
           AppConfig.configDict = json.load(json_data_file)
@@ -49,5 +48,5 @@ class AppConfig:
         logging.basicConfig(format='%(levelname)s %(asctime)s [%(module)s]: %(message)s', level=logLevel)
         AppConfig.DATE_DIFF = datetime.timedelta(days=AppConfig.configDict.get("system", {}).get("daysOffset", 0))
         logging.info("Loaded config: " + str(AppConfig.configDict))
-        logging.info("App time: " + util.dateToTimeString(AppConfig.getCurrentTime()))
+        logging.info("App time: " + str(AppConfig.getCurrentTime()))
         break
