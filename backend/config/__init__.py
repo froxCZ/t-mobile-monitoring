@@ -2,6 +2,7 @@ from .AppConfig import AppConfig
 
 configColl = AppConfig.getColletion()
 
+AppConfig.loadConfigFile()
 
 def getCurrentTime():
   """

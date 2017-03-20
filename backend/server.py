@@ -6,8 +6,8 @@ from flask.json import JSONEncoder
 from flask_cors import CORS
 
 import common.api.auth as auth
-import config
 import util
+from config import AppConfig
 
 app = Flask(__name__)
 CORS(app)
@@ -37,7 +37,7 @@ def hello():
 @app.route("/currentTime")
 @auth.require_root
 def currentTime():
-  return jsonify({"currentTime": util.dateToTimeString(config.getCurrentTime())})
+  return jsonify({"currentTime": util.dateToTimeString(AppConfig.getCurrentTime())})
 
 
 @app.errorhandler(Exception)
@@ -69,4 +69,4 @@ app.register_blueprint(common, url_prefix="/app")
 app.register_blueprint(zookeeperApi, url_prefix="/zookeeper")
 
 # SchedulerRunner().start()
-app.run(debug=True, host="0.0.0.0", port=5000, threaded=True)
+app.run(debug=AppConfig.getFlaskConfig().get("debug",False), host="0.0.0.0", port=5000, threaded=True)

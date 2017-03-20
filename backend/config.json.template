@@ -1,0 +1,8 @@
+{
+  "flask": {
+    "debug": false
+  },
+  "system": {
+    "daysOffset": -60
+  }
+}
