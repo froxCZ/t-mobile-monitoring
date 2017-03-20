@@ -51,8 +51,6 @@ def usersPOST():
   body = request.get_json()
   if "login" not in body or len(body["login"]) == 0:
     raise StatusException("Login is required", 400)
-  body["_id"] = body["login"]
-  del body["login"]
   UserManager.addUser(body)
   return jsonify(UserManager.getUsers())
 

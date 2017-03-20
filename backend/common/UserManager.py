@@ -22,6 +22,13 @@ def _hashPassword(password):
 def _generateApiKey():
   return ''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(10))
 
+DEFAULT_USER = {
+  "login": "root",
+  "password": "root",
+  "accountType": "user",
+  "permission": "root",
+}
+
 
 class UserManager():
   @staticmethod
@@ -42,6 +49,8 @@ class UserManager():
 
   @staticmethod
   def addUser(body):
+    body["_id"] = body["login"]
+    del body["login"]
     if body["accountType"] == "user":
       body["passwordHash"] = _hashPassword(body["password"])
       del body["password"]
@@ -61,3 +70,7 @@ class UserManager():
   @staticmethod
   def deleteUser(login):
     return mongo.users().delete_one({"_id": login})
+
+
+if len(UserManager.getUsers()) == 0:#if there is no user in db, insert root/root
+  UserManager.addUser(DEFAULT_USER)

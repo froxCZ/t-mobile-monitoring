@@ -4,7 +4,9 @@ from mediation.flow_analyzer import FlowStatusManager
 
 lobsStatus = Blueprint('status', __name__)
 
-
+"""
+deprecated endpoint, use /flows
+"""
 @lobsStatus.route('/lobs/<string:country>', methods=["GET"])
 def getLobsOverview(country):
   lobsOverview = FlowStatusManager().getLobsOverview(country)

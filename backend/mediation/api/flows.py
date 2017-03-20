@@ -72,7 +72,7 @@ def enableFlow(country, lobName, flowName):
   flow = MediationConfig.getLobWithCountry(country, lobName)["flows"][flowName]
   MediationConfig.configColl.update_one(
     MEDIATION_DOCUMENT, {"$set": {"lobs." + flow["dataPath"] + ".enabled": enable}})
-  return jsonify(MediationConfig.getLob(lobName)["flows"][flowName]["options"])
+  return jsonify(MediationConfig.getLobWithCountry(country, lobName)["flows"][flowName]["options"])
 
 
 @flowsApi.route('/<string:country>/<string:lobName>/options', methods=["PUT"])
@@ -80,7 +80,7 @@ def lobOptionsPUT(country, lobName):
   body = request.get_json()
   optionsPath = "lobs." + country + "." + lobName + ".options"
   MediationConfig.configColl.update_one(MEDIATION_DOCUMENT, {"$set": {optionsPath: body}})
-  return jsonify(MediationConfig.getLob(lobName)["options"])
+  return jsonify(MediationConfig.getLob(country, lobName)["options"])
 
 
 @flowsApi.route('/<string:country>/<string:lobName>/<string:flowName>/options', methods=["GET"])
@@ -104,7 +104,7 @@ def addLob():
   addLobRequest = request.get_json()
   country = addLobRequest["country"]
   lobName = addLobRequest["lobName"]
-  if MediationConfig.getLob(lobName) is not None:
+  if MediationConfig.getLobWithCountry(country, lobName) is not None:
     raise StatusException("Lob already exists", 400)
   MediationConfig.addLob(country, lobName)
   return getCountry(country)
@@ -122,7 +122,7 @@ def deleteLob(country, lobName):
 
 @flowsApi.route('/<string:country>/<string:lobName>', methods=["POST"])
 def addFlow(country, lobName):
-  lob = MediationConfig.getLobWithCountry(country,lobName)
+  lob = MediationConfig.getLobWithCountry(country, lobName)
   addFlowRequest = request.get_json()
   name = addFlowRequest["name"]
   type = addFlowRequest["type"]
@@ -135,7 +135,7 @@ def addFlow(country, lobName):
 
 @flowsApi.route('/<string:country>/<string:lobName>/<string:flowName>', methods=["DELETE"])
 def deleteFlow(country, lobName, flowName):
-  lob = MediationConfig.getLob(lobName)
+  lob = MediationConfig.getLobWithCountry(country, lobName)
   if flowName in lob["flows"]:
     MediationConfig.deleteFlow(lob["flows"][flowName])
   return getLob(country, lobName)

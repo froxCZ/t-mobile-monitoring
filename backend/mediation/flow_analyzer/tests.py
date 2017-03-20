@@ -7,7 +7,7 @@ from mediation.flow_analyzer import FlowAnalyzer
 
 class TestStringMethods(unittest.TestCase):
   def setUp(self):
-    gsm = MediationConfig.getLob("CZ_GSM")
+    gsm = MediationConfig.getLobWithCountry("CZ","GSM")
     flow = gsm["flows"]["MSSCEB1B"]
     flow["options"]["granularity"] = 30
     self.lobAnalyzer = FlowAnalyzer(gsm["flows"]["MSSCEB1B"])
