@@ -29,29 +29,36 @@ class StatusProducer(threading.Thread):
   def __init__(self):
     super().__init__()
     self.q = Queue()
-    self.kafkaProducer = KafkaProducer(
-      bootstrap_servers=IntegrationConfig.kafkaServers(),
-      value_serializer=jsonDictSerializer,
-      request_timeout_ms=3000
-
-    )
     self.emailSender = EmailSender.instance()
     self.start()
     self.sendingSuccess = None
+    self.kafkaProducer = None
+
+  def _startProducer(self):
+    try:
+      self.kafkaProducer = KafkaProducer(
+        bootstrap_servers=IntegrationConfig.kafkaServers(),
+        value_serializer=jsonDictSerializer,
+        request_timeout_ms=3000
+      )
+    except Exception as e:
+      time.sleep(2)
+      raise e
 
   def run(self):
     while True:
       dictMsg = None
       try:
         dictMsg = self.q.get()
-        x = self.kafkaProducer.send('mediationMonitoringStatus', dictMsg).get(3)
-        print("sent " + str(dictMsg))
+        if self.kafkaProducer is None:
+          self._startProducer()
+        self.kafkaProducer.send('mediationMonitoringStatus', dictMsg).get(3)
         self.sendingSuccess = True
       except Exception as e:
         if self.sendingSuccess:
           self.emailSender.sendEmail("kafka", "Failed to send message " + str(dictMsg))
           self.sendingSuccess = False
-        if dictMsg is not None and self.q.qsize() < 100000:
+        if dictMsg is not None and self.q.qsize() < 10000:
           self.q.put(dictMsg)
 
   def send(self, dictMsg):
