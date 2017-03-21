@@ -69,10 +69,12 @@ class FlowStatusManager:
     for lobName, lob in lobs.items():
       for flowName, flow in lob["flows"].items():
         gName = flow["gName"]
-        if gName in res:
+        if flow["options"]["enabled"] is False:
+          statuses[gName] = {"status": status.DISABLED}
+        elif gName in res:
           statuses[gName] = self._setStatusMetadata(res[gName], flow)
         else:
-          statuses[gName] = {"status": "N_A"}
+          statuses[gName] = {"status": status.NA}
     return statuses
 
   def getStatusForFlow(self, flow):
