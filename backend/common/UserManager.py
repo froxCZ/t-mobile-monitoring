@@ -25,6 +25,7 @@ def _generateApiKey():
 DEFAULT_USER = {
   "login": "root",
   "password": "root",
+  "name": "root",
   "accountType": "user",
   "permission": "root",
 }

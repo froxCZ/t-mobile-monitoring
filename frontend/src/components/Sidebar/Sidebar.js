@@ -25,7 +25,7 @@ class Sidebar extends Component {
           <ul className="nav">
             <li className="nav-item">
               <Link to={'/dashboard'} className="nav-link" activeClassName="active"><i className="icon-speedometer"></i>
-                Dashboard <span className="badge badge-info">NEW</span></Link>
+                Dashboard</Link>
             </li>
             <li className="nav-title">
               Mediation

@@ -93,12 +93,10 @@ class Header extends Component {
             <Dropdown isOpen={this.state.dropdownOpen} toggle={this.toggle}>
               <a onClick={this.toggle} className="nav-link dropdown-toggle nav-link" data-toggle="dropdown" href="#"
                  role="button" aria-haspopup="true" aria-expanded={this.state.dropdownOpen}>
-                <img src={'img/avatars/6.jpg'} className="img-avatar" alt="admin@bootstrapmaster.com"/>
-                <span className="hidden-md-down">admin</span>
+                <span className="hidden-md-down">{this.props.auth.user.name}</span>
               </a>
 
               <DropdownMenu className="dropdown-menu-right">
-                <DropdownItem><i className="fa fa-wrench"></i> Settings</DropdownItem>
                 <DropdownItem>
                   <div onClick={() => {
                     this.props.logout();
