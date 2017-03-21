@@ -42,7 +42,7 @@ class StatusProducer(threading.Thread):
         request_timeout_ms=3000
       )
     except Exception as e:
-      time.sleep(2)
+      time.sleep(120)
       raise e
 
   def run(self):

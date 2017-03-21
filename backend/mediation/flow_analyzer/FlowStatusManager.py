@@ -92,9 +92,10 @@ class FlowStatusManager:
 
   def _setStatusMetadata(self, flowStatus, flow):
     ticTime = flowStatus["ticTime"]
-    granDelta = datetime.timedelta(minutes=flow["options"]["granularity"])
     if not flow["options"]["enabled"]:
       return {"status": status.DISABLED}
+    granDelta = datetime.timedelta(minutes=flow["options"]["granularity"]
+                                           + 3)  # set as N_A after it has not been analyzed for more than 3 minutes than it should have
     if ticTime + 2 * granDelta < config.getCurrentTime():
       return {"status": status.NA}
     return flowStatus
