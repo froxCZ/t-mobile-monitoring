@@ -8,10 +8,14 @@ from mediation.flow_analyzer.OutlierDetector import OutlierDetector
 
 
 class FlowAnalyzer:
-  def __init__(self, flow):
+  def __init__(self, flow, granularity=None):
     super().__init__()
     self.flow = flow
     self.options = flow["options"]
+    if granularity is None:
+      self.granularity = self.options["granularity"]
+    else:
+      self.granularity = granularity
     self.outlierDetector = OutlierDetector(self.flow)
     self.precomputedData = {}
     self.outageDetector = OutageDetector(self.flow)
@@ -27,7 +31,7 @@ class FlowAnalyzer:
     return 0
 
   def _getLatestCompleteTicTime(self, time):
-    granularity = self.options["granularity"]
+    granularity = self.granularity
     minuteOfDay = time.hour * 60 + time.minute
     minutesOverInterval = minuteOfDay % granularity
     latestClosedIntervalTime = time - datetime.timedelta(minutes=minutesOverInterval + granularity)
@@ -48,7 +52,7 @@ class FlowAnalyzer:
 
 if __name__ == "__main__":
   logging.basicConfig(format='%(levelname)s [%(module)s]: %(message)s', level=logging.DEBUG)
-  gsm = MediationConfig.getLobWithCountry("CZ","TIT")
+  gsm = MediationConfig.getLobWithCountry("CZ", "TIT")
   analyzer = FlowAnalyzer(gsm["flows"]["CLH"])
   analyzer.run(util.stringToTime("17.01.2017 15:00:00"))
   isOutage, traffic = analyzer.getResult()

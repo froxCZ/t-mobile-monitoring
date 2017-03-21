@@ -13,7 +13,7 @@ class OutageDateRangeQuery():
     self.granularity = granularity
     self.metric = "status"
     self.ticDict = {}
-    self.flowAnalyzer = FlowAnalyzer(self.flow)
+    self.flowAnalyzer = FlowAnalyzer(self.flow,self.granularity)
 
   def setPrecomputedData(self, precomputedData, valueKey):
     for tic in precomputedData:
