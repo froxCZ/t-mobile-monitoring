@@ -55,7 +55,7 @@ export default class LobChart extends Component {
       referenceLines.push(<ReferenceLine y={this.props.hardAlarmLevel} label="expected" stroke="#bd3e39"/>)
     }
     return (
-      <ResponsiveContainer height='100%' width='100%' aspect={4.0 / 1.5}>
+      <ResponsiveContainer height='100%' width='100%' aspect={4.0 / 2}>
         <LineChart data={this.props.data} syncId="anyId">
           <XAxis dataKey="tickValue"/>
           <YAxis/>
@@ -134,7 +134,7 @@ export default class LobChart extends Component {
       if (!color) {
         color = COLORS[iColor++]
       }
-      lines.push(<Line type="linear" dataKey={i} stroke={color} isAnimationActive={false} dot={false}/>)
+      lines.push(<Line type="linear" dataKey={i} stroke={color} isAnimationActive={false} dot={false} strokeWidth={2}/>)
     }
     return lines
   }

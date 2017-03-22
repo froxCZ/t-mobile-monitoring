@@ -45,7 +45,6 @@ export default class ChatControl extends Component {
   apply() {
     let dateStr = this.state.fromDate.format("DD.MM.YYYY");
     let toDateStr = Moment(this.state.fromDate).add(this.state.dayRange, 'days').format("DD.MM.YYYY");
-    console.log(dateStr)
     this.props.onApply({fromDate: dateStr, toDate: toDateStr, granularity: this.state.granularity})
   }
 

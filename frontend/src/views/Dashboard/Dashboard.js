@@ -1,6 +1,7 @@
 import React, {Component} from "react";
 import Api from "../../Api";
 import Util from "../../Util";
+import {browserHistory} from "react-router";
 import StatusBadge from "../../components/StatusBadge";
 import StatusCounterBadge from "../../components/StatusCounterBadge";
 class Dashboard extends Component {
@@ -40,19 +41,25 @@ class Dashboard extends Component {
     this.setState({omitOK: omitOK})
   }
 
+  goToFlowDetail(country, lobName, flowName) {
+    browserHistory.push("/mediation/monitoring/" + country + "/" + lobName + "/" + flowName);
+  }
+
   renderEvents() {
     if (this.state.events == null) {
       return <p></p>
     }
     let rows = [];
     for (let event of this.state.events) {
-      let row = <tr>
+      let row = <tr style={{cursor: 'pointer'}}
+                    onClick={() => this.goToFlowDetail(event.country, event.lobName, event.flowName)}>
         <td><img src={Util.countryToFlagPath(event.country)} style={{height: 15 + 'px'}}/></td>
         <td>{event.lobName}</td>
         <td>{event.flowName}</td>
         <td>{event.message}</td>
         <td>{Util.formatIsoDateStrToDateTimeStr(event.time)}&nbsp;
-          ({Util.timeAgo(Util.parseIsoDateString(event.time))})</td>
+          ({Util.timeAgo(Util.parseIsoDateString(event.time))})
+        </td>
         <td>{Util.formatIsoDateStrToDateTimeStr(event.ticTime)}</td>
         <td><h5><StatusBadge status={event.newStatus}/></h5></td>
 

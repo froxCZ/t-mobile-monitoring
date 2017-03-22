@@ -1,8 +1,10 @@
 import React, {Component} from "react";
 import Api from "../../Api";
+import Util from "../../Util";
 import ChatControl from "../../components/ChartControl";
 import "react-datepicker/dist/react-datepicker.css";
 import LobChart from "../../components/LobChart";
+import StatusBadge from "../../components/StatusBadge";
 const MINUTE_RANGES = [
   5,
   10,
@@ -52,6 +54,13 @@ export default class LobMonitoringDetailForward extends Component {
           flowName: response.name,
           optionsString: JSON.stringify(response.options, null, 2)
         });
+        let controlSettings = {};
+        let from = Util.getCurrentTime().subtract(7, 'days');
+        let to = Util.getCurrentTime().add(7, 'days');
+        controlSettings.fromDate = from.format("DD.MM.YYYY");
+        controlSettings.toDate = to.format("DD.MM.YYYY");
+        controlSettings.granularity = 0;
+        this.loadData(controlSettings)
       });
     }
   }
@@ -78,32 +87,12 @@ export default class LobMonitoringDetailForward extends Component {
       <div className="animated fadeIn">
         <div className="row">
           <div className="col-lg-12">
-            <h2>{this.state.lobName} - {this.state.flowName}</h2>
-          </div>
-        </div>
-        <div className="row">
-          <div className="col-sm-6">
-            <div className="card">
-              <div className="card-header">
-                Config
-              </div>
-              <div className="card-block">
-                {this.renderOptions()}
-              </div>
-            </div>
-          </div>
-          <div className="col-sm-6">
-            <div className="card">
-              <div className="card-header">
-                Chart controls
-              </div>
-              <div className="card-block">
-                <ChatControl onApply={this.loadData.bind(this)}/>
-              </div>
-            </div>
-          </div>
+            <h2>{this.state.lobName} - {this.state.flowName} {this.state.flow &&
+            <StatusBadge status={this.state.flow.status.status}/>}</h2>
 
+          </div>
         </div>
+
         <div className="row">
           <div className="col-lg-6">
             <div className="card">
@@ -128,7 +117,27 @@ export default class LobMonitoringDetailForward extends Component {
           </div>
         </div>
 
+        <div className="row">
 
+          <div className="col-sm-6">
+            <div className="card">
+
+              <div className="card-block">
+                <ChatControl ref="chartControl" onApply={this.loadData.bind(this)}/>
+              </div>
+            </div>
+          </div>
+          <div className="col-sm-6">
+            <div className="card">
+              <div className="card-header">
+                Config
+              </div>
+              <div className="card-block">
+                {this.renderOptions()}
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
 
     )
@@ -151,7 +160,7 @@ export default class LobMonitoringDetailForward extends Component {
       <div className="col-md-5">
                 <textarea id="textarea-input"
                           name="textarea-input"
-                          rows="5"
+                          rows="10"
                           className="form-control" value={this.state.optionsString}
                           onChange={(e) => {
                             let state = {optionsString: e.target.value}
