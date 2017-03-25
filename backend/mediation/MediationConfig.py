@@ -127,8 +127,8 @@ class MediationConfig():
       return None
 
   @staticmethod
-  def numberOfWorker():
-    return AppConfig.getMediationConfig().get("analyzerThreads",1)
+  def threadsCount():
+    return AppConfig.getMediationConfig().get("threadsCount", 1)
 
 
 def _getCountryFromLob(lobName):

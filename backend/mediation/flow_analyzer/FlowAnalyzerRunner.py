@@ -49,7 +49,7 @@ class FlowAnalyzerRunner(AbstractAnalyzerRunner):
     for country in MediationConfig.getCountryList():
       self._enqueFlowsToAnalyze(flowQueue, country)
     if not flowQueue.empty():
-      workers = [Worker(flowQueue, self.statusManager) for i in range(0, 8)]
+      workers = [Worker(flowQueue, self.statusManager) for i in range(0, MediationConfig.threadsCount())]
       for worker in workers:
         worker.start()
       for worker in workers:
