@@ -66,6 +66,3 @@ class DiscoverFlowsExecutor:
     print("inserted lobs:" + str(insertedLobs))
     print("inserted flows:" + str(len(newFlows)))
     return allFlows
-
-
-allFlows = DiscoverFlowsExecutor().execute()

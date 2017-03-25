@@ -19,7 +19,7 @@ class MediationConfig():
 
   @staticmethod
   def getCountries():
-    defaultParam = {"lazyDays": [], "holidays": []}
+    defaultParam = {"lazyDays": [], "holidays": [], "enabled": True}
     res = configColl.find_one(MEDIATION_DOCUMENT)["countries"]
     countries = {}
     for countryName, country in res.items():
@@ -41,20 +41,24 @@ class MediationConfig():
     :return:
     """
     res = configColl.find_one(MEDIATION_DOCUMENT)
+    countryEnabled = MediationConfig.getCountryByName(country)["enabled"]
     defaultConfig = {
       "granularity": 240,
       "hardAlarmLevel": 0.5,
       "softAlarmLevel": 0.75,
       "difference": "day",
+      "enabled": countryEnabled
     }
     if country not in res["lobs"]:
       return {}
+
     for lobName, config in res["lobs"][country].items():
       config["country"] = country
       config["name"] = lobName
       if "options" not in config:
         config["options"] = {}
       config["options"] = {**defaultConfig, **config["options"]}
+      config["options"]["enabled"] = defaultConfig["enabled"] and config["options"]["enabled"]
       if "inputs" not in config:
         config["inputs"] = {}
       if "forwards" not in config:
@@ -76,7 +80,7 @@ class MediationConfig():
       for flowName, flowOptions in config["forwards"].items():
         inputName = flowName.split(":")[0]
         if inputName in config["inputs"]:
-          flow = {"options": setFlowDefaultOptions(flowOptions, parentObj=config["inputs"][inputName]["options"])}
+          flow = {"options": setFlowDefaultOptions(flowOptions, parentObj=inputs[inputName]["options"])}
         else:
           flow = {"options": setFlowDefaultOptions(flowOptions, parentObj=config["options"])}
         flow["name"] = flowName
@@ -136,4 +140,6 @@ def _getCountryFromLob(lobName):
 
 
 def setFlowDefaultOptions(obj, parentObj):
-  return {**{"enabled": True}, **parentObj, **obj}
+  options = {**parentObj, **obj}
+  options["enabled"] = obj.get("enabled", True) and parentObj["enabled"]
+  return options
