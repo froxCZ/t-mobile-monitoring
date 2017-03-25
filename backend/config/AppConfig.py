@@ -7,10 +7,8 @@ import pytz
 
 TIMEZONE = pytz.timezone('CET')
 
-from mongo import mongo
 
-configColl = mongo.config()
-
+configColl = None
 
 class AppConfig:
   configDict = None
@@ -42,6 +40,10 @@ class AppConfig:
     return AppConfig.configDict.get("mediation", {})
 
   @staticmethod
+  def getMongoConfig():
+    return AppConfig.configDict.get("mongo")
+
+  @staticmethod
   def loadConfigFile():
     for configFile in ["/config/backend.json", os.path.join(os.path.dirname(__file__), "..", "config.json")]:
       if os.path.exists(configFile):
@@ -54,3 +56,6 @@ class AppConfig:
         logging.info("Loaded config: " + str(AppConfig.configDict))
         logging.info("App time: " + str(AppConfig.getCurrentTime()))
         break
+    from mongo import mongo
+    global configColl
+    configColl = mongo.config()

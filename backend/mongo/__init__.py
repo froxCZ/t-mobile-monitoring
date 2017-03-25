@@ -2,12 +2,18 @@ import pytz
 from bson import CodecOptions
 from pymongo import MongoClient
 
+from config import AppConfig
+
 _client = MongoClient("mongodb://localhost/", tz_aware=True)
 
 codec_options = CodecOptions(
   tz_aware=True,
   tzinfo=pytz.timezone('CET')
 )
+mongoConfig = AppConfig.getMongoConfig()
+_client.admin.authenticate(mongoConfig["user"], mongoConfig["password"], mechanism='SCRAM-SHA-1')
+dataDb = _client["mediation_data"]
+db = _client["mediation"]
 
 
 class _Mongo:
@@ -54,10 +60,10 @@ class _Mongo:
     ))
 
   def dataDb(self):
-    return _client["mediation_data"]
+    return dataDb
 
   def db(self):
-    return _client["mediation"]
+    return db
 
 
 class _ZookeeperMongo:
@@ -74,10 +80,10 @@ class _ZookeeperMongo:
     ))
 
   def dataDb(self):
-    return _client["mediation_data"]
+    return dataDb
 
   def db(self):
-    return _client["mediation"]
+    return db
 
 
 mongo = _Mongo()
