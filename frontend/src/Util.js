@@ -2,10 +2,13 @@
  * Created by vojtech.udrzal on 3/4/17.
  */
 import Moment from "moment";
+import {injectUserProp} from "./Store";
 Moment.locale('cs')
 
 
 export default class Util {
+  loggedUser = null;
+
   static formatIsoDateString(isoDateString, format) {
     return Moment(isoDateString, "YYYY-MM-DDThh:mm:ssTZD").format(format)
   }
@@ -22,15 +25,15 @@ export default class Util {
   static timeAgo(momentTime) {
     let seconds = Math.floor(Moment.duration(Util.getCurrentTime().diff(momentTime)).asMilliseconds() / 1000)
     if (seconds < 60) {
-      return seconds+ "s ago"
-    }else if(seconds<60*60){
-      let minutes = Math.floor(seconds/(60));
-      let sec = Math.floor(seconds-minutes*60);
-      return minutes+"m "+sec+"s ago";
-    }else{
-      let hours = Math.floor(seconds/(60*60))
-      let minutes = Math.floor((seconds-hours*60*60)/60)
-      return hours+"h "+minutes+"m ago";
+      return seconds + "s ago"
+    } else if (seconds < 60 * 60) {
+      let minutes = Math.floor(seconds / (60));
+      let sec = Math.floor(seconds - minutes * 60);
+      return minutes + "m " + sec + "s ago";
+    } else {
+      let hours = Math.floor(seconds / (60 * 60))
+      let minutes = Math.floor((seconds - hours * 60 * 60) / 60)
+      return hours + "h " + minutes + "m ago";
     }
 
   }
@@ -62,4 +65,9 @@ export default class Util {
     return COUNTRY_TO_FLAG[country]
   }
 
+  static isRoot(user) {
+    return user != null && user.permission == "root";
+  }
+
+  static injectUserProp = injectUserProp
 }

@@ -5,7 +5,6 @@ from flask import Flask, jsonify
 from flask.json import JSONEncoder
 from flask_cors import CORS
 
-import common.api.auth as auth
 import util
 from config import AppConfig
 
@@ -35,7 +34,6 @@ def hello():
 
 
 @app.route("/currentTime")
-@auth.require_root
 def currentTime():
   return jsonify({"currentTime": util.dateToTimeString(AppConfig.getCurrentTime())})
 

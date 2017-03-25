@@ -60,14 +60,15 @@ export default class DateListEditor extends Component {
     }
 
     return <div>{datesList}
-      <DatePicker
+      {this.props.editable && <DatePicker
         id="fromDate"
         dateFormat={this.state.dateFormat}
         className="form-control"
         onChange={(date) => {
           this.addDay(date)
         }}
-      /></div>
+      />}
+    </div>
   }
 
 }

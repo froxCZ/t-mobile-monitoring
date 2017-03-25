@@ -1,6 +1,7 @@
 import React, {Component} from "react";
 import {browserHistory} from "react-router";
 import Api from "../../Api";
+import Util from "../../Util";
 import classnames from "classnames";
 import {
   TabContent,
@@ -20,10 +21,11 @@ import StatusBadge from "../../components/StatusBadge";
 const LIST_TAB = 'listTab'
 const CHART_TAB = 'chartTab'
 const CONFIG_TAB = 'configTab'
-export default class LobMonitoringDetail extends Component {
+class LobMonitoringDetail extends Component {
   constructor() {
     super()
     this.state = {activeTab: LIST_TAB, optionsString: ''}
+    this.isRoot = false;
     this.closeModal = this.closeModal.bind(this);
   }
 
@@ -63,6 +65,7 @@ export default class LobMonitoringDetail extends Component {
   }
 
   render() {
+    this.isRoot = Util.isRoot(this.props.user)
 
     return (
       <div className="animated fadeIn">
@@ -155,6 +158,7 @@ export default class LobMonitoringDetail extends Component {
                           className="form-control" value={this.state.optionsString}
                           onChange={(e) => this.setState({optionsString: e.target.value})}
                 />
+              {this.isRoot &&
               <div style={{display: "block"}}>
                 <button type="button"
                         className="btn btn-primary"
@@ -165,6 +169,7 @@ export default class LobMonitoringDetail extends Component {
                           }}>{buttonText}
                 </button>
               </div>
+              }
 
             </div>
           </div>
@@ -224,34 +229,38 @@ export default class LobMonitoringDetail extends Component {
               <label className="switch switch-3d switch-primary" onClick={(e) => e.stopPropagation()}>
                 <input type="checkbox" className="switch-input"
                        checked={flow.options.enabled}
-                       onChange={(e) => this.flowEnabledChange(e, flow)}
+                       onChange={(e) => this.isRoot && this.flowEnabledChange(e, flow)}
                 />
                 <span className="switch-label"></span>
                 <span className="switch-handle"></span>
               </label>
             </td>
             <td>
+              {this.isRoot &&
               <i className="icon-trash icons font-2xl d-block" style={{cursor: 'pointer'}}
                  onClick={() => this.setState({flowToDelete: flow})}></i>
+              }
             </td>
           </tr>)
       }
-      neidRows.push(<tr>
-          <td><input type="text"
-                     id="text-input"
-                     name="text-input"
-                     className="form-control col-lg-2"
-                     style={{display: "inline"}}
-                     ref="addFlowinputs"
-                     placeholder="Input name"/>
-            &nbsp;
-            <button type="button"
-                    className="btn btn-primary active"
-                    onClick={() => this.addFlow("inputs")}>Add
-            </button>
-          </td>
-        </tr>
-      )
+      if (this.isRoot) {
+        neidRows.push(<tr>
+            <td><input type="text"
+                       id="text-input"
+                       name="text-input"
+                       className="form-control col-lg-2"
+                       style={{display: "inline"}}
+                       ref="addFlowinputs"
+                       placeholder="Input name"/>
+              &nbsp;
+              <button type="button"
+                      className="btn btn-primary active"
+                      onClick={() => this.addFlow("inputs")}>Add
+              </button>
+            </td>
+          </tr>
+        );
+      }
       for (let flowName in this.state.lob.forwards) {
         let flow = this.state.lob.forwards[flowName]
         forwardRows.push(
@@ -268,33 +277,37 @@ export default class LobMonitoringDetail extends Component {
               <label className="switch switch-3d switch-primary" onClick={(e) => e.stopPropagation()}>
                 <input type="checkbox" className="switch-input"
                        checked={flow.options.enabled}
-                       onChange={(e) => this.flowEnabledChange(e, flow)}
+                       onChange={(e) => this.isRoot && this.flowEnabledChange(e, flow)}
                 />
                 <span className="switch-label"></span>
                 <span className="switch-handle"></span>
               </label>
             </td>
-            <td><i className="icon-trash icons font-2xl d-block" style={{cursor: 'pointer'}}
-                   onClick={() => this.setState({flowToDelete: flow})}></i>
+            <td>
+              {this.isRoot && <i className="icon-trash icons font-2xl d-block" style={{cursor: 'pointer'}}
+                                 onClick={() => this.setState({flowToDelete: flow})}></i>
+              }
             </td>
           </tr>)
       }
-      forwardRows.push(<tr>
-          <td><input type="text"
-                     id="text-input"
-                     name="text-input"
-                     className="form-control col-lg-2"
-                     style={{display: "inline"}}
-                     ref="addFlowforwards"
-                     placeholder="Foward name"/>
-            &nbsp;
-            <button type="button"
-                    className="btn btn-primary active"
-                    onClick={() => this.addFlow("forwards")}>Add
-            </button>
-          </td>
-        </tr>
-      )
+      if (this.isRoot) {
+        forwardRows.push(<tr>
+            <td><input type="text"
+                       id="text-input"
+                       name="text-input"
+                       className="form-control col-lg-2"
+                       style={{display: "inline"}}
+                       ref="addFlowforwards"
+                       placeholder="Foward name"/>
+              &nbsp;
+              <button type="button"
+                      className="btn btn-primary active"
+                      onClick={() => this.addFlow("forwards")}>Add
+              </button>
+            </td>
+          </tr>
+        )
+      }
     }
     return (<div>
       {this.createDeleteModal()}
@@ -408,3 +421,4 @@ export default class LobMonitoringDetail extends Component {
     });
   }
 }
+export default Util.injectUserProp(LobMonitoringDetail)

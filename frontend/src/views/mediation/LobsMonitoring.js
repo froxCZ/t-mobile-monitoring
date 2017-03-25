@@ -4,6 +4,7 @@ import {bindActionCreators} from "redux";
 import {connect} from "react-redux";
 import {showLoading, hideLoading} from "react-redux-loading-bar";
 import Api from "../../Api";
+import Util from "../../Util";
 import StatusBadge from "../../components/StatusBadge";
 import StatusCounterBadge from "../../components/StatusCounterBadge";
 import {
@@ -20,7 +21,7 @@ import {
 } from "reactstrap";
 
 function mapStateToProps(state) {
-  return {auth: state.auth};
+  return {user: state.auth.user};
 }
 function mapDispatchToProps(dispatch) {
   var actions = {showLoading: showLoading, hideLoading: hideLoading};
@@ -61,6 +62,7 @@ class LobsMonitoring extends Component {
   }
 
   render() {
+    this.isRoot = Util.isRoot(this.props.user);
     let lobRows = [];
     if (this.state.lobs) {
       for (let lobName in this.state.lobs) {
@@ -95,27 +97,31 @@ class LobsMonitoring extends Component {
               <h4>{statusSpan}</h4>
             </td>
             <td>
+              {this.isRoot &&
               <i className="icon-trash icons font-2xl d-block" style={{cursor: 'pointer'}}
                  onClick={() => this.setState({lobToDelete: lob})}></i>
+              }
             </td>
           </tr>)
       }
     }
-    if (this.props.params) {
-      lobRows.push(<tr>
-          <td>
-            <input type="text"
-                   id="text-input"
-                   name="text-input"
-                   className="form-control col-lg-1"
-                   style={{display: "inline"}}
-                   ref="newLobName"
-                   placeholder="Lob name"/>
-            &nbsp;
-            <button type="button" className="btn btn-primary active" onClick={() => this.addLob()}>Add</button>
-          </td>
-        </tr>
-      )
+    if (this.isRoot) {
+      if (this.props.params) {
+        lobRows.push(<tr>
+            <td>
+              <input type="text"
+                     id="text-input"
+                     name="text-input"
+                     className="form-control col-lg-1"
+                     style={{display: "inline"}}
+                     ref="newLobName"
+                     placeholder="Lob name"/>
+              &nbsp;
+              <button type="button" className="btn btn-primary active" onClick={() => this.addLob()}>Add</button>
+            </td>
+          </tr>
+        )
+      }
     }
     return (
       <div className="animated fadeIn">

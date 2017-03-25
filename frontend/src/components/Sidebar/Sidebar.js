@@ -1,7 +1,7 @@
 import React, {Component} from "react";
-import {Link} from "react-router";
+import {Link, browserHistory} from "react-router";
 import Util from "../../Util";
-
+import {injectUserProp} from "../../Store";
 class Sidebar extends Component {
 
   handleClick(e) {
@@ -68,15 +68,18 @@ class Sidebar extends Component {
             <li className="nav-item">
               <Link to={'/zookeeper'} className="nav-link" activeClassName="active">Zookeeper</Link>
             </li>
-
-            <li className="nav-title">
-            </li>
-            <li className="nav-title">
-              System
-            </li>
-            <li className="nav-item">
-              <Link to={'/settings/users'} className="nav-link" activeClassName="active">Users</Link>
-            </li>
+            {Util.isRoot(this.props.user) &&
+            <div>
+              <li className="nav-title">
+              </li>
+              < li className="nav-title">
+                System
+              </li>
+              <li className="nav-item">
+                <Link to={'/settings/users'} className="nav-link" activeClassName="active">Users</Link>
+              </li>
+            </div>
+            }
 
           </ul>
         </nav>
@@ -84,5 +87,4 @@ class Sidebar extends Component {
     )
   }
 }
-
-export default Sidebar;
+export default injectUserProp(Sidebar)

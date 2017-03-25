@@ -41,6 +41,18 @@ def login():
   return jsonify(user)
 
 
+@common.route('/visitorLogin', methods=["POST"])
+def visitorLogin():
+  username = "visitor"
+  password = "visitor"
+  passHash = _hashPassword(password)
+  user = UserManager.getUserByName(username)
+  if user == None or user["passwordHash"].lower() != passHash.lower():
+    return _invalidLoginResponse()
+  del user["passwordHash"]
+  return jsonify(user)
+
+
 @common.route('/users', methods=["GET"])
 def usersGET():
   return jsonify(UserManager.getUsers())

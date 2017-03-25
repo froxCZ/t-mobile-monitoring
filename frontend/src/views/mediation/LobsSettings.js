@@ -1,11 +1,12 @@
 import React, {Component} from "react";
 import Api from "../../Api";
+import Util from "../../Util";
 import CountrySettings from "../../components/CountrySettings";
 import classnames from "classnames";
 import {TabContent, TabPane, Nav, NavItem, NavLink} from "reactstrap";
 import "react-datepicker/dist/react-datepicker.css";
 const COUNTRIES = ["CZ", "AT", "DE", "NL"]
-export default class LobsSettings extends Component {
+class LobsSettings extends Component {
   constructor() {
     super();
     this.state = {countries: null, activeTab: "CZ"}
@@ -66,6 +67,7 @@ export default class LobsSettings extends Component {
               <CountrySettings
                 country={this.state.countries[c]}
                 onSave={this.saveSettings.bind(this)}
+                editable={Util.isRoot(this.props.user)}
               />
             </div>
           </div>
@@ -86,3 +88,4 @@ export default class LobsSettings extends Component {
 
   }
 }
+export default Util.injectUserProp(LobsSettings)

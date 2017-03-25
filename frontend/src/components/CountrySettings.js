@@ -1,8 +1,9 @@
 import React, {Component} from "react";
 import DateListEditor from "./DateListEditor";
+import Util from "../Util";
 
 
-export default class CountrySettings extends Component {
+class CountrySettings extends Component {
   constructor() {
     super();
     this.state = {country: null}
@@ -28,14 +29,17 @@ export default class CountrySettings extends Component {
     return <div>
       <h4>Lazy days</h4>
       <DateListEditor
+        editable={this.props.editable}
         dates={this.state.country.lazyDays}
-        />
+      />
       <br/>
       <h4>Holidays</h4>
       <DateListEditor
         dates={this.state.country.holidays}
+        editable={this.props.editable}
         daysOnly={true}
-        />
+      />
+      {this.props.editable &&
       <div style={{display: "block"}}>
         <button type="button" className="btn btn-primary" onClick={
           () => {
@@ -43,7 +47,10 @@ export default class CountrySettings extends Component {
           }}>Save
         </button>
       </div>
+      }
     </div>
   }
 
 }
+
+export default Util.injectUserProp(CountrySettings)

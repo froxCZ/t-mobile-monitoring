@@ -93,7 +93,7 @@ class Header extends Component {
             <Dropdown isOpen={this.state.dropdownOpen} toggle={this.toggle}>
               <a onClick={this.toggle} className="nav-link dropdown-toggle nav-link" data-toggle="dropdown" href="#"
                  role="button" aria-haspopup="true" aria-expanded={this.state.dropdownOpen}>
-                <span className="hidden-md-down">{this.props.auth.user.name}</span>
+                <span className="hidden-md-down">{this.props.auth.user && this.props.auth.user.name}</span>
               </a>
 
               <DropdownMenu className="dropdown-menu-right">

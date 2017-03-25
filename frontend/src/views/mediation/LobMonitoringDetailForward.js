@@ -20,7 +20,7 @@ const MINUTE_RANGES = [
   1440
 ]
 
-export default class LobMonitoringDetailForward extends Component {
+class LobMonitoringDetailForward extends Component {
   constructor() {
     super()
     this.state = {data: [], metadata: {}};
@@ -153,6 +153,7 @@ export default class LobMonitoringDetailForward extends Component {
   }
 
   renderOptions() {
+    console.log(this.props)
     let isValidJson = this.isValidJson(this.state.optionsString)
     let buttonText = isValidJson ? "Save" : "Invalid JSON"
     return (
@@ -171,6 +172,7 @@ export default class LobMonitoringDetailForward extends Component {
                             this.setState(state)
                           }}
                 />
+        {Util.isRoot(this.props.user) &&
         <div style={{display: "block"}}>
           <button type="button"
                   className="btn btn-primary"
@@ -181,6 +183,7 @@ export default class LobMonitoringDetailForward extends Component {
                     }}>{buttonText}
           </button>
         </div>
+        }
 
       </div>)
   }
@@ -202,3 +205,5 @@ export default class LobMonitoringDetailForward extends Component {
     })
   }
 }
+
+export default Util.injectUserProp(LobMonitoringDetailForward)

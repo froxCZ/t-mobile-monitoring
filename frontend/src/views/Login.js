@@ -1,9 +1,9 @@
 import React, {Component} from "react";
+import {Actions as AuthActions} from "../Store";
+import Api from "../Api";
+import {browserHistory} from "react-router";
 import {bindActionCreators} from "redux";
 import {connect} from "react-redux";
-import {Actions as AuthActions} from "../Store";
-import {browserHistory} from "react-router";
-import Api from "../Api";
 function mapStateToProps(state) {
   return {auth: state.auth};
 }
@@ -30,12 +30,23 @@ class Login extends Component {
     }
   }
 
-  login() {
+  userLogin() {
     let req = {
       method: "POST",
       body: {username: this.refs.username.value, password: this.refs.password.value}
     }
     Api.fetch("/app/login", req).then(response => {
+      this.props.loggedIn(response)
+    }).catch(e => {
+      e.json.then(json => {
+        this.setState({errorMessage: json.message})
+      })
+    })
+  }
+
+
+  visitorLogin() {
+    Api.fetch("/app/visitorLogin", {method: "POST"}).then(response => {
       this.props.loggedIn(response)
     }).catch(e => {
       e.json.then(json => {
@@ -66,8 +77,15 @@ class Login extends Component {
                   <div className="row">
                     <div className="col-6">
                       <button type="button" className="btn btn-primary px-2" onClick={() => {
-                        this.login()
+                        this.userLogin()
                       }}>Login
+                      </button>
+                    </div>
+
+                    <div className="col-6">
+                      <button type="button" style={{float: "right"}} className="btn btn-primary px-2" onClick={() => {
+                        this.visitorLogin()
+                      }}>Login as visitor
                       </button>
                     </div>
                   </div>

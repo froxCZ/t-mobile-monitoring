@@ -1,5 +1,6 @@
-import {createStore, combineReducers, compose, applyMiddleware} from "redux";
+import {createStore, combineReducers, compose, applyMiddleware, bindActionCreators} from "redux";
 import {loadingBarReducer} from "react-redux-loading-bar";
+import {connect} from "react-redux";
 export const AUTH = "auth";
 const AUTH_LOCAL_STORAGE_KEY = 'AUTH_LOCAL_STORAGE_KEY';
 export const LOGGED_IN = 'LOGGED_IN';
@@ -41,7 +42,15 @@ const initialState = {};
 
 export const Store = createStore(Reducers, initialState);
 
+export function injectUserProp(c) {
 
+  return connect((state) => {
+    let user = state.auth ? state.auth.user : null
+    return {
+      user: user
+    }
+  })(c)
+}
 export function state(key) {
   return Store.getState()[key];
 }

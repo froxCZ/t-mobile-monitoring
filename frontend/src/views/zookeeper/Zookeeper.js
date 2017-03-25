@@ -2,11 +2,12 @@ import React, {Component} from "react";
 import Api from "../../Api";
 import Util from "../../Util";
 import StatusBadge from "../../components/StatusBadge";
-export default class Zookeeper extends Component {
+class Zookeeper extends Component {
 
   constructor() {
     super()
     this.state = {}
+    this.isRoot = false;
   }
 
   componentWillMount() {
@@ -81,6 +82,7 @@ export default class Zookeeper extends Component {
   }
 
   render() {
+    this.isRoot = Util.isRoot(this.props.user)
     if (!this.state.cluster) {
       return <p></p>
     }
@@ -114,28 +116,29 @@ export default class Zookeeper extends Component {
             <td>
               <StatusBadge status={status}/>
             </td>
-            <td><i className="icon-trash icons font-2xl d-block" style={{cursor: 'pointer'}}
-                   onClick={() => this.removeNode(socket)}></i></td>
+            <td>{this.isRoot && <i className="icon-trash icons font-2xl d-block" style={{cursor: 'pointer'}}
+                                   onClick={() => this.removeNode(socket)}></i>}</td>
           </tr>)
       }
+      if (this.isRoot) {
+        rows.push(<tr>
+          <td>
+            <input type="text"
+                   id="text-input"
+                   name="text-input"
+                   className="form-control col-lg-6"
+                   style={{display: "inline"}}
+                   ref="inputSocketAddress"
+                   placeholder="Text"/>
+            &nbsp;
+            <button type="button" className="btn btn-primary active" onClick={() => this.addNode()}>Add</button>
+          </td>
+          <td></td>
+          <td></td>
+          <td></td>
 
-      rows.push(<tr>
-        <td>
-          <input type="text"
-                 id="text-input"
-                 name="text-input"
-                 className="form-control col-lg-6"
-                 style={{display: "inline"}}
-                 ref="inputSocketAddress"
-                 placeholder="Text"/>
-          &nbsp;
-          <button type="button" className="btn btn-primary active" onClick={() => this.addNode()}>Add</button>
-        </td>
-        <td></td>
-        <td></td>
-        <td></td>
-
-      </tr>)
+        </tr>)
+      }
     }
 
     return (
@@ -163,6 +166,7 @@ export default class Zookeeper extends Component {
                       <input type="checkbox" className="switch-input"
                              checked={this.state.cluster.enabled}
                              onChange={(e) => {
+                               this.isRoot &&
                                this.monitoringEnabledChange(e.target.checked)
                              }}
                       />
@@ -206,3 +210,4 @@ export default class Zookeeper extends Component {
     )
   }
 }
+export default Util.injectUserProp(Zookeeper)
