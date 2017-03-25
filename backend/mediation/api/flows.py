@@ -37,6 +37,20 @@ def getCountry(country):
   return jsonify(res)
 
 
+@flowsApi.route('/<string:country>/enable', methods=["GET"])
+def getEnabledCountry(country):
+  return jsonify({"enabled": MediationConfig.getCountryByName(country)["enabled"]})
+
+
+@flowsApi.route('/<string:country>/enable', methods=["PUT"])
+def enableCountry(country):
+  body = request.get_json()
+  enable = body["enable"]
+  MediationConfig.configColl.update_one(
+    MEDIATION_DOCUMENT, {"$set": {"countries." + country + ".enabled": enable}})
+  return getEnabledCountry(country)
+
+
 @flowsApi.route('/<string:country>/<string:lobName>', methods=["GET"])
 def getLob(country, lobName):
   res = MediationConfig.getLobWithCountry(country, lobName)
@@ -80,7 +94,15 @@ def lobOptionsPUT(country, lobName):
   body = request.get_json()
   optionsPath = "lobs." + country + "." + lobName + ".options"
   MediationConfig.configColl.update_one(MEDIATION_DOCUMENT, {"$set": {optionsPath: body}})
-  return jsonify(MediationConfig.getLob(country, lobName)["options"])
+  return jsonify(MediationConfig.getLobWithCountry(country, lobName)["options"])
+
+
+@flowsApi.route('/<string:country>/<string:lobName>/enable', methods=["PUT"])
+def enableLob(country, lobName):
+  enable = request.get_json()["enable"]
+  optionsPath = "lobs." + country + "." + lobName + ".options.enabled"
+  MediationConfig.configColl.update_one(MEDIATION_DOCUMENT, {"$set": {optionsPath: enable}})
+  return jsonify(MediationConfig.getLobWithCountry(country, lobName)["options"])
 
 
 @flowsApi.route('/<string:country>/<string:lobName>/<string:flowName>/options', methods=["GET"])

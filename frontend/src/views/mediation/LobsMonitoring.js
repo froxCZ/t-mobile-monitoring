@@ -30,7 +30,7 @@ function mapDispatchToProps(dispatch) {
 class LobsMonitoring extends Component {
   constructor() {
     super();
-    this.state = {}
+    this.state = {countryEnabled: null}
     this.closeModal = this.closeModal.bind(this);
 
   }
@@ -43,7 +43,10 @@ class LobsMonitoring extends Component {
   }
 
   reloadData(country) {
-    this.setState({country: country})
+    this.setState({country: country});
+    Api.fetch("/mediation/flows/" + country + "/enable", {method: 'GET'}).then((response) => {
+      this.setState({countryEnabled: response.enabled});
+    });
     Api.fetch("/mediation/flows/" + country, {method: 'GET'}).then((response) => {
       this.setState({lobs: response});
     });
@@ -55,6 +58,33 @@ class LobsMonitoring extends Component {
 
   componentWillReceiveProps(nextProps) {
     this.propChange(nextProps)
+  }
+
+  countryEnableChange(enabled) {
+    let body = {enable: enabled}
+    var req = {
+      method: 'PUT',
+      body: body
+    };
+    Api.fetch("/mediation/flows/" + this.state.country + "/enable", req)
+      .then(lobOptionsResponse => {
+        this.reloadData(this.state.country)
+      });
+  }
+
+  lobEnableChange(enabled, lob) {
+    let body = {enable: enabled}
+    var req = {
+      method: 'PUT',
+      body: body
+    };
+    Api.fetch("/mediation/flows/" + lob.country + "/" + lob.name + "/enable", req)
+      .then(lobOptionsResponse => {
+        let changedLob = {...lob, options: lobOptionsResponse}
+        let newLobs = {...this.state.lobs, [lob.name]: changedLob}
+        this.setState({lobs: newLobs})
+      });
+
   }
 
   render() {
@@ -95,6 +125,20 @@ class LobsMonitoring extends Component {
             </td>
             <td>
               <h4>{statusSpan}</h4>
+            </td>
+            <td>
+              {this.isRoot && <label className="switch switch-3d switch-primary"
+                                     onClick={(e) => e.stopPropagation()}>
+                <input type="checkbox" className="switch-input"
+                       checked={lob.options.enabled}
+                       onChange={(e) => {
+                         this.lobEnableChange(e.target.checked, lob)
+                       }}
+                />
+                <span className="switch-label"></span>
+                <span className="switch-handle"></span>
+              </label>
+              }
             </td>
             <td>
               {this.isRoot &&
@@ -144,6 +188,17 @@ class LobsMonitoring extends Component {
                     <th>Lob Name</th>
                     <th>Flows</th>
                     <th>Status</th>
+                    <th>Enabled<br/><label className="switch switch-3d switch-primary"
+                                           onClick={(e) => e.stopPropagation()}>
+                      <input type="checkbox" className="switch-input"
+                             checked={this.state.countryEnabled}
+                             onChange={(e) => {
+                               this.countryEnableChange(e.target.checked)
+                             }}
+                      />
+                      <span className="switch-label"></span>
+                      <span className="switch-handle"></span>
+                    </label></th>
                     <th>Delete</th>
                   </tr>
                   </thead>
