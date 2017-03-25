@@ -1,5 +1,4 @@
 import React, {Component} from "react";
-import {browserHistory} from "react-router";
 import Api from "../../Api";
 import Util from "../../Util";
 import classnames from "classnames";
@@ -18,19 +17,16 @@ import {
 import LobOverviewCharts from "../../components/LobOverviewCharts";
 import _ from "lodash";
 import StatusBadge from "../../components/StatusBadge";
+import {Link, browserHistory} from "react-router";
 const LIST_TAB = 'listTab'
 const CHART_TAB = 'chartTab'
 const CONFIG_TAB = 'configTab'
 class LobMonitoringDetail extends Component {
   constructor() {
     super()
-    this.state = {activeTab: LIST_TAB, optionsString: ''}
+    this.state = {activeTab: LIST_TAB, optionsString: '', expand: false}
     this.isRoot = false;
     this.closeModal = this.closeModal.bind(this);
-  }
-
-  goToFlowDetail(flowName) {
-    browserHistory.push(this.props.location.pathname + "/" + flowName);
   }
 
   componentWillMount() {
@@ -188,11 +184,6 @@ class LobMonitoringDetail extends Component {
     Api.fetch("/mediation/flows/" + this.state.country + "/" + this.state.lobName + "/options", myInit);
   }
 
-  getStatusBadge(flow) {
-    return <StatusBadge status={flow.status.status}/>
-  }
-
-
   flowEnabledChange(e, flow) {
     let body = {enable: e.target.checked}
     var myInit = {
@@ -212,18 +203,25 @@ class LobMonitoringDetail extends Component {
   renderList() {
     let neidRows = []
     let forwardRows = []
+    let maxRows = this.state.expand ? 100000 : 100000
     if (this.state.lob) {
+      let counter = 0
       for (let flowName in this.state.lob.inputs) {
+        if (counter++ > maxRows)break;
         let flow = this.state.lob.inputs[flowName]
         neidRows.push(
           <tr>
-            <td style={{cursor: 'pointer'}} onClick={this.goToFlowDetail.bind(this, flowName)}>{flowName}</td>
+            <td>
+              <Link to={this.props.location.pathname + '/' + flowName} className="nav-link" activeClassName="active">
+                {flowName}
+              </Link>
+            </td>
             <td>{flow.options.granularity}</td>
             <td>{flow.options.softAlarmLevel}</td>
             <td>{flow.options.hardAlarmLevel}</td>
             <td>{flow.status.difference}</td>
             <td>
-              <h4>{this.getStatusBadge(flow)}</h4>
+              <h4><StatusBadge status={flow.status.status}/></h4>
             </td>
             <td>
               <label className="switch switch-3d switch-primary" onClick={(e) => e.stopPropagation()}>
@@ -261,17 +259,23 @@ class LobMonitoringDetail extends Component {
           </tr>
         );
       }
+      counter = 0
       for (let flowName in this.state.lob.forwards) {
+        if (counter++ > maxRows)break;
         let flow = this.state.lob.forwards[flowName]
         forwardRows.push(
           <tr>
-            <td style={{cursor: 'pointer'}} onClick={this.goToFlowDetail.bind(this, flowName)}>{flowName}</td>
+            <td>
+              <Link to={this.props.location.pathname + '/' + flowName} className="nav-link" activeClassName="active">
+                {flowName}
+              </Link>
+            </td>
             <td>{flow.options.granularity}</td>
             <td>{flow.options.softAlarmLevel}</td>
             <td>{flow.options.hardAlarmLevel}</td>
             <td>{flow.status.difference}</td>
             <td>
-              <h4>{this.getStatusBadge(flow)}</h4>
+              <h4><StatusBadge status={flow.status.status}/></h4>
             </td>
             <td>
               <label className="switch switch-3d switch-primary" onClick={(e) => e.stopPropagation()}>

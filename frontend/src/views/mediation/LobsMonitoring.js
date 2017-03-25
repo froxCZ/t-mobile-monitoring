@@ -35,10 +35,6 @@ class LobsMonitoring extends Component {
 
   }
 
-  goToLobDetail(lobName) {
-    browserHistory.push(this.props.location.pathname + "/" + lobName);
-  }
-
   propChange(props) {
     let country = props.params.country;
     if (country != this.state.country) {
@@ -89,7 +85,11 @@ class LobsMonitoring extends Component {
 
         lobRows.push(
           <tr >
-            <td onClick={this.goToLobDetail.bind(this, lobName)} style={{cursor: 'pointer'}}>{lobName}</td>
+            <td>
+              <Link to={this.props.location.pathname + '/' + lobName} className="nav-link" activeClassName="active">
+                {lobName}
+              </Link>
+            </td>
             <td>
               {flowStatuses}
             </td>
