@@ -1,36 +1,71 @@
-class DiscoverQuery():
-  pass
-  """
-  not used anymore
-  """
-  # def __init__(self, fromDate, toDate):
-  #   self.fromDate = fromDate
-  #   self.toDate = toDate
-  #
-  # def execute(self):
-  #   lobsConfig = config.getLobsConfig()["lobs"]
-  #   discovered = {}
-  #   cursor = mongo.lobs().find({"$and": [
-  #     {"_id": {"$gte": self.fromDate}},
-  #     {"_id": {"$lt": self.toDate}}
-  #   ]})
-  #   for doc in cursor:
-  #     for lobName, lob in doc["data"].items():
-  #       if lobName not in lobsConfig:
-  #         continue
-  #       if lobName not in discovered:
-  #         discovered[lobName] = {"inputs": {}, "forwards": {}}
-  #       if "inputs" in lob:
-  #         for neid in lob["inputs"]:
-  #           if neid == "sum" or neid == "updatesCnt":
-  #             continue
-  #           if neid not in lobsConfig[lobName]["inputs"] and neid not in discovered[lobName]["inputs"]:
-  #             discovered[lobName]["inputs"][neid] = {"granularity": 0}
-  #       if "forwards" in lob:
-  #         for forward in lob["forwards"]:
-  #           if forward == "sum" or forward == "updatesCnt":
-  #             continue
-  #           if forward not in lobsConfig[lobName]["forwards"] and forward not in discovered[lobName]["forwards"]:
-  #             discovered[lobName]["forwards"][forward] = {"granularity": 0}
-  #
-  #   return discovered
+import datetime
+
+from config import AppConfig
+from mediation import MediationConfig
+from mongo import mongo
+
+SEPARATOR = "-+-"
+
+
+def createGlobalName(country, lob, flow, type):
+  strArr = [country, lob, flow, type]
+  for s in strArr:
+    if len(s) == 0:
+      raise Exception("cant create global name for " + str(strArr))
+  return SEPARATOR.join(strArr)
+
+
+def globalNameToFlow(globalName):
+  country, lobName, name, type = globalName.split(SEPARATOR)
+  return {"country": country, "lobName": lobName, "name": name, "type": type}
+
+
+class DiscoverQuery:
+  def __init__(self):
+    super().__init__()
+    self.toDate = AppConfig.getCurrentTime()
+    self.fromDate = self.toDate - datetime.timedelta(days=7)
+
+  def execute(self):
+    cursor = mongo.lobs().find({"$and": [
+      {"_id": {"$gte": self.fromDate}},
+      {"_id": {"$lt": self.toDate}}
+    ]})
+    allFlows = dict((countryName, {}) for countryName in MediationConfig.getCountries())
+    currentConfig = dict(
+      (countryName, MediationConfig.getLobs(countryName)) for countryName in MediationConfig.getCountries())
+    newFlows = {}
+    newLobs = dict((countryName, {}) for countryName in MediationConfig.getCountries())
+    for doc in cursor:
+      for countryName, country in doc["data"].items():
+        for lobName, lob in country.items():
+          if lobName == "FOX":
+            continue
+          if currentConfig[countryName].get(lobName, None) == None:
+            newLobs[countryName][lobName] = True
+          for flowName, flow in lob.get("inputs", {}).items():
+            if flowName == "updatesCnt" or flowName == "sum":
+              continue
+            if flowName not in currentConfig[countryName].get(lobName, {}).get("inputs", {}):
+              newFlows[createGlobalName(countryName, lobName, flowName, "inputs")] = True
+          for flowName, flow in lob.get("forwards", {}).items():
+            if flowName == "updatesCnt" or flowName == "sum":
+              continue
+            if flowName not in currentConfig[countryName].get(lobName, {}).get("forwards", {}):
+              newFlows[createGlobalName(countryName, lobName, flowName, "forwards")] = True
+              # print(flowName)
+    insertedLobs = 0
+    for countryName, lobs in newLobs.items():
+      for lobName in lobs.keys():
+        print(countryName + " " + lobName)
+        insertedLobs += 1
+        MediationConfig.addLob(countryName, lobName)
+    for globalFlowName in newFlows.keys():
+      flow = globalNameToFlow(globalFlowName)
+      MediationConfig.addFlow(flow)
+    print("inserted lobs:" + str(insertedLobs))
+    print("inserted flows:" + str(len(newFlows)))
+    return allFlows
+
+
+allFlows = DiscoverQuery().execute()

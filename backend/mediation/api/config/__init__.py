@@ -174,7 +174,7 @@ def putCountriesConfig():
 #   """
 #   now = datetime.datetime.now()
 #   fromDate = now - datetime.timedelta(days=14)
-#   newLobNeids = DiscoverQuery(fromDate, now).execute()
+#   newLobNeids = DiscoverQuery_old(fromDate, now).execute()
 #   setObj = {}
 #   addedCnt = 0
 #   for lobName, newConfig in newLobNeids.items():

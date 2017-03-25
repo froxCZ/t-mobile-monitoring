@@ -1,6 +1,6 @@
 from .DateRangeGroupQuery import DateRangeGroupQuery
 from .DatesQuery import DatesQuery
-from .DiscoverQuery import DiscoverQuery
+from .DiscoverQuery_old import DiscoverQuery_old
 from .ExpectedTrafficQuery import ExpectedTrafficQuery
 from .FlowLevelDateRangeQuery import FlowLevelDateRangeQuery
 from .OutageDateRangeQuery import OutageDateRangeQuery
