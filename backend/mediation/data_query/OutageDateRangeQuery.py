@@ -1,8 +1,6 @@
 import datetime
 
 import util
-from mediation.flow_analyzer import FlowAnalyzer
-
 
 class OutageDateRangeQuery():
   def __init__(self, fromDate, toDate, flow, granularity):
@@ -13,6 +11,7 @@ class OutageDateRangeQuery():
     self.granularity = granularity
     self.metric = "status"
     self.ticDict = {}
+    from mediation.flow_analyzer import FlowAnalyzer
     self.flowAnalyzer = FlowAnalyzer(self.flow,self.granularity)
 
   def setPrecomputedData(self, precomputedData, valueKey):
@@ -35,3 +34,7 @@ class OutageDateRangeQuery():
       statusList.append({"_id": self.flowAnalyzer.ticTime, "status": status})
       d += granularityDelta
     return statusList
+
+
+if __name__ == "__main__":
+  OutageDateRangeQuery(util.stringToTime("17.01.2017 15:00:00"),util.stringToTime("20.01.2017 15:00:00"),{},0)

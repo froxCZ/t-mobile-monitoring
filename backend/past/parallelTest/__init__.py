@@ -1,11 +1,11 @@
-def load():
-  import sys
-  paths = ['/home/frox/school/thesis/nodejs/bigmon/backend']
-  for p in paths:
-    sys.path.insert(0, p)
-
-
-load()
+# def load():
+#   import sys
+#   paths = ['/home/frox/school/thesis/nodejs/bigmon/backend']
+#   for p in paths:
+#     sys.path.insert(0, p)
+#
+#
+# load()
 import threading
 from queue import Queue
 

@@ -6,8 +6,8 @@ from queue import Queue, Empty
 import config
 from config import AppConfig
 from mediation import MediationConfig
+from mediation.flow_analyzer import FlowAnalyzer
 from mediation.flow_analyzer import status
-from mediation.flow_analyzer.FlowAnalyzer import FlowAnalyzer
 from mediation.flow_analyzer.FlowStatusManager import FlowStatusManager
 from scheduler.AbstractExecutor import AbstractExecutor
 

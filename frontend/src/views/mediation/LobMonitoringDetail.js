@@ -196,6 +196,7 @@ class LobMonitoringDetail extends Component {
         let newState = _.extend({}, this.state);
         newState.lob[type][flow.name].options = response
         this.setState(newState);
+        this.reloadLob(this.state.country, this.state.lobName)
       });
 
   }
