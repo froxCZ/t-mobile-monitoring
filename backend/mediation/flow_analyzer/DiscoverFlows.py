@@ -20,7 +20,7 @@ def globalNameToFlow(globalName):
   return {"country": country, "lobName": lobName, "name": name, "type": type}
 
 
-class DiscoverQuery:
+class DiscoverFlowsQuery:
   def __init__(self):
     super().__init__()
     self.toDate = AppConfig.getCurrentTime()
@@ -68,4 +68,4 @@ class DiscoverQuery:
     return allFlows
 
 
-allFlows = DiscoverQuery().execute()
+allFlows = DiscoverFlowsQuery().execute()

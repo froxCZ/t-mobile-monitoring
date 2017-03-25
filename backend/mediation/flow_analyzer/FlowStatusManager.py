@@ -3,12 +3,13 @@ import datetime
 import config
 from mediation import MediationConfig
 from mediation.flow_analyzer import status
+from mediation.flow_analyzer.StatusChangeNotificator import StatusChangeNotificator
 from mongo import mongo
 
 
 class FlowStatusManager:
   def __init__(self):
-    pass
+    self.notificator = StatusChangeNotificator()
 
   def getLobDetailWithCountry(self, country, lobName):
     lob = MediationConfig.getLobWithCountry(country, lobName)
@@ -84,8 +85,10 @@ class FlowStatusManager:
       return {"validity": "expired"}
     return self._setStatusMetadata(res[gName], flow)
 
-  def saveStatus(self, flow, status, difference, ticTime):
-    statusDict = {"status": status,
+  def saveStatus(self, flow,previousStatus, newStatus, difference, ticTime):
+    if previousStatus != newStatus:
+      self.notificator.statusChanged(flow, previousStatus, newStatus, ticTime)
+    statusDict = {"status": newStatus,
                   "ticTime": ticTime,
                   "difference": difference}
     setObj = {"$set": {flow["gName"]: statusDict}}

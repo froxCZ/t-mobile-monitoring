@@ -1,5 +1,7 @@
 import datetime
 import logging
+import threading
+from queue import Queue, Empty
 
 import config
 from config import AppConfig
@@ -7,8 +9,32 @@ from mediation import MediationConfig
 from mediation.flow_analyzer import status
 from mediation.flow_analyzer.FlowAnalyzer import FlowAnalyzer
 from mediation.flow_analyzer.FlowStatusManager import FlowStatusManager
-from mediation.flow_analyzer.StatusChangeNotificator import StatusChangeNotificator
 from scheduler.AbstractAnalyzerRunner import AbstractAnalyzerRunner
+
+
+class Worker(threading.Thread):
+  def __init__(self, queue, statusManager):
+    super().__init__()
+    self.queue = queue
+    self.statusManager = statusManager
+
+  def _analyzeFlow(self, flow, lastExecution):
+    analyzer = FlowAnalyzer(flow)
+    runResult = analyzer.run(config.getCurrentTime().replace(tzinfo=AppConfig.getTimezone()))
+    previousStatus = lastExecution["status"]
+    newStatus = analyzer.status
+    self.statusManager.saveStatus(flow, previousStatus, newStatus, analyzer.difference, analyzer.ticTime)
+
+  def run(self):
+    try:
+      while True:
+        try:
+          job = self.queue.get_nowait()
+          self._analyzeFlow(job["flow"], job["lastExecution"])
+        except Exception as e:
+          logging.error("Error while analyzing flow. " + str(e))
+    except Empty as e:
+      pass
 
 
 class FlowAnalyzerRunner(AbstractAnalyzerRunner):
@@ -16,31 +42,27 @@ class FlowAnalyzerRunner(AbstractAnalyzerRunner):
 
   def __init__(self):
     super().__init__()
-    self.manager = FlowStatusManager()
-    self.notificator = StatusChangeNotificator()
+    self.statusManager = FlowStatusManager()
 
   def _runInternal(self):
+    flowQueue = Queue()
     for country in MediationConfig.getCountryList():
-      self._analyzeContry(country)
+      self._enqueFlowsToAnalyze(flowQueue, country)
+    if not flowQueue.empty():
+      workers = [Worker(flowQueue, self.statusManager) for i in range(0, 8)]
+      for worker in workers:
+        worker.start()
+      for worker in workers:
+        worker.join()
 
-  def _analyzeContry(self, country):
-    self.lastExecutions = self.manager.getAll(country)
-
-    flowsToAnalyze = self._getFlowsToAnalyze(country)
-    if (len(flowsToAnalyze)) == 0:
-      logging.debug("no flows to analyze")
-
-    for flow in flowsToAnalyze:
-      self._analyzeFlow(flow)
-
-  def _analyzeFlow(self, flow):
-    analyzer = FlowAnalyzer(flow)
-    runResult = analyzer.run(config.getCurrentTime().replace(tzinfo=AppConfig.getTimezone()))
-    previousStatus = self.lastExecutions[flow["gName"]]["status"]
-    newStatus = analyzer.status
-    if previousStatus != newStatus:
-      self.notificator.statusChanged(flow, previousStatus, newStatus, analyzer.ticTime)
-    self.manager.saveStatus(flow, newStatus, analyzer.difference, analyzer.ticTime)
+  def _enqueFlowsToAnalyze(self, flowQueue, country):
+    self.lastExecutions = self.statusManager.getAll(country)
+    countryLobs = MediationConfig.getLobs(country, enabledOnly=True)
+    for lobName, lob in countryLobs.items():
+      for flow in lob["flows"].values():
+        if self.shouldSchedule(flow):
+          job = {"flow": flow, "lastExecution": self.lastExecutions[flow["gName"]]}
+          flowQueue.put(job)
 
   def _getFlowsToAnalyze(self, country):
     flowsToAnalyze = []
@@ -66,3 +88,4 @@ class FlowAnalyzerRunner(AbstractAnalyzerRunner):
 if __name__ == "__main__":
   logging.basicConfig(format='%(levelname)s [%(module)s]: %(message)s', level=logging.DEBUG)
   FlowAnalyzerRunner().run()
+  print("x")

@@ -38,6 +38,10 @@ class AppConfig:
     return AppConfig.configDict.get("system", {})
 
   @staticmethod
+  def getMediationConfig():
+    return AppConfig.configDict.get("mediation", {})
+
+  @staticmethod
   def loadConfigFile():
     for configFile in ["/config/backend.json", os.path.join(os.path.dirname(__file__), "..", "config.json")]:
       if os.path.exists(configFile):

@@ -1,7 +1,7 @@
 import React, {Component} from "react";
 import Api from "../../Api";
 import Util from "../../Util";
-import {browserHistory} from "react-router";
+import {Link, browserHistory} from "react-router";
 import StatusBadge from "../../components/StatusBadge";
 import StatusCounterBadge from "../../components/StatusCounterBadge";
 class Dashboard extends Component {

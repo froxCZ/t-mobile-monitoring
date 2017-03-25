@@ -9,8 +9,7 @@ class EventsManager:
   @staticmethod
   def logStatusChangeEvent(flow, message, ticTime, newStatus):
     currentTime = config.getCurrentTime()
-    obj = {"_id": currentTime,
-           "flowName": flow["name"],
+    obj = {"flowName": flow["name"],
            "lobName": flow["lobName"],
            "country": flow["country"],
            "time": currentTime,

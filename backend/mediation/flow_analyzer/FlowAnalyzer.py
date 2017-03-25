@@ -21,7 +21,6 @@ class FlowAnalyzer:
     self.outageDetector = OutageDetector(self.flow)
 
   def run(self, time):
-    logging.info("analyzing " + self.flow["name"])
     latestCompleteTicTime = self._getLatestCompleteTicTime(time)
     self.status = self.outageDetector.getStatus(latestCompleteTicTime)
     self.difference = self.outageDetector.difference

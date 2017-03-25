@@ -25,6 +25,7 @@ def jsonDictSerializer(dictToSend):
 
 class StatusProducer(threading.Thread):
   _instance = None
+  daemon = True
 
   def __init__(self):
     super().__init__()
@@ -65,7 +66,6 @@ class StatusProducer(threading.Thread):
     dictMsg["messageId"] = util.randomHash(10)
     dictMsg["time"] = AppConfig.getCurrentTime()
     self.q.put(dictMsg)
-    print("queued " + str(dictMsg))
 
   @staticmethod
   def instance():

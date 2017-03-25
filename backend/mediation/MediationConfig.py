@@ -1,3 +1,4 @@
+from config import AppConfig
 from mongo import mongo
 
 configColl = mongo.config()
@@ -124,6 +125,10 @@ class MediationConfig():
       return lobs[lobName]
     else:
       return None
+
+  @staticmethod
+  def numberOfWorker():
+    return AppConfig.getMediationConfig().get("analyzerThreads",1)
 
 
 def _getCountryFromLob(lobName):
