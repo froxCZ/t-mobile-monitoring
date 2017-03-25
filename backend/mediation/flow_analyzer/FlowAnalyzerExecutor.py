@@ -9,7 +9,7 @@ from mediation import MediationConfig
 from mediation.flow_analyzer import status
 from mediation.flow_analyzer.FlowAnalyzer import FlowAnalyzer
 from mediation.flow_analyzer.FlowStatusManager import FlowStatusManager
-from scheduler.AbstractAnalyzerRunner import AbstractAnalyzerRunner
+from scheduler.AbstractExecutor import AbstractExecutor
 
 
 class Worker(threading.Thread):
@@ -37,14 +37,13 @@ class Worker(threading.Thread):
       pass
 
 
-class FlowAnalyzerRunner(AbstractAnalyzerRunner):
-  name = "FlowAnalyzerRunner"
+class FlowAnalyzerExecutor(AbstractExecutor):
 
   def __init__(self):
-    super().__init__()
+    super().__init__("MediationAnalyzerExecutor")
     self.statusManager = FlowStatusManager()
 
-  def _runInternal(self):
+  def _executeInternal(self):
     flowQueue = Queue()
     for country in MediationConfig.getCountryList():
       self._enqueFlowsToAnalyze(flowQueue, country)
@@ -87,5 +86,5 @@ class FlowAnalyzerRunner(AbstractAnalyzerRunner):
 
 if __name__ == "__main__":
   logging.basicConfig(format='%(levelname)s [%(module)s]: %(message)s', level=logging.DEBUG)
-  FlowAnalyzerRunner().run()
+  FlowAnalyzerExecutor().execute()
   print("x")
