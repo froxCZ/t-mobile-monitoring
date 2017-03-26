@@ -11,7 +11,8 @@ class Analyzer():
     if cluster == None:
       cluster = ZookeeperConfig.getCluster()
     if cluster["enabled"] == False:
-      return {}
+      cluster["status"] = "DISABLED"
+      return cluster
     numberOfNodes = len(cluster["nodes"])
     onlineNodes = 0
     nodeStatus = {}

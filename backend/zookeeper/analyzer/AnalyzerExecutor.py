@@ -21,6 +21,8 @@ class AnalyzerExecutor(AbstractExecutor):
     statusChange = {"nodes": {}, "system": "zookeeper"}
     change = False
     try:
+      if newClusterStatus["status"] == "DISABLED":
+        return
       for nodeName, node in newClusterStatus["nodes"].items():
         oldNode = oldClusterStatus["nodes"].get(nodeName, None)
         if oldNode is None:
