@@ -32,13 +32,12 @@ class Worker(threading.Thread):
           job = self.queue.get_nowait()
           self._analyzeFlow(job["flow"], job["lastExecution"])
         except Exception as e:
-          logging.error("Error while analyzing flow. " + str(e))
+          logging.exception("Error while analyzing flow.")
     except Empty as e:
       pass
 
 
 class FlowAnalyzerExecutor(AbstractExecutor):
-
   def __init__(self):
     super().__init__("MediationAnalyzerExecutor")
     self.statusManager = FlowStatusManager()

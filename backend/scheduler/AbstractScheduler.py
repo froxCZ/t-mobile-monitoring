@@ -1,4 +1,3 @@
-import abc
 import threading
 import time
 
@@ -15,11 +14,10 @@ class AbstractScheduler(threading.Thread):
   def run(self):
     self.startScheduling()
 
-  @abc.abstractmethod
   def startScheduling(self):
-    for seconds, schedulers in self.executors.items():
-      for scheduler in schedulers:
-        schedule.every(seconds).seconds.do(scheduler.execute)
+    for seconds, executors in self.executors.items():
+      for executor in executors:
+        schedule.every(seconds).seconds.do(executor.execute)
 
     while True:
       schedule.run_pending()
