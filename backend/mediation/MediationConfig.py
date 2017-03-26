@@ -140,6 +140,6 @@ def _getCountryFromLob(lobName):
 
 
 def setFlowDefaultOptions(obj, parentObj):
-  options = {**parentObj, **obj}
+  options = {**parentObj, **{"minimalExpectation": 1}, **obj}
   options["enabled"] = obj.get("enabled", True) and parentObj["enabled"]
   return options

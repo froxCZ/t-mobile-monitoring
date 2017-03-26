@@ -13,7 +13,7 @@ class ExpectedTrafficQuery:
     self.granularity = granularity
     self.dates = SimilarPastDaysFinder(self.flow).findSimilarPastDays(date)
     country = MediationConfig.getCountryByName(self.flow["country"])
-    options = self.flow["options"]
+    self.options = self.flow["options"]
     self.adjustment = None
     lazyDayDifference = self.flow["options"].get("lazyDayDifference", 1)
     if lazyDayDifference != 1:
@@ -35,8 +35,10 @@ class ExpectedTrafficQuery:
         tick[metric] = tick[metric] * self.adjustment
     dayMedians = _createMedians(data, metric)
     self.dayAverage = 0
-    if len(dayMedians.values()) != 0:
-      self.dayAverage = sum(dayMedians.values()) / len(dayMedians.values())
+    for minute, expectedValue in dayMedians.items():
+      dayMedians[minute] = max(expectedValue, self.options["minimalExpectation"])
+    if len(dayMedians) != 0:
+      self.dayAverage = sum(dayMedians.values()) / len(dayMedians)
     return dayMedians
 
 

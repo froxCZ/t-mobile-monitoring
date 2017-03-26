@@ -63,7 +63,7 @@ class MediationAnalyzerExecutor(AbstractExecutor):
       for worker in workers:
         worker.join()
       logging.info("Finished analyzing " + str(flowsToAnalyzeCnt) +
-                   "flows. Time: " + str(int(time.time() - start)) + " seconds.")
+                   " flows. Time: " + str(int(time.time() - start)) + " seconds.")
 
   def _enqueFlowsToAnalyze(self, flowQueue, country):
     self.lastExecutions = self.statusManager.getAll(country)

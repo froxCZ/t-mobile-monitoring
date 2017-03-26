@@ -5,7 +5,6 @@ from flask import Blueprint, jsonify
 from flask import request
 
 import util
-from config import config
 from mediation import MediationConfig
 from mediation import data_query
 from mediation.data_receiver import DataInsertor
@@ -27,13 +26,13 @@ def dataQueryV2():
   if "neids" in searchParam:
     for neid in searchParam["neids"]:
       if neid == "*":
-        flows.append(config.createMergedFlowsObject(country, lobName, "inputs"))
+        flows.append(createMergedFlowsObject(country, lobName, "inputs"))
         break
       flows.append(lobConfig["flows"][neid])
   if "forwards" in searchParam:
     for forward in searchParam["forwards"]:
       if forward == "*":
-        flows.append(config.createMergedFlowsObject(country, lobName, "forwards"))
+        flows.append(createMergedFlowsObject(country, lobName, "forwards"))
         break
       flows.append(lobConfig["flows"][forward])
   response = {}
@@ -116,6 +115,16 @@ def getDayMedians():
   response["metrics"] = ["median"]
   return jsonify(response)
 
+def createMergedFlowsObject(country, lobName, flowType):
+  flow = {}
+  flow["name"] = lobName + "-" + flowType
+  flow["type"] = "all_forwards"
+  flow["lobName"] = lobName
+  flow["dataPath"] = country + "." + lobName + "." + flowType + ".sum"
+  flow["gName"] = lobName + "_" + flowType
+  flow["country"] = country
+  flow["options"] = MediationConfig.getLobWithCountry(country, lobName)["options"]
+  return flow
 # def smoothData(data, granularity, validMetricName):
 #   dataList = []
 #   for row in data:
