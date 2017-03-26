@@ -2,8 +2,8 @@ import csv
 
 import pytz
 
-import mediation.data_receiver.config as config
-import mediation.data_receiver.util as util
+import mediation.data_receiver.DataReceiverConfig as config
+import mediation.data_receiver.DataReceiverUtil as util
 from config import AppConfig
 from .data_insertor import DataInsertor
 

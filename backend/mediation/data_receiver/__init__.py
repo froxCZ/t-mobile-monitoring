@@ -1,5 +1,4 @@
-from .DataInsertor import DataListInsertor
-from .DataParser import DataParser
+from .DataInsertor import DataInsertor
 
 
 

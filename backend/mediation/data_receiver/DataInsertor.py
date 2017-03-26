@@ -1,19 +1,24 @@
 import logging
 from datetime import timedelta
 
+from mediation.data_receiver.DataParser import DataParser
 from mongo import mongo
 
 
-class DataListInsertor():
-  def __init__(self):
+class DataInsertor():
+  def __init__(self,stream):
     super().__init__()
+    self.dataParser = DataParser(stream)
+  def run(self):
+    for dataList in self.dataParser:
+      self._insertRows(dataList)
 
-  def insertRows(self, rowList):
+  def _insertRows(self, rowList):
     coll = mongo.lobs()
     updates = _sumUpdates(list(map(_createRowUpdateDict, rowList)))
     logging.info("Inserted " + str(len(rowList)) + " rows")
-    # for key, value in updates.items():
-    #   coll.update({'_id': key}, value, upsert=True)
+    for key, value in updates.items():
+      coll.update({'_id': key}, value, upsert=True)
 
 def _createRowUpdateDict(row):
   date = row["date"]
@@ -48,3 +53,7 @@ def _sumUpdates(updates):
           prevUpdate["$inc"][key] = value
 
   return sums
+
+if __name__ == "__main__":
+  insertor = DataInsertor(open("/home/frox/tmobile/data_mar12/preparation/input/AT_Spark_Statistics_010117.csv", 'r'))
+  insertor.run()

@@ -8,8 +8,7 @@ import util
 from config import config
 from mediation import MediationConfig
 from mediation import data_query
-from mediation.data_receiver import DataListInsertor
-from mediation.data_receiver import DataParser
+from mediation.data_receiver import DataInsertor
 
 api_data_query = Blueprint('data_query', __name__)
 
@@ -77,9 +76,8 @@ def dataQueryV2():
 def insertData():
   f = request.files['file']
   stream = io.StringIO(f.stream.read().decode("UTF8"), newline=None)
-  insertor = DataListInsertor()
-  for l in DataParser(stream):
-    insertor.insertRows(l)
+  insertor = DataInsertor(stream)
+  insertor.run()
   return jsonify({})
 
 
