@@ -27,17 +27,21 @@ def jsonDictSerializer(dictToSend):
 
 
 class StatusProducer(threading.Thread):
+  name = "StatusProducer"
   _instance = None
   daemon = True
 
   def __init__(self):
     super().__init__()
+    self.status = "DISCONNECTED"
     if IntegrationConfig.outputTopic() is not None:
       self.q = Queue()
       self.emailSender = EmailSender.instance()
       self.start()
       self.sendingSuccess = None
       self.kafkaProducer = None
+    else:
+      self.status = "NOT_CONFIGURED"
 
   def _startProducer(self):
     try:
@@ -47,6 +51,7 @@ class StatusProducer(threading.Thread):
         value_serializer=jsonDictSerializer,
         request_timeout_ms=3000
       )
+      self.status = "CONNECTED"
     except Exception as e:
       logging.exception("Failed to connect to kafka.")
       time.sleep(120)
@@ -60,8 +65,10 @@ class StatusProducer(threading.Thread):
         if self.kafkaProducer is None:
           self._startProducer()
         self.kafkaProducer.send(IntegrationConfig.outputTopic(), dictMsg).get(3)
+        self.status = "CONNECTED"
         self.sendingSuccess = True
       except Exception as e:
+        self.status = "DISCONNECTED"
         if self.sendingSuccess:
           self.emailSender.sendEmail("kafka", "Failed to send message " + str(dictMsg))
           self.sendingSuccess = False

@@ -40,8 +40,9 @@ class Worker(threading.Thread):
 
 
 class MediationAnalyzerExecutor(AbstractExecutor):
+  name = "MediationAnalyzerExecutor"
   def __init__(self):
-    super().__init__("MediationAnalyzerExecutor")
+    super().__init__(MediationAnalyzerExecutor.name)
     self.statusManager = FlowStatusManager()
 
   def _executeInternal(self):

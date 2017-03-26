@@ -7,9 +7,10 @@ from zookeeper.analyzer.Analyzer import Analyzer
 from zookeeper.analyzer.StatusManager import StatusManager
 
 
-class AnalyzerExecutor(AbstractExecutor):
+class ZookeeperAnalyzerExecutor(AbstractExecutor):
+  name = "ZookeeperAnalyzerExecutor"
   def __init__(self):
-    super().__init__("ZookeeperAnalyzerExecutor")
+    super().__init__(ZookeeperAnalyzerExecutor.name)
     self.analyzer = Analyzer()
 
   def _executeInternal(self):
@@ -42,4 +43,4 @@ class AnalyzerExecutor(AbstractExecutor):
 
 
 if __name__ == '__main__':
-  AnalyzerExecutor().execute()
+  ZookeeperAnalyzerExecutor().execute()

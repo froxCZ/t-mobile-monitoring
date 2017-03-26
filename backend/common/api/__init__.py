@@ -3,6 +3,7 @@ import hashlib
 from flask import Blueprint, jsonify
 from flask import request
 
+from common import SystemStatusManager
 from common import UserManager
 
 common = Blueprint('common', __name__)
@@ -65,6 +66,10 @@ def usersPOST():
     raise StatusException("Login is required", 400)
   UserManager.addUser(body)
   return jsonify(UserManager.getUsers())
+
+@common.route('/status', methods=["GET"])
+def getSystemStatus():
+  return jsonify(SystemStatusManager.getStatus())
 
 
 @common.route('/user/<string:login>', methods=["PUT"])

@@ -4,7 +4,7 @@ import time
 
 import schedule
 
-from zookeeper.analyzer import AnalyzerExecutor
+from zookeeper.analyzer import ZookeeperAnalyzerExecutor
 
 """
 deprecated
@@ -18,7 +18,7 @@ class Scheduler(threading.Thread):
     logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.INFO)
     from mediation.flow_analyzer import MediationAnalyzerExecutor
     MODULE_SCHEDULERS = {
-      5:[AnalyzerExecutor()],
+      5:[ZookeeperAnalyzerExecutor()],
       15: [MediationAnalyzerExecutor()],
 
     }
