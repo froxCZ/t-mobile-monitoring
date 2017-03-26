@@ -32,6 +32,8 @@ class Worker(threading.Thread):
           job = self.queue.get_nowait()
           self._analyzeFlow(job["flow"], job["lastExecution"])
         except Exception as e:
+          if type(e) is Empty:
+            raise Empty
           logging.exception("Error while analyzing flow.")
     except Empty as e:
       pass
