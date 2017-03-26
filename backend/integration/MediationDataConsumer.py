@@ -1,6 +1,7 @@
 import json
 import logging
 import threading
+import time
 
 from kafka import KafkaConsumer
 
@@ -8,31 +9,49 @@ import util
 from integration import IntegrationConfig
 from mongo import mongo
 
+logging.getLogger('kafka').setLevel(logging.CRITICAL)
+
 
 class MediationDataConsumer(threading.Thread):
-  daemon = False
+  name = "MediationDataConsumer"
+  _instance = None
+  daemon = True
+
+  def __init__(self):
+    super().__init__()
+    self.status = "DISCONNECTED"
+
+  def _startConsumer(self):
+    if IntegrationConfig.inputTopic() is not None and IntegrationConfig.kafkaServers() is not None:
+      while True:
+        try:
+          consumer = KafkaConsumer(bootstrap_servers=IntegrationConfig.kafkaServers(),
+                                   auto_offset_reset='latest',
+                                   enable_auto_commit=True,
+                                   group_id="mediationMonitoring")
+          consumer.subscribe([IntegrationConfig.inputTopic()])
+          self.status = "CONNECTED"
+          self.consumer = consumer
+          return
+        except Exception as e:
+          logging.exception("Failed to connect to kafka.")
+          time.sleep(120)
+    else:
+      self.status = "NOT_CONFIGURED"
+      return False
 
   def run(self):
-    consumer = KafkaConsumer(bootstrap_servers=IntegrationConfig.kafkaServers(),
-                             auto_offset_reset='latest',
-                             enable_auto_commit=True,
-                             group_id="mediationMonitoring")
-    consumer.subscribe(['mediationData'])
-
-    for message in consumer:
-      try:
-        self.processMessage(message)
-      except Exception as e:
-        logging.warning(str(e))
+    if self._startConsumer():
+      for message in self.consumer:
+        try:
+          self.processMessage(message)
+        except Exception as e:
+          logging.exception("Error while processing mediation data message.")
 
   def processMessage(self, message):
-    try:
-      value = message.value.decode('utf-8')
-      row = json.loads(value)
-      return self.saveMediationData(row)
-    except Exception as e:
-      logging.error("Error while processing mediation data " + str(e))
-      return True
+    value = message.value.decode('utf-8')
+    row = json.loads(value)
+    return self.saveMediationData(row)
 
   def saveMediationData(self, row):
     """
@@ -67,14 +86,11 @@ class MediationDataConsumer(threading.Thread):
       logging.error("Error while persisting data " + str(row) + " exception: " + str(e))
       return False
 
-
-def main():
-  threads = [
-    MediationDataConsumer()
-  ]
-
-  for t in threads:
-    t.start()
+  @staticmethod
+  def instance():
+    if MediationDataConsumer._instance is None:
+      MediationDataConsumer._instance = MediationDataConsumer()
+    return MediationDataConsumer._instance
 
 
 if __name__ == "__main__":
@@ -82,7 +98,12 @@ if __name__ == "__main__":
     format='%(asctime)s.%(msecs)s:%(name)s:%(thread)d:%(levelname)s:%(process)d:%(message)s',
     level=logging.INFO
   )
-  main()
+  threads = [
+    MediationDataConsumer()
+  ]
+
+  for t in threads:
+    t.start()
   """
   data = {"country": "CZ",
           "lob": "ACI",

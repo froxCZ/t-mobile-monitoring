@@ -34,49 +34,50 @@ class StatusProducer(threading.Thread):
   def __init__(self):
     super().__init__()
     self.status = "DISCONNECTED"
-    if IntegrationConfig.outputTopic() is not None:
-      self.q = Queue()
-      self.emailSender = EmailSender.instance()
-      self.start()
-      self.sendingSuccess = None
-      self.kafkaProducer = None
-    else:
-      self.status = "NOT_CONFIGURED"
+    self.q = Queue()
+    self.emailSender = EmailSender.instance()
+    self.start()
+    self.sendingSuccess = None
+    self.kafkaProducer = None
 
   def _startProducer(self):
-    try:
-      assert IntegrationConfig.kafkaServers() is not None
-      self.kafkaProducer = KafkaProducer(
-        bootstrap_servers=IntegrationConfig.kafkaServers(),
-        value_serializer=jsonDictSerializer,
-        request_timeout_ms=3000
-      )
-      self.status = "CONNECTED"
-    except Exception as e:
-      logging.exception("Failed to connect to kafka.")
-      time.sleep(120)
-      raise e
+    if IntegrationConfig.outputTopic() is not None and IntegrationConfig.kafkaServers() is not None:
+      while True:
+        try:
+          kafkaProducer = KafkaProducer(
+            bootstrap_servers=IntegrationConfig.kafkaServers(),
+            value_serializer=jsonDictSerializer,
+            request_timeout_ms=3000
+          )
+          self.status = "CONNECTED"
+          self.kafkaProducer = kafkaProducer
+          return True
+        except Exception as e:
+          logging.exception("Failed to connect to kafka.")
+          time.sleep(120)
+    else:
+      self.status = "NOT_CONFIGURED"
+      return False
 
   def run(self):
-    while True:
-      dictMsg = None
-      try:
-        dictMsg = self.q.get()
-        if self.kafkaProducer is None:
-          self._startProducer()
-        self.kafkaProducer.send(IntegrationConfig.outputTopic(), dictMsg).get(3)
-        self.status = "CONNECTED"
-        self.sendingSuccess = True
-      except Exception as e:
-        self.status = "DISCONNECTED"
-        if self.sendingSuccess:
-          self.emailSender.sendEmail("kafka", "Failed to send message " + str(dictMsg))
-          self.sendingSuccess = False
-        if dictMsg is not None and self.q.qsize() < 10000:
-          self.q.put(dictMsg)
+    if self._startProducer():
+      while True:
+        dictMsg = None
+        try:
+          dictMsg = self.q.get()
+          self.kafkaProducer.send(IntegrationConfig.outputTopic(), dictMsg).get(3)
+          self.status = "CONNECTED"
+          self.sendingSuccess = True
+        except Exception as e:
+          self.status = "DISCONNECTED"
+          if self.sendingSuccess:
+            self.emailSender.sendEmail("kafka", "Failed to send message " + str(dictMsg))
+            self.sendingSuccess = False
+          if dictMsg is not None and self.q.qsize() < 10000:
+            self.q.put(dictMsg)
 
   def send(self, dictMsg):
-    if IntegrationConfig.outputTopic() is not None:
+    if self.status != "NOT_CONFIGURED":
       dictMsg["messageId"] = util.randomHash(10)
       dictMsg["time"] = AppConfig.getCurrentTime()
       self.q.put(dictMsg)
