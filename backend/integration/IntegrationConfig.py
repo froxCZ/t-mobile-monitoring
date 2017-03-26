@@ -1,14 +1,19 @@
+from config import AppConfig
+
+
 class IntegrationConfig:
   @staticmethod
   def kafkaServers():
-    return "127.0.0.2:9092"
+    return AppConfig.getIntegrationConfig().get("kafka", {}).get("servers", None)
+
+  @staticmethod
+  def outputTopic():
+    return AppConfig.getIntegrationConfig().get("kafka", {}).get("outputTopic", None)
+
+  @staticmethod
+  def inputTopic():
+    return AppConfig.getIntegrationConfig().get("kafka", {}).get("inputTopic", None)
 
   @staticmethod
   def getEmailConfig():
-    emailConfig = {}
-    emailConfig['to'] = "mediation-monitoring@seznam.cz"
-    emailConfig['from'] = "mediation-monitoring@seznam.cz"
-    emailConfig['login'] = "mediation-monitoring@seznam.cz"
-    emailConfig['password'] = "mediation1."
-    emailConfig['smtpHostname'] = "smtp.seznam.cz"
-    return emailConfig
+    return AppConfig.getIntegrationConfig().get("email",None)

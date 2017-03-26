@@ -23,13 +23,16 @@ class EmailSender:
     return AppConfig.getCurrentTime() - lastTime > MIN_DELAY
 
   def sendEmail(self, component, body):
+    emailConfig = IntegrationConfig.getEmailConfig()
+    if emailConfig is None:
+      return
     if not self.canSendEmail(component):
       return
     msg = MIMEText(body +
                    "\ntime:" + util.dateToTimeString(AppConfig.getCurrentTime()) +
                    "\ncomponent:" + component
                    )
-    emailConfig = IntegrationConfig.getEmailConfig()
+
     msg['Subject'] = 'Mediation monitoring: ' + component
     msg['From'] = emailConfig["from"]
     msg['To'] = emailConfig["to"]

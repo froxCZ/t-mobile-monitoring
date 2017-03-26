@@ -7,8 +7,8 @@ import pytz
 
 TIMEZONE = pytz.timezone('CET')
 
-
 configColl = None
+
 
 class AppConfig:
   configDict = None
@@ -42,6 +42,10 @@ class AppConfig:
   @staticmethod
   def getMongoConfig():
     return AppConfig.configDict.get("mongo")
+
+  @staticmethod
+  def getIntegrationConfig():
+    return AppConfig.configDict.get("integration", {})
 
   @staticmethod
   def loadConfigFile():
