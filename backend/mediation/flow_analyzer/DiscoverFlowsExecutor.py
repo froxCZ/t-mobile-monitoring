@@ -4,6 +4,7 @@ import logging
 from config import AppConfig
 from mediation import MediationConfig
 from mongo import mongo
+from scheduler.AbstractExecutor import AbstractExecutor
 
 SEPARATOR = "-+-"
 
@@ -21,13 +22,17 @@ def globalNameToFlow(globalName):
   return {"country": country, "lobName": lobName, "name": name, "type": type}
 
 
-class DiscoverFlowsExecutor:
+class DiscoverFlowsExecutor(AbstractExecutor):
+  name = "DiscoverFlowsExecutor"
+  interval = 60 * 60
+  maxRunningTime = 5 * 60
+
   def __init__(self):
-    super().__init__()
+    super().__init__(DiscoverFlowsExecutor.name, DiscoverFlowsExecutor.interval)
     self.toDate = AppConfig.getCurrentTime()
     self.fromDate = self.toDate - datetime.timedelta(days=7)
 
-  def execute(self):
+  def _executeInternal(self):
     cursor = mongo.lobs().find({"$and": [
       {"_id": {"$gte": self.fromDate}},
       {"_id": {"$lt": self.toDate}}
@@ -65,4 +70,3 @@ class DiscoverFlowsExecutor:
       MediationConfig.addFlow(flow)
     logging.info("inserted lobs:" + str(insertedLobs))
     logging.info("inserted flows:" + str(len(newFlows)))
-    return allFlows

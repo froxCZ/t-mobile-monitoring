@@ -6,8 +6,9 @@ from config import AppConfig
 
 
 class AbstractExecutor:
-  def __init__(self, name):
+  def __init__(self, name, interval):
     self.name = name
+    self.interval = interval
     pass
 
   def execute(self):
@@ -23,3 +24,6 @@ class AbstractExecutor:
   @abc.abstractmethod
   def _executeInternal(self):
     return
+
+  def getInterval(self):
+    return self.interval

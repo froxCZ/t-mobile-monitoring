@@ -5,8 +5,5 @@ from scheduler.AbstractScheduler import AbstractScheduler
 
 class MediationScheduler(AbstractScheduler):
   def __init__(self):
-    executors = {
-      15: [MediationAnalyzerExecutor()],
-      60 * 60: [DiscoverFlowsExecutor()]
-    }
+    executors = [MediationAnalyzerExecutor(),DiscoverFlowsExecutor()]
     super().__init__(executors)

@@ -3,6 +3,7 @@ import datetime
 from config import AppConfig
 from integration import MediationDataConsumer
 from integration import StatusProducer
+from mediation.flow_analyzer import DiscoverFlowsExecutor
 from mediation.flow_analyzer import MediationAnalyzerExecutor
 from mongo import mongo
 from zookeeper.analyzer import ZookeeperAnalyzerExecutor
@@ -10,30 +11,32 @@ from zookeeper.analyzer import ZookeeperAnalyzerExecutor
 statusColl = mongo.statuses()
 
 
-def _statusIsExpired(time, maxMinutes=5):
-  return AppConfig.getCurrentTime() - time > datetime.timedelta(minutes=maxMinutes)
+def _statusIsExpired(time, maxSeconds=60 * 5):
+  return AppConfig.getCurrentTime() - time > datetime.timedelta(seconds=maxSeconds)
 
 
 class SystemStatusManager:
   @staticmethod
   def getStatus():
     from scheduler.ComponentMonitoring import ComponentMonitoring
-    executors = [ComponentMonitoring.name, ZookeeperAnalyzerExecutor.name, MediationAnalyzerExecutor.name]
-    kafkaComponents = [StatusProducer.name,MediationDataConsumer.name]
+    executors = [ComponentMonitoring, ZookeeperAnalyzerExecutor, MediationAnalyzerExecutor, DiscoverFlowsExecutor]
+    kafkaComponents = [StatusProducer.name, MediationDataConsumer.name]
     systemStatus = {"executors": {}, "kafka": {}}
     res = statusColl.find_one({"_id": "system"}, {"_id": 0})
     if res == None:
       res = {}
-    for executorName in executors:
-      executorStatus = res.get("executors", {}).get(executorName, None)
-      if executorStatus is None or _statusIsExpired(executorStatus["time"]):
-        systemStatus["executors"][executorName] = "FAIL"
+    for executor in executors:
+      executorStatus = res.get("executors", {}).get(executor.name, None)
+      if executorStatus is None or _statusIsExpired(executorStatus["time"],
+                                                    executor.interval + executor.maxRunningTime):
+        systemStatus["executors"][executor.name] = "FAIL"
       else:
-        systemStatus["executors"][executorName] = executorStatus["status"]
+        systemStatus["executors"][executor.name] = executorStatus["status"]
 
     for componentName in kafkaComponents:
       componentStatus = res.get("kafka", {}).get(componentName, None)
-      if componentStatus is None or _statusIsExpired(componentStatus["time"]):
+      if componentStatus is None or \
+        _statusIsExpired(componentStatus["time"], ComponentMonitoring.interval + ComponentMonitoring.maxRunningTime):
         systemStatus["kafka"][componentName] = "FAIL"
       else:
         systemStatus["kafka"][componentName] = componentStatus["status"]

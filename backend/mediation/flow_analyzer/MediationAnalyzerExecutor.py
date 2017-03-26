@@ -41,8 +41,11 @@ class Worker(threading.Thread):
 
 class MediationAnalyzerExecutor(AbstractExecutor):
   name = "MediationAnalyzerExecutor"
+  interval = 15
+  maxRunningTime = 5*60
+
   def __init__(self):
-    super().__init__(MediationAnalyzerExecutor.name)
+    super().__init__(MediationAnalyzerExecutor.name,MediationAnalyzerExecutor.interval)
     self.statusManager = FlowStatusManager()
 
   def _executeInternal(self):

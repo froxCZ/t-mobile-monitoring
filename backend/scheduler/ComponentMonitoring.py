@@ -8,8 +8,10 @@ from scheduler.AbstractScheduler import AbstractScheduler
 
 class ComponentMonitoring(AbstractExecutor):
   name = "ComponentMonitoring"
+  interval = 10
+  maxRunningTime = 5
   def __init__(self):
-    super().__init__(ComponentMonitoring.name)
+    super().__init__(ComponentMonitoring.name,ComponentMonitoring.interval)
 
   def _executeInternal(self):
     from common import SystemStatusManager
@@ -23,7 +25,4 @@ class ComponentMonitoring(AbstractExecutor):
 
 class ComponentMonitoringScheduler(AbstractScheduler):
   def __init__(self):
-    executors = {
-      15: [ComponentMonitoring()],
-    }
-    super().__init__(executors)
+    super().__init__([ComponentMonitoring()])

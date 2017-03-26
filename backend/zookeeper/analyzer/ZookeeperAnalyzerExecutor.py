@@ -9,8 +9,11 @@ from zookeeper.analyzer.StatusManager import StatusManager
 
 class ZookeeperAnalyzerExecutor(AbstractExecutor):
   name = "ZookeeperAnalyzerExecutor"
+  interval = 5
+  maxRunningTime = 5
+
   def __init__(self):
-    super().__init__(ZookeeperAnalyzerExecutor.name)
+    super().__init__(ZookeeperAnalyzerExecutor.name, ZookeeperAnalyzerExecutor.interval)
     self.analyzer = Analyzer()
 
   def _executeInternal(self):
