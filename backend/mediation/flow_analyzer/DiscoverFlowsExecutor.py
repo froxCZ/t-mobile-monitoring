@@ -1,4 +1,5 @@
 import datetime
+import logging
 
 from config import AppConfig
 from mediation import MediationConfig
@@ -57,12 +58,11 @@ class DiscoverFlowsExecutor:
     insertedLobs = 0
     for countryName, lobs in newLobs.items():
       for lobName in lobs.keys():
-        print(countryName + " " + lobName)
         insertedLobs += 1
         MediationConfig.addLob(countryName, lobName)
     for globalFlowName in newFlows.keys():
       flow = globalNameToFlow(globalFlowName)
       MediationConfig.addFlow(flow)
-    print("inserted lobs:" + str(insertedLobs))
-    print("inserted flows:" + str(len(newFlows)))
+    logging.info("inserted lobs:" + str(insertedLobs))
+    logging.info("inserted flows:" + str(len(newFlows)))
     return allFlows

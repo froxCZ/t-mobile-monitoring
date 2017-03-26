@@ -18,6 +18,10 @@ class AbstractScheduler(threading.Thread):
     myScheduler = schedule.Scheduler()
     for seconds, executors in self.executors.items():
       for executor in executors:
+        executor.execute()
+
+    for seconds, executors in self.executors.items():
+      for executor in executors:
         myScheduler.every(seconds).seconds.do(executor.execute)
 
     while True:
