@@ -12,8 +12,6 @@ from config import AppConfig
 from integration import EmailSender
 from integration import IntegrationConfig
 
-logging.getLogger('kafka').setLevel(logging.CRITICAL)
-
 
 def jsonDictSerializer(dictToSend):
   baseTypeDict = {}

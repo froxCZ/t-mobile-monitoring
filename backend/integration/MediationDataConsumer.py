@@ -9,8 +9,6 @@ import util
 from integration import IntegrationConfig
 from mongo import mongo
 
-logging.getLogger('kafka').setLevel(logging.CRITICAL)
-
 
 class MediationDataConsumer(threading.Thread):
   name = "MediationDataConsumer"

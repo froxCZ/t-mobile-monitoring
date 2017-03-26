@@ -1,6 +1,7 @@
 import datetime
 import logging
 import threading
+import time
 from queue import Queue, Empty
 
 import config
@@ -42,10 +43,10 @@ class Worker(threading.Thread):
 class MediationAnalyzerExecutor(AbstractExecutor):
   name = "MediationAnalyzerExecutor"
   interval = 15
-  maxRunningTime = 5*60
+  maxRunningTime = 5 * 60
 
   def __init__(self):
-    super().__init__(MediationAnalyzerExecutor.name,MediationAnalyzerExecutor.interval)
+    super().__init__(MediationAnalyzerExecutor.name, MediationAnalyzerExecutor.interval)
     self.statusManager = FlowStatusManager()
 
   def _executeInternal(self):
@@ -53,13 +54,16 @@ class MediationAnalyzerExecutor(AbstractExecutor):
     for country in MediationConfig.getCountryList():
       self._enqueFlowsToAnalyze(flowQueue, country)
     if not flowQueue.empty():
-      logging.info("Going to analyze " + str(flowQueue.unfinished_tasks))
+      start = time.time()
+      flowsToAnalyzeCnt = flowQueue.unfinished_tasks
+      logging.info("Going to analyze " + str(flowsToAnalyzeCnt)+" flows")
       workers = [Worker(flowQueue, self.statusManager) for i in range(0, MediationConfig.threadsCount())]
       for worker in workers:
         worker.start()
       for worker in workers:
         worker.join()
-      logging.info("Finished analyzing")
+      logging.info("Finished analyzing " + str(flowsToAnalyzeCnt) +
+                   "flows. Time: " + str(int(time.time() - start)) + " seconds.")
 
   def _enqueFlowsToAnalyze(self, flowQueue, country):
     self.lastExecutions = self.statusManager.getAll(country)

@@ -1,5 +1,6 @@
 import datetime
 import logging
+import time
 
 from config import AppConfig
 from mediation import MediationConfig
@@ -33,6 +34,7 @@ class DiscoverFlowsExecutor(AbstractExecutor):
     self.fromDate = self.toDate - datetime.timedelta(days=7)
 
   def _executeInternal(self):
+    start = time.time()
     cursor = mongo.lobs().find({"$and": [
       {"_id": {"$gte": self.fromDate}},
       {"_id": {"$lt": self.toDate}}
@@ -68,5 +70,6 @@ class DiscoverFlowsExecutor(AbstractExecutor):
     for globalFlowName in newFlows.keys():
       flow = globalNameToFlow(globalFlowName)
       MediationConfig.addFlow(flow)
-    logging.info("inserted lobs:" + str(insertedLobs))
-    logging.info("inserted flows:" + str(len(newFlows)))
+    if insertedLobs > 0 or len(newFlows) > 0:
+      logging.info("inserted " + str(insertedLobs) + " lobs and " + str(len(newFlows)) +
+                   " flows in " + str(int(time.time() - start)) + " seconds")

@@ -13,7 +13,7 @@ class AbstractExecutor:
 
   def execute(self):
     try:
-      logging.info(" Running " + self.name + " on thread " + str(threading.get_ident()))
+      logging.debug(" Running " + self.name + " on thread " + str(threading.get_ident()))
       self._executeInternal()
       from common import SystemStatusManager
       SystemStatusManager.saveExecutorSuccessfulExecution(self.name, AppConfig.getCurrentTime())
