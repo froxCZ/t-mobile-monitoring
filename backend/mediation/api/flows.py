@@ -6,7 +6,7 @@ from mediation import MediationConfig
 from mediation.MediationConfig import MEDIATION_DOCUMENT
 from mediation.flow_analyzer import FlowStatusManager
 
-flowsApi = Blueprint('flows', __name__)
+flowsAPI = Blueprint('flows', __name__)
 
 DEFAULT_EXPAND = {"config": True, "status": True}
 
@@ -24,7 +24,7 @@ def addStatus(res, status):
     res[k]["status"] = v
 
 
-@flowsApi.route('/<string:country>', methods=["GET"])
+@flowsAPI.route('/<string:country>', methods=["GET"])
 def getCountry(country):
   res = MediationConfig.getLobs(country)
   for lob in res.values():
@@ -37,12 +37,12 @@ def getCountry(country):
   return jsonify(res)
 
 
-@flowsApi.route('/<string:country>/enable', methods=["GET"])
+@flowsAPI.route('/<string:country>/enable', methods=["GET"])
 def getEnabledCountry(country):
   return jsonify({"enabled": MediationConfig.getCountryByName(country)["enabled"]})
 
 
-@flowsApi.route('/<string:country>/enable', methods=["PUT"])
+@flowsAPI.route('/<string:country>/enable', methods=["PUT"])
 def enableCountry(country):
   body = request.get_json()
   enable = body["enable"]
@@ -51,7 +51,7 @@ def enableCountry(country):
   return getEnabledCountry(country)
 
 
-@flowsApi.route('/<string:country>/<string:lobName>', methods=["GET"])
+@flowsAPI.route('/<string:country>/<string:lobName>', methods=["GET"])
 def getLob(country, lobName):
   res = MediationConfig.getLobWithCountry(country, lobName)
   if shouldIncludeStatus():
@@ -63,7 +63,7 @@ def getLob(country, lobName):
   return jsonify(res)
 
 
-@flowsApi.route(
+@flowsAPI.route(
   '/<string:country>/<string:lobName>/<string:flowName>', methods=["GET"])
 def flowGET(country, lobName, flowName):
   flow = MediationConfig.getLobWithCountry(country, lobName)["flows"][flowName]
@@ -73,13 +73,13 @@ def flowGET(country, lobName, flowName):
   return jsonify(flow)
 
 
-@flowsApi.route('', methods=["GET"])
+@flowsAPI.route('', methods=["GET"])
 def getCountriesOverview():
   countries = FlowStatusManager().getCountriesOverview()
   return jsonify(countries)
 
 
-@flowsApi.route('/<string:country>/<string:lobName>/<string:flowName>/enable', methods=["PUT"])
+@flowsAPI.route('/<string:country>/<string:lobName>/<string:flowName>/enable', methods=["PUT"])
 def enableFlow(country, lobName, flowName):
   body = request.get_json()
   enable = body["enable"]
@@ -89,7 +89,7 @@ def enableFlow(country, lobName, flowName):
   return jsonify(MediationConfig.getLobWithCountry(country, lobName)["flows"][flowName]["options"])
 
 
-@flowsApi.route('/<string:country>/<string:lobName>/options', methods=["PUT"])
+@flowsAPI.route('/<string:country>/<string:lobName>/options', methods=["PUT"])
 def lobOptionsPUT(country, lobName):
   body = request.get_json()
   optionsPath = "lobs." + country + "." + lobName + ".options"
@@ -97,7 +97,7 @@ def lobOptionsPUT(country, lobName):
   return jsonify(MediationConfig.getLobWithCountry(country, lobName)["options"])
 
 
-@flowsApi.route('/<string:country>/<string:lobName>/enable', methods=["PUT"])
+@flowsAPI.route('/<string:country>/<string:lobName>/enable', methods=["PUT"])
 def enableLob(country, lobName):
   enable = request.get_json()["enable"]
   optionsPath = "lobs." + country + "." + lobName + ".options.enabled"
@@ -105,14 +105,14 @@ def enableLob(country, lobName):
   return jsonify(MediationConfig.getLobWithCountry(country, lobName)["options"])
 
 
-@flowsApi.route('/<string:country>/<string:lobName>/<string:flowName>/options', methods=["GET"])
+@flowsAPI.route('/<string:country>/<string:lobName>/<string:flowName>/options', methods=["GET"])
 def getFlowOptions(country, lobName, flowName):
   lobConfig = MediationConfig.getLobWithCountry(country, lobName)
   flowConfig = lobConfig["flows"][flowName]
   return jsonify(flowConfig)
 
 
-@flowsApi.route('/<string:country>/<string:lobName>/<string:flowName>/options', methods=["PUT"])
+@flowsAPI.route('/<string:country>/<string:lobName>/<string:flowName>/options', methods=["PUT"])
 def putFlowOptions(country, lobName, flowName):
   body = request.get_json()
   flow = MediationConfig.getLobWithCountry(country, lobName)["flows"][flowName]
@@ -120,7 +120,7 @@ def putFlowOptions(country, lobName, flowName):
   return jsonify(MediationConfig.getLobWithCountry(country, lobName)["flows"][flowName]["options"])
 
 
-@flowsApi.route('/', methods=["POST"])
+@flowsAPI.route('/', methods=["POST"])
 def addLob():
   """put under /lobs"""
   addLobRequest = request.get_json()
@@ -132,7 +132,7 @@ def addLob():
   return getCountry(country)
 
 
-@flowsApi.route('/<string:country>/<string:lobName>', methods=["DELETE"])
+@flowsAPI.route('/<string:country>/<string:lobName>', methods=["DELETE"])
 def deleteLob(country, lobName):
   lob = MediationConfig.getLobWithCountry(country, lobName)
   if lob is not None:
@@ -142,7 +142,7 @@ def deleteLob(country, lobName):
   return getCountry(country)
 
 
-@flowsApi.route('/<string:country>/<string:lobName>', methods=["POST"])
+@flowsAPI.route('/<string:country>/<string:lobName>', methods=["POST"])
 def addFlow(country, lobName):
   lob = MediationConfig.getLobWithCountry(country, lobName)
   addFlowRequest = request.get_json()
@@ -155,7 +155,7 @@ def addFlow(country, lobName):
   return getLob(country, lobName)
 
 
-@flowsApi.route('/<string:country>/<string:lobName>/<string:flowName>', methods=["DELETE"])
+@flowsAPI.route('/<string:country>/<string:lobName>/<string:flowName>', methods=["DELETE"])
 def deleteFlow(country, lobName, flowName):
   lob = MediationConfig.getLobWithCountry(country, lobName)
   if flowName in lob["flows"]:

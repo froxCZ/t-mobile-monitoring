@@ -10,10 +10,10 @@ from mediation import MediationConfig
 from mediation import data_query
 from mediation.data_receiver import DataInsertor
 
-api_data_query = Blueprint('data_query', __name__)
+dataAPI = Blueprint('data_api', __name__)
 
 
-@api_data_query.route('/query', methods=["POST"])
+@dataAPI.route('/query', methods=["POST"])
 def dataQueryV2():
   searchParam = request.get_json()
   fromDate = util.stringToDate(searchParam["from"])
@@ -72,7 +72,7 @@ def dataQueryV2():
   return jsonify(response)
 
 
-@api_data_query.route('/insert', methods=["POST"])
+@dataAPI.route('/insert', methods=["POST"])
 def insertData():
   f = request.files['file']
   stream = io.StringIO(f.stream.read().decode("UTF8"), newline=None)
@@ -81,7 +81,7 @@ def insertData():
   return jsonify({})
 
 
-@api_data_query.route('/best_correlations', methods=["GET"])
+@dataAPI.route('/best_correlations', methods=["GET"])
 def bestCorrelations():
   lobName = request.args.get('lobName')
   granularity = int(request.args.get('granularity'))
@@ -90,14 +90,14 @@ def bestCorrelations():
   return jsonify(bestCorrelations)
 
 
-@api_data_query.route('/averages', methods=["GET"])
+@dataAPI.route('/averages', methods=["GET"])
 def getDayAverages():
   lobName = request.args.get('lobName')
   from past.data_util.moving_average import DayAverageExecutor
   return jsonify(DayAverageExecutor.getDayAverages(lobName))
 
 
-@api_data_query.route('/day_medians', methods=["GET"])
+@dataAPI.route('/day_medians', methods=["GET"])
 def getDayMedians():
   """deprecated"""
   lobName = request.args.get('lobName')

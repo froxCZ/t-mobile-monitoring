@@ -56,18 +56,18 @@ def handle_invalid_usage(error):
   return response
 
 
-from mediation.api.data_query import api_data_query
+from mediation.api.data import dataAPI
 from mediation.api.config import configAPI
 from mediation.api.status import lobsStatus
-from mediation.api.flows import flowsApi
+from mediation.api.flows import flowsAPI
 from mediation.api.mediation import mediation
 from common.api import common, StatusException
 from zookeeper.api import zookeeperApi
 
-app.register_blueprint(api_data_query, url_prefix="/mediation/data")
+app.register_blueprint(dataAPI, url_prefix="/mediation/data")
 app.register_blueprint(configAPI, url_prefix="/mediation/config")
 app.register_blueprint(lobsStatus, url_prefix="/mediation/status")
-app.register_blueprint(flowsApi, url_prefix="/mediation/flows")
+app.register_blueprint(flowsAPI, url_prefix="/mediation/flows")
 app.register_blueprint(mediation, url_prefix="/mediation")
 app.register_blueprint(common, url_prefix="/app")
 app.register_blueprint(zookeeperApi, url_prefix="/zookeeper")
