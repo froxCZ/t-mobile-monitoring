@@ -1,8 +1,10 @@
+import logging
+
 import config
 from integration import StatusProducer
 from scheduler.AbstractExecutor import AbstractExecutor
-from zookeeper.analyzer import StatusManager
 from zookeeper.analyzer.Analyzer import Analyzer
+from zookeeper.analyzer.StatusManager import StatusManager
 
 
 class AnalyzerExecutor(AbstractExecutor):
@@ -34,7 +36,7 @@ class AnalyzerExecutor(AbstractExecutor):
       if change:
         StatusProducer.instance().send(statusChange)
     except Exception as e:
-      print(e)
+      logging.exception("Exception while checking zookeeper status change.")
 
 
 if __name__ == '__main__':

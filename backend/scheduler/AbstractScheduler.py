@@ -15,10 +15,11 @@ class AbstractScheduler(threading.Thread):
     self.startScheduling()
 
   def startScheduling(self):
+    myScheduler = schedule.Scheduler()
     for seconds, executors in self.executors.items():
       for executor in executors:
-        schedule.every(seconds).seconds.do(executor.execute)
+        myScheduler.every(seconds).seconds.do(executor.execute)
 
     while True:
-      schedule.run_pending()
+      myScheduler.run_pending()
       time.sleep(1)

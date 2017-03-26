@@ -39,7 +39,7 @@ class Worker(threading.Thread):
       pass
 
 
-class FlowAnalyzerExecutor(AbstractExecutor):
+class MediationAnalyzerExecutor(AbstractExecutor):
   def __init__(self):
     super().__init__("MediationAnalyzerExecutor")
     self.statusManager = FlowStatusManager()
@@ -49,11 +49,13 @@ class FlowAnalyzerExecutor(AbstractExecutor):
     for country in MediationConfig.getCountryList():
       self._enqueFlowsToAnalyze(flowQueue, country)
     if not flowQueue.empty():
+      logging.info("Going to analyze " + str(flowQueue.unfinished_tasks))
       workers = [Worker(flowQueue, self.statusManager) for i in range(0, MediationConfig.threadsCount())]
       for worker in workers:
         worker.start()
       for worker in workers:
         worker.join()
+      logging.info("Finished analyzing")
 
   def _enqueFlowsToAnalyze(self, flowQueue, country):
     self.lastExecutions = self.statusManager.getAll(country)
@@ -87,5 +89,5 @@ class FlowAnalyzerExecutor(AbstractExecutor):
 
 if __name__ == "__main__":
   logging.basicConfig(format='%(levelname)s [%(module)s]: %(message)s', level=logging.DEBUG)
-  FlowAnalyzerExecutor().execute()
+  MediationAnalyzerExecutor().execute()
   print("x")

@@ -1,22 +1,23 @@
 import abc
 
 import logging
+import threading
 
 
 class AbstractExecutor:
   name = ""
 
-  def __init__(self,name):
+  def __init__(self, name):
     self.name = name
     pass
 
   def execute(self):
     try:
-      logging.info("Running "+self.name)
+      logging.info(" Running " + self.name + " on thread " + str(threading.get_ident()))
       self._executeInternal()
       # todo: save success status
     except Exception as e:
-      pass  # log exception
+      logging.exception("Executing failed.")
     return
 
   @abc.abstractmethod

@@ -16,10 +16,10 @@ class Scheduler(threading.Thread):
 
   def run(self):
     logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.INFO)
-    from mediation.flow_analyzer import FlowAnalyzerExecutor
+    from mediation.flow_analyzer import MediationAnalyzerExecutor
     MODULE_SCHEDULERS = {
       5:[AnalyzerExecutor()],
-      15: [FlowAnalyzerExecutor()],
+      15: [MediationAnalyzerExecutor()],
 
     }
 
