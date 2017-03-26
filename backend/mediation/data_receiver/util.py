@@ -4,7 +4,7 @@ from datetime import datetime
 from datetime import timedelta
 def dateToBucket(startDate,date,granularity):
     d = date - startDate
-    diffMinutes = d.total_seconds() / 60;
+    diffMinutes = d.total_seconds() / 60
     return round(diffMinutes / granularity)
 
 def stringToDate(dateTimeStr):

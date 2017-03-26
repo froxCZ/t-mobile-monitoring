@@ -44,7 +44,7 @@ class Api {
         "granularity": granularity || 0
       }
     };
-    return this.fetch("/mediation/data_query/flows", myInit);
+    return this.fetch("/mediation/data/query", myInit);
   }
 
   fetch(url, myInit) {

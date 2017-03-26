@@ -11,6 +11,7 @@ from config import AppConfig
 
 app = Flask(__name__)
 CORS(app)
+app.config['MAX_CONTENT_LENGTH'] = 40 * 1024 * 1024
 
 
 class CustomJSONEncoder(JSONEncoder):
@@ -63,7 +64,7 @@ from mediation.api.mediation import mediation
 from common.api import common, StatusException
 from zookeeper.api import zookeeperApi
 
-app.register_blueprint(api_data_query, url_prefix="/mediation/data_query")
+app.register_blueprint(api_data_query, url_prefix="/mediation/data")
 app.register_blueprint(configAPI, url_prefix="/mediation/config")
 app.register_blueprint(lobsStatus, url_prefix="/mediation/status")
 app.register_blueprint(flowsApi, url_prefix="/mediation/flows")

@@ -6,5 +6,6 @@ COUNTRIES = {
 }
 
 IGNORE_LOBS = {
-  "GT2"
+  "CZ_GT2",
+  "CZ_FOX"
 }

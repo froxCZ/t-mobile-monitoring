@@ -13,7 +13,9 @@ LATEST_DATE = util.stringToDate("20.02.16 00:00:00").replace(tzinfo=AppConfig.ge
 def isValidFlow(flow):
   return flow["date"] > LATEST_DATE and flow["country"] in config.COUNTRIES and flow["lob"] not in config.IGNORE_LOBS
 
-
+"""
+deprecated
+"""
 class FileParser:
   def __init__(self):
     self.batchSize = 100000

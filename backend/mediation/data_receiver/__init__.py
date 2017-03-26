@@ -1,15 +1,6 @@
-from pymongo import MongoClient
+from .DataInsertor import DataListInsertor
+from .DataParser import DataParser
 
-client = MongoClient("mongodb://localhost/dev")
-db = client["dev"]
-result = db.test.insert_one(
-  {
-    "address": {
-      "street": "2 Avenue"
-    }
-  }
-)
-print(result.acknowledged)
 
 
 

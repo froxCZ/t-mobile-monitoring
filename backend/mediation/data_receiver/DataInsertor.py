@@ -1,21 +1,19 @@
+import logging
 from datetime import timedelta
 
 from mongo import mongo
 
-"""
-deprecated
-"""
-class DataInsertor():
 
+class DataListInsertor():
   def __init__(self):
     super().__init__()
 
   def insertRows(self, rowList):
     coll = mongo.lobs()
     updates = _sumUpdates(list(map(_createRowUpdateDict, rowList)))
-    print("Inserted " + str(len(rowList)) + " rows")
-    for key, value in updates.items():
-      coll.update({'_id': key}, value, upsert=True)
+    logging.info("Inserted " + str(len(rowList)) + " rows")
+    # for key, value in updates.items():
+    #   coll.update({'_id': key}, value, upsert=True)
 
 def _createRowUpdateDict(row):
   date = row["date"]

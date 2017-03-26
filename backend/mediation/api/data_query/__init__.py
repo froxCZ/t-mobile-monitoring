@@ -1,4 +1,5 @@
 import datetime
+import io
 
 from flask import Blueprint, jsonify
 from flask import request
@@ -7,11 +8,13 @@ import util
 from config import config
 from mediation import MediationConfig
 from mediation import data_query
+from mediation.data_receiver import DataListInsertor
+from mediation.data_receiver import DataParser
 
 api_data_query = Blueprint('data_query', __name__)
 
 
-@api_data_query.route('/flows', methods=["POST"])
+@api_data_query.route('/query', methods=["POST"])
 def dataQueryV2():
   searchParam = request.get_json()
   fromDate = util.stringToDate(searchParam["from"])
@@ -68,6 +71,16 @@ def dataQueryV2():
   response["data"] = data
   response["metadata"] = {**{"metrics": metrics}, **metadata}
   return jsonify(response)
+
+
+@api_data_query.route('/insert', methods=["POST"])
+def insertData():
+  f = request.files['file']
+  stream = io.StringIO(f.stream.read().decode("UTF8"), newline=None)
+  insertor = DataListInsertor()
+  for l in DataParser(stream):
+    insertor.insertRows(l)
+  return jsonify({})
 
 
 @api_data_query.route('/best_correlations', methods=["GET"])

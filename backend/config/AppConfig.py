@@ -10,6 +10,7 @@ TIMEZONE = pytz.timezone('CET')
 configColl = None
 
 
+
 class AppConfig:
   configDict = None
   DATE_DIFF = None
