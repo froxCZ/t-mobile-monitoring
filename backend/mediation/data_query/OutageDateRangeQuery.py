@@ -3,6 +3,9 @@ import datetime
 import util
 
 class OutageDateRangeQuery():
+  """
+  Finds outages for the given dates and flow
+  """
   def __init__(self, fromDate, toDate, flow, granularity):
     super().__init__()
     self.fromDate = util.resetDateTimeMidnight(fromDate)

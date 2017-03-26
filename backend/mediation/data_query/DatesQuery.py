@@ -68,10 +68,12 @@ class DatesQuery:
           minuteRange = minuteGroup
           grouping = self.createHourGrouping(minuteGroup / 60)
           break
-    else:
+    elif groupCount <= 24*60:
       days = 1
       minuteRange = days * 24 * 60
       grouping = self.createDayGrouping(days)
+    else:
+      raise NotImplemented("")
     self.metadata["granularity"] = minuteRange
     return grouping
 

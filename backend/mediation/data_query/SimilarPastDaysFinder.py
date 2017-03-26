@@ -9,9 +9,12 @@ IGNORE_DAYS = [(24, 12), (31, 12), (1, 1)] #days with always unusual traffic. Do
 
 
 class SimilarPastDaysFinder():
+  """
+  Finds similar days for the given day and flow
+  """
   def __init__(self, flow):
     self.options = flow["options"]
-    self.independentdays = self.options.get("independentdays", [])
+    self.independentDays = self.options.get("independentDays", [])
     self.country = MediationConfig.getCountryByName(flow["country"])
     self.HOLIDAYS = []
     for holiday in self.country["holidays"]:
@@ -52,7 +55,7 @@ class SimilarPastDaysFinder():
     return resultDays
 
   def _satifiesIndependentDays(self, dayToTest):
-    if self.date.weekday() in self.independentdays:
+    if self.date.weekday() in self.independentDays:
       return self.date.weekday() == dayToTest.weekday()
     return True
 

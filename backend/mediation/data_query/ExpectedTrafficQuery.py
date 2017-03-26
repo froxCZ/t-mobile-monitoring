@@ -6,6 +6,9 @@ from .SimilarPastDaysFinder import SimilarPastDaysFinder
 
 
 class ExpectedTrafficQuery:
+  """
+  Calculates expected traffic for the given flow and date
+  """
   def __init__(self, date, flows, granularity=0):
     self.flows = flows
     self.flow = flows[0]

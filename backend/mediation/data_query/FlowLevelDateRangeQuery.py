@@ -6,6 +6,9 @@ from .flow_level_difference import calculateFlowLevelDifference
 
 
 class FlowLevelDateRangeQuery:
+  """
+  Calls ExpectedTrafficQuery and calculates current level of traffic compared to expectations
+  """
   def __init__(self, fromDate, toDate, flows, granularity, data):
     super().__init__()
     self.fromDate = util.resetDateTimeMidnight(fromDate)

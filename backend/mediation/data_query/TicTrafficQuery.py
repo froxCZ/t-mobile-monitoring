@@ -3,6 +3,10 @@ from mediation import data_query
 
 
 class TicTrafficQuery():
+  """
+  Calculates expected and flow level traffic for given tick only
+  """
+
   def __init__(self, dateTime, flow):
     self.dateTime = dateTime
     self.flow = flow
