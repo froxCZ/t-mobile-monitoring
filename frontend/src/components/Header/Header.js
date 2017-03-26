@@ -1,13 +1,13 @@
 import React, {Component} from "react";
 import {Dropdown, DropdownMenu, DropdownItem} from "reactstrap";
 import LoadingBar from "react-redux-loading-bar";
+import {Link, browserHistory} from "react-router";
 import Util from "../../Util";
 import Api from "../../Api";
 import Moment from "moment";
 import {bindActionCreators} from "redux";
 import {connect} from "react-redux";
 import {Actions as AuthActions} from "../../Store";
-import {browserHistory} from "react-router";
 
 function mapStateToProps(state) {
   return {auth: state.auth};
@@ -78,7 +78,7 @@ class Header extends Component {
         <LoadingBar/>
         <button className="navbar-toggler mobile-sidebar-toggler hidden-lg-up" onClick={this.mobileSidebarToggle}
                 type="button">&#9776;</button>
-        <a className="navbar-brand" href="#"></a>
+        <Link className="navbar-brand" to="/dashboard"></Link>
         <ul className="nav navbar-nav hidden-md-down">
           <li className="nav-item">
             <a className="nav-link navbar-toggler sidebar-toggler" onClick={this.sidebarToggle} href="#">&#9776;</a>
