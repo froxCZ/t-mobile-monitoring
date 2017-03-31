@@ -9,15 +9,15 @@ from config.AppConfig import TIMEZONE
 
 
 def jsStringToDate(string):
-  return dateutil.parser.parse(string).replace(tzinfo=TIMEZONE)
+  return TIMEZONE.localize(dateutil.parser.parse(string))
 
 
 def stringToDate(dateString):
-  return datetime.datetime.strptime(dateString, "%d.%m.%Y").replace(tzinfo=TIMEZONE)
+  return TIMEZONE.localize(datetime.datetime.strptime(dateString, "%d.%m.%Y"))
 
 
 def stringToTime(dateTimeString):
-  return datetime.datetime.strptime(dateTimeString, "%d.%m.%Y %H:%M:%S").replace(tzinfo=TIMEZONE)
+  return TIMEZONE.localize(datetime.datetime.strptime(dateTimeString, "%d.%m.%Y %H:%M:%S"))
 
 
 def dateToTimeString(date):

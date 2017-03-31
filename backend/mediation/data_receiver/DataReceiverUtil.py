@@ -2,13 +2,17 @@ import os
 import pickle
 from datetime import datetime
 from datetime import timedelta
+
+from config import AppConfig
+
+
 def dateToBucket(startDate,date,granularity):
     d = date - startDate
     diffMinutes = d.total_seconds() / 60
     return round(diffMinutes / granularity)
 
 def stringToDate(dateTimeStr):
-    return datetime.strptime(dateTimeStr, "%d.%m.%y %H:%M:%S")
+    return AppConfig.getTimezone().localize(datetime.strptime(dateTimeStr, "%d.%m.%y %H:%M:%S"))
 
 def bucketToDate(startDate:datetime,bucket,granularity):
     return startDate+timedelta(0,bucket*granularity*60)

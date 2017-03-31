@@ -25,7 +25,7 @@ class DatesQuery:
       date = datetime.datetime(group["year"], group["month"], group["dayOfMonth"], int(group["hour"]),
                                int(group["minute"]))
       from config import AppConfig
-      date = date.replace(tzinfo=AppConfig.getTimezone())
+      date = AppConfig.getTimezone().localize(date)
       i["_id"] = date
       resultDict[date] = i
     granularityDelta = datetime.timedelta(minutes=self.granularity)

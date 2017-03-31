@@ -2,11 +2,10 @@ import csv
 
 import pytz
 
-from config import AppConfig
 from mediation.data_receiver import DataReceiverConfig
 from mediation.data_receiver import DataReceiverUtil
 
-LATEST_DATE = DataReceiverUtil.stringToDate("20.02.16 00:00:00").replace(tzinfo=AppConfig.getTimezone())
+LATEST_DATE = DataReceiverUtil.stringToDate("20.02.16 00:00:00")
 
 
 def isValidFlow(flow):

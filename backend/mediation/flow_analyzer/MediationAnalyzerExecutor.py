@@ -5,7 +5,6 @@ import time
 from queue import Queue, Empty
 
 import config
-from config import AppConfig
 from mediation import MediationConfig
 from mediation.flow_analyzer import FlowAnalyzer
 from mediation.flow_analyzer import status
@@ -21,7 +20,7 @@ class Worker(threading.Thread):
 
   def _analyzeFlow(self, flow, lastExecution):
     analyzer = FlowAnalyzer(flow)
-    runResult = analyzer.run(config.getCurrentTime().replace(tzinfo=AppConfig.getTimezone()))
+    runResult = analyzer.run(config.getCurrentTime())
     previousStatus = lastExecution["status"]
     newStatus = analyzer.status
     self.statusManager.saveStatus(flow, previousStatus, newStatus, analyzer.difference, analyzer.ticTime)

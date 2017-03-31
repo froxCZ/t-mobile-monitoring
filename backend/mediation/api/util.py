@@ -4,7 +4,7 @@ from config import AppConfig
 
 
 def jsStringToDate(string):
-  return dateutil.parser.parse(string).replace(tzinfo=AppConfig.getTimezone())
+  return AppConfig.getTimezone().localize(dateutil.parser.parse(string))
 
 
 def dateToString(date):

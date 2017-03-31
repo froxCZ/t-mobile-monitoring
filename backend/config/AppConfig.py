@@ -5,7 +5,7 @@ import os
 
 import pytz
 
-TIMEZONE = pytz.timezone('CET')
+TIMEZONE = pytz.timezone('Europe/Prague')
 
 configColl = None
 
