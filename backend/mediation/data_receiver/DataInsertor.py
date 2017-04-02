@@ -7,15 +7,16 @@ from mongo import mongo
 
 
 class DataInsertor():
-  def __init__(self):
+  def __init__(self, version=-1):
     super().__init__()
+    self.version = version
 
   def insertDir(self, dirPath, type, country):
     for filePath in os.listdir(dirPath):
       self.insertFile(os.path.join(dirPath, filePath), type, country)
 
   def insertFile(self, filePath, type, country):
-    dataParser = DataParser(open(filePath, "r"), type, country)
+    dataParser = DataParser(open(filePath, "r"), type, country, self.version)
     logging.info("Inserting file " + filePath)
     for dataList in dataParser:
       self._insertRows(dataList)
