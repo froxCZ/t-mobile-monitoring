@@ -6,7 +6,7 @@ _client = MongoClient("mongodb://localhost/", tz_aware=True)
 
 mongoConfig = AppConfig.getMongoConfig()
 _client.admin.authenticate(mongoConfig["user"], mongoConfig["password"], mechanism='SCRAM-SHA-1')
-dataDb = _client["mediation_data_new"]
+dataDb = _client["mediation_data"]
 db = _client["mediation"]
 
 

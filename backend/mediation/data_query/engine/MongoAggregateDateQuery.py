@@ -6,6 +6,7 @@ import util
 from mongo import mongo
 
 utc = pytz.timezone("UTC")
+cet = pytz.timezone("CET")
 
 
 class MongoAggregateDateQuery:
@@ -41,9 +42,9 @@ class MongoAggregateDateQuery:
     appTimezone = AppConfig.getTimezone()
     for i in result:
       group = i["_id"]
-      utcDate = datetime.datetime(group["year"], group["month"], group["dayOfMonth"], int(group["hour"]),
-                                  int(group["minute"]), 0, 0, utc)
-      date = utcDate.astimezone(appTimezone)
+      cetDate = datetime.datetime(group["year"], group["month"], group["dayOfMonth"], int(group["hour"]),
+                                  int(group["minute"]), 0, 0, cet)
+      date = cetDate.astimezone(appTimezone)
       anyDate = i["anyDate"].astimezone(appTimezone)
       i["_id"] = date
       resultDict[date] = i
