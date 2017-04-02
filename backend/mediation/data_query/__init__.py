@@ -3,6 +3,7 @@ from .DatesQuery import DatesQuery
 from .DiscoverQuery_old import DiscoverQuery_old
 from .ExpectedTrafficQuery import ExpectedTrafficQuery
 from .FlowLevelDateRangeQuery import FlowLevelDateRangeQuery
+from .LocalAggregateDateQuery import LocalAggregateDateQuery
 from .OutageDateRangeQuery import OutageDateRangeQuery
 from .TicTrafficQuery import TicTrafficQuery
 from .flow_level_difference import calculateFlowLevelDifference

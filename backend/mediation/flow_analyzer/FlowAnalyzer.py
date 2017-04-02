@@ -1,10 +1,15 @@
 import datetime
 import logging
 
+import pytz
+
 import util
+from config import AppConfig
 from mediation import MediationConfig
 from mediation.flow_analyzer.OutageDetector import OutageDetector
 from mediation.flow_analyzer.OutlierDetector import OutlierDetector
+
+utc = pytz.timezone("UTC")
 
 
 class FlowAnalyzer:
@@ -16,9 +21,9 @@ class FlowAnalyzer:
       self.granularity = self.options["granularity"]
     else:
       self.granularity = granularity
-    self.outlierDetector = OutlierDetector(self.flow)
+    self.outlierDetector = OutlierDetector(self.flow, self.granularity)
     self.precomputedData = {}
-    self.outageDetector = OutageDetector(self.flow)
+    self.outageDetector = OutageDetector(self.flow, self.granularity)
 
   def run(self, time):
     latestCompleteTicTime = self._getLatestCompleteTicTime(time)
@@ -33,9 +38,16 @@ class FlowAnalyzer:
     granularity = self.granularity
     minuteOfDay = time.hour * 60 + time.minute
     minutesOverInterval = minuteOfDay % granularity
-    latestClosedIntervalTime = time - datetime.timedelta(minutes=minutesOverInterval + granularity)
-    latestClosedIntervalTime = latestClosedIntervalTime.replace(second=0, microsecond=0)
-    return latestClosedIntervalTime
+    if granularity == 60:
+      latestClosedIntervalTime = time - datetime.timedelta(minutes=minutesOverInterval + granularity)
+      latestClosedIntervalTime = latestClosedIntervalTime.replace(second=0, microsecond=0)
+      return util.getTicTime(latestClosedIntervalTime.astimezone(AppConfig.getTimezone()), granularity)
+    else:
+      naiveTime = time.replace(tzinfo=None)
+      latestClosedIntervalNaiveTime = naiveTime - datetime.timedelta(minutes=minutesOverInterval + granularity)
+      latestClosedIntervalNaiveTime = latestClosedIntervalNaiveTime.replace(second=0, microsecond=0)
+      localized = AppConfig.getTimezone().localize(latestClosedIntervalNaiveTime).astimezone(AppConfig.getTimezone())
+      return util.getTicTime(localized, granularity)
 
   def getResult(self):
     """

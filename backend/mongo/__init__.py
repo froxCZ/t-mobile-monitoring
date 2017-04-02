@@ -1,57 +1,33 @@
-import pytz
-from bson import CodecOptions
 from pymongo import MongoClient
 
 from config import AppConfig
 
 _client = MongoClient("mongodb://localhost/", tz_aware=True)
 
-codec_options = CodecOptions(
-  tz_aware=True,
-  tzinfo=pytz.timezone('CET')
-)
 mongoConfig = AppConfig.getMongoConfig()
 _client.admin.authenticate(mongoConfig["user"], mongoConfig["password"], mechanism='SCRAM-SHA-1')
-dataDb = _client["mediation_data"]
+dataDb = _client["mediation_data_new"]
 db = _client["mediation"]
 
 
 class _Mongo:
   def users(self):
-    return self.db()["users"].with_options(codec_options=CodecOptions(
-      tz_aware=True,
-      tzinfo=pytz.timezone('CET')
-    ))
+    return self.db()["users"]
 
   def lobs(self):
-    return self.dataDb()["lobs"].with_options(codec_options=CodecOptions(
-      tz_aware=True,
-      tzinfo=pytz.timezone('CET')
-    ))
+    return self.dataDb()["lobs"]
 
   def statuses(self):
-    return self.db()["statuses"].with_options(codec_options=CodecOptions(
-      tz_aware=True,
-      tzinfo=pytz.timezone('CET')
-    ))
+    return self.db()["statuses"]
 
   def events(self):
-    return self.db()["events"].with_options(codec_options=CodecOptions(
-      tz_aware=True,
-      tzinfo=pytz.timezone('CET')
-    ))
+    return self.db()["events"]
 
   def config(self):
-    return self.db()["config"].with_options(codec_options=CodecOptions(
-      tz_aware=True,
-      tzinfo=pytz.timezone('CET')
-    ))
+    return self.db()["config"]
 
   def outages(self):
-    return self.db()["outages"].with_options(codec_options=CodecOptions(
-      tz_aware=True,
-      tzinfo=pytz.timezone('CET')
-    ))
+    return self.db()["outages"]
 
   def dataDb(self):
     return dataDb
@@ -62,16 +38,10 @@ class _Mongo:
 
 class _ZookeeperMongo:
   def config(self):
-    return self.db()["zookeeper_config"].with_options(codec_options=CodecOptions(
-      tz_aware=True,
-      tzinfo=pytz.timezone('CET')
-    ))
+    return self.db()["zookeeper_config"]
 
   def statuses(self):
-    return self.db()["statuses"].with_options(codec_options=CodecOptions(
-      tz_aware=True,
-      tzinfo=pytz.timezone('CET')
-    ))
+    return self.db()["statuses"]
 
   def dataDb(self):
     return dataDb

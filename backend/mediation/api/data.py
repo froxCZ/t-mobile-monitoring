@@ -75,8 +75,8 @@ def dataQueryV2():
 def insertData():
   f = request.files['file']
   stream = io.StringIO(f.stream.read().decode("UTF8"), newline=None)
-  insertor = DataInsertor(stream)
-  insertor.run()
+  insertor = DataInsertor()
+  insertor.run(stream)
   return jsonify({})
 
 
@@ -108,7 +108,7 @@ def getDayMedians():
   requestDate = util.resetDateTimeMidnight(requestDate)
   medianQuery = data_query.ExpectedTrafficQuery(lobName, requestDate)
   medians = medianQuery.execute()
-  dataList = data_query.dateDictToList(data_query.minuteDictToDateDict(requestDate, medians, "median"))
+  dataList = util.dateDictToList(data_query.minuteDictToDateDict(requestDate, medians, "median"))
   response = {}
   response["data"] = dataList
   response["granularity"] = medianQuery.metadata["granularity"]

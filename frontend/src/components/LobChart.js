@@ -152,7 +152,7 @@ export default class LobChart extends Component {
   }
 
   static findCurrentTimeLabel(data) {
-    if (data == null || data.length == 0) {
+    if (data == null || data.length <= 1) {
       return null;
     }
     let currentTime = Util.getCurrentTime();

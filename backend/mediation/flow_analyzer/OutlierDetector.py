@@ -3,9 +3,10 @@ from mediation.flow_analyzer import status
 
 
 class OutlierDetector():
-  def __init__(self, flow):
+  def __init__(self, flow, granularity=0):
     super().__init__()
     self.flow = flow
+    self.granularity = granularity
 
   def getOutlierType(self, ticTraffic):
     flowLevel = data_query.calculateFlowLevelDifference(ticTraffic["value"],

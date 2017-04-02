@@ -1,11 +1,14 @@
 import copy
 import datetime
+import logging
 import random
 import string
 
 import dateutil.parser
+import pytz
 
-from config.AppConfig import TIMEZONE
+utc = pytz.timezone("UTC")
+from config.AppConfig import TIMEZONE, AppConfig
 
 
 def jsStringToDate(string):
@@ -43,7 +46,8 @@ def listToDayMinutes(dataList, value="value"):
 
 
 def resetDateTimeMidnight(dateTime):
-  return dateTime.replace(hour=0, minute=0, second=0, microsecond=0)
+  # return dateTime.replace(hour=0, minute=0, second=0, microsecond=0)
+  return TIMEZONE.localize(datetime.datetime.combine(dateTime.date(), datetime.datetime.min.time()))
 
 
 def str2bool(value):
@@ -62,9 +66,35 @@ def minuteDictToDateDict(baseDate, dict, valueName):
   baseDate = baseDate
   if (len(dict.values()) == 0):
     return dateDict
-  for minute, x in dict.items():
-    id = baseDate + datetime.timedelta(minutes=minute)
-    dateDict[id] = {"_id": id, valueName: x}
+  if (len(dict.values()) == 1):
+    granularity = 1440
+  else:
+    keys = sorted(dict.keys())
+    granularity = int(keys[1] - keys[0])
+
+  d = resetDateTimeMidnight(baseDate)
+  until = resetDateTimeMidnight(baseDate + datetime.timedelta(days=1))
+  while d < until:
+    minuteOfDay = d.hour * 60 + d.minute
+    minuteVal = dict[minuteOfDay]
+    dateDict[d] = {"_id": d, valueName: minuteVal}
+    d = getNextTic(d, granularity)
+    # d = (d + granularityDelta).astimezone(TIMEZONE)  # dst to winter, winter -> summer
+  # while d < until:
+  #   minuteOfDay = d.hour * 60 + d.minute
+  #   minuteVal = None
+  #   if minuteOfDay in dict:
+  #     minuteVal = dict[minuteOfDay]
+  #   elif minuteOfDay + 60 in dict:
+  #     minuteVal = dict[minuteOfDay + 60]
+  #     d += hourDelta
+  #   else:
+  #     minuteVal = dict[minuteOfDay - 60]
+  #     d -= hourDelta
+  #   dateDict[d] = {"_id": d, valueName: minuteVal}
+  #   d = TIMEZONE.localize(d.replace(tzinfo=None) + granularityDelta).astimezone(TIMEZONE)  # winter -> summer
+  #   # d = (d + granularityDelta).astimezone(TIMEZONE)  # dst to winter, winter -> summer
+
   return dateDict
 
 
@@ -78,6 +108,9 @@ def merge2DateLists(list1, val1, list2, val2):
   :return:
   """
   d = {}
+  if len(list1) != len(list2):
+    logging.error("lists are different! %s,%s", len(list1), len(list2))
+  assert len(list1) == len(list2)
   list1NullObject = None
   list2NullObject = None
   if val1 is not None:
@@ -133,3 +166,49 @@ def listToDateDict(l):
 
 def randomHash(size):
   return ''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(size))
+
+
+def getNextTic(d, granularity):
+  prevOffsetSeconds = d.tzinfo._utcoffset.total_seconds()
+  from config import AppConfig
+  newTic = (d + datetime.timedelta(minutes=granularity)).astimezone(AppConfig.getTimezone())
+  newOffsetSeconds = newTic.tzinfo._utcoffset.total_seconds()
+  if prevOffsetSeconds != newOffsetSeconds:
+    if prevOffsetSeconds < newOffsetSeconds:
+      newTic = getTicTime(newTic, granularity)
+    else:
+      newTic = roundToNextTicTime(newTic, granularity)
+  return getTicTime(newTic, granularity)
+
+
+def roundToNextTicTime(time, granularity):
+  minuteOfDay = time.hour * 60 + time.minute
+  minutesOverInterval = minuteOfDay % granularity
+  naiveTime = time.replace(tzinfo=None)
+  latestClosedIntervalNaiveTime = naiveTime + datetime.timedelta(minutes=granularity - minutesOverInterval)
+  latestClosedIntervalNaiveTime = latestClosedIntervalNaiveTime.replace(second=0, microsecond=0)
+  return AppConfig.getTimezone().localize(latestClosedIntervalNaiveTime)
+
+
+def getTicTime(time, granularity):
+  minuteOfDay = time.hour * 60 + time.minute
+  minutesOverInterval = minuteOfDay % granularity
+  naiveTime = time.replace(tzinfo=None)
+  latestClosedIntervalNaiveTime = naiveTime - datetime.timedelta(minutes=minutesOverInterval)
+  latestClosedIntervalNaiveTime = latestClosedIntervalNaiveTime.replace(second=0, microsecond=0)
+  return AppConfig.getTimezone().localize(latestClosedIntervalNaiveTime)
+
+
+def getNextDay(d):
+  dayDelta = datetime.timedelta(days=1)
+  return AppConfig.getTimezone().localize(d.replace(tzinfo=None) + dayDelta)
+
+
+if __name__ == "__main__":
+  t = stringToTime("29.10.2017 00:00:00")
+  gran = 120
+  t1 = getNextTic(t, gran)
+  t2 = getNextTic(t1, gran)
+  t3 = getNextTic(t2, gran)
+  t4 = getNextTic(t3, gran)
+  t5 = getNextTic(t4, gran)

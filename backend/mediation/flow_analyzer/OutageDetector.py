@@ -6,9 +6,10 @@ from mediation.flow_analyzer.OutlierDetector import OutlierDetector
 
 
 class OutageDetector():
-  def __init__(self, flow):
+  def __init__(self, flow,granularity=0):
     super().__init__()
     self.flow = flow
+    self.granularity = granularity
     self.outlierDetector = OutlierDetector(self.flow)
     self.precomputedData = {}
 
@@ -34,7 +35,7 @@ class OutageDetector():
     if ticTime in self.precomputedData:
       return self.precomputedData[ticTime]
     else:
-      return data_query.TicTrafficQuery(ticTime, self.flow).execute()
+      return data_query.TicTrafficQuery(ticTime, self.flow,self.granularity).execute()
 
   def setPrecomputedData(self, precomputedData):
     self.precomputedData = precomputedData

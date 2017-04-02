@@ -1,7 +1,14 @@
 import datetime
 
+import pytz
+
 import util
 from mongo import mongo
+
+utc = pytz.timezone("UTC")
+
+
+
 
 
 class DatesQuery:
@@ -18,28 +25,39 @@ class DatesQuery:
 
   def execute(self):
     self.prepare()
+    all = list(self.coll.find())
     result = list(self.coll.aggregate(self.query))
     resultDict = {}
+    from config import AppConfig
+    appTimezone = AppConfig.getTimezone()
     for i in result:
       group = i["_id"]
-      date = datetime.datetime(group["year"], group["month"], group["dayOfMonth"], int(group["hour"]),
-                               int(group["minute"]))
-      from config import AppConfig
-      date = AppConfig.getTimezone().localize(date)
+      utcDate = datetime.datetime(group["year"], group["month"], group["dayOfMonth"], int(group["hour"]),
+                                  int(group["minute"]), 0, 0, utc)
+      date = utcDate.astimezone(appTimezone)
+      anyDate = i["anyDate"].astimezone(appTimezone)
       i["_id"] = date
       resultDict[date] = i
+    from mediation.data_query import LocalAggregateDateQuery
+    resultDict = LocalAggregateDateQuery(self.flows[0], self.dates, self.granularity).execute()
     granularityDelta = datetime.timedelta(minutes=self.granularity)
     nullObject = {}
     for metric in self.metrics:
       nullObject[metric] = 0
+    finalResultDict = {}
     for date in self.dates:
       d = date
-      while d < date + datetime.timedelta(days=1):
+      counter = 0
+      until = util.resetDateTimeMidnight(date + datetime.timedelta(days=1))
+      while d < until:
         if d not in resultDict:  # TODO: check if some results can have just few of the metrics.
-          resultDict[d] = {**nullObject, **{"_id": d}}
-        d += granularityDelta
+          finalResultDict[d] = {**nullObject, **{"_id": d}}
+        else:
+          finalResultDict[d]=resultDict[d]
+        # d = (d.astimezone(utc)+granularityDelta).astimezone(appTimezone)
+        d = util.getNextTic(d, self.granularity)
 
-    result = sorted(resultDict.values(), key=lambda x: x["_id"])
+    result = sorted(finalResultDict.values(), key=lambda x: x["_id"])
     return result
 
   def createDataPathAndOutputs2(self):
@@ -68,7 +86,7 @@ class DatesQuery:
           minuteRange = minuteGroup
           grouping = self.createHourGrouping(minuteGroup / 60)
           break
-    elif groupCount <= 24*60:
+    elif groupCount <= 24 * 60:
       days = 1
       minuteRange = days * 24 * 60
       grouping = self.createDayGrouping(days)
@@ -93,7 +111,10 @@ class DatesQuery:
       },
       "anyDate": {"$first": self._idTimezoneFix()},
     }
-    project = {"_id": "$_id"}
+    project = {
+      "_id": "$_id",
+      "anyDate": "$anyDate",
+    }
     return groupObject, project
 
   def createHourGrouping(self, groupByHours):
@@ -112,7 +133,10 @@ class DatesQuery:
       },
       "anyDate": {"$first": self._idTimezoneFix()},
     }
-    project = {"_id": "$_id"}
+    project = {
+      "_id": "$_id",
+      "anyDate": "$anyDate",
+    }
     return groupObject, project
 
   def createDayGrouping(self, groupByDays):
@@ -127,7 +151,8 @@ class DatesQuery:
       "anyDate": {"$first": self._idTimezoneFix()},
     }
     project = {
-      "_id": "$_id"
+      "_id": "$_id",
+      "anyDate": "$anyDate",
     }
     return groupObject, project
 
@@ -142,12 +167,12 @@ class DatesQuery:
     return group, project
 
   def _idTimezoneFix(self):
-    return {"$add": ["$_id", 60 * 60 * 1000]}
+    return {"$add": ["$_id", 0]}
 
   def createMatchObject(self):
     orMatches = []
     for date in self.dates:
-      orMatches.append({"_id": {"$gte": date, "$lt": date + datetime.timedelta(days=1)}})
+      orMatches.append({"_id": {"$gte": date, "$lt": util.resetDateTimeMidnight(date + datetime.timedelta(days=1))}})
     return {"$match": {"$or": orMatches}}
 
   def prepare(self):
@@ -160,7 +185,7 @@ class DatesQuery:
     project = {"$project": project}
     sort = {
       "$sort": {
-        "_id": 1
+        "anyDate": 1
       }
     }
     self.query = [match, group, project, sort]

@@ -1,4 +1,5 @@
 import logging
+import os
 from datetime import timedelta
 
 from mediation.data_receiver.DataParser import DataParser
@@ -6,10 +7,21 @@ from mongo import mongo
 
 
 class DataInsertor():
-  def __init__(self,stream):
+  def __init__(self):
     super().__init__()
+
+  def insertDir(self, dirPath, type, country):
+    for filePath in os.listdir(dirPath):
+      self.insertFile(os.path.join(dirPath, filePath), type, country)
+
+  def insertFile(self, filePath, type, country):
+    dataParser = DataParser(open(filePath, "r"), type, country)
+    logging.info("Inserting file " + filePath)
+    for dataList in dataParser:
+      self._insertRows(dataList)
+
+  def run(self, stream):
     self.dataParser = DataParser(stream)
-  def run(self):
     for dataList in self.dataParser:
       self._insertRows(dataList)
 
@@ -19,6 +31,7 @@ class DataInsertor():
     logging.info("Inserted " + str(len(rowList)) + " rows")
     for key, value in updates.items():
       coll.update({'_id': key}, value, upsert=True)
+
 
 def _createRowUpdateDict(row):
   date = row["date"]
@@ -39,6 +52,7 @@ def _createRowUpdateDict(row):
             }
   return (indexDate, update)
 
+
 def _sumUpdates(updates):
   sums = {}
   for indexDate, update in updates:
@@ -54,6 +68,7 @@ def _sumUpdates(updates):
 
   return sums
 
+
 if __name__ == "__main__":
-  insertor = DataInsertor(open("/home/frox/tmobile/data_mar12/preparation/input/AT_Spark_Statistics_010117.csv", 'r'))
-  insertor.run()
+  insertor = DataInsertor()
+  insertor.run(open("/home/frox/tmobile/data_mar12/preparation/input/AT_Spark_Statistics_010117.csv", 'r'))
