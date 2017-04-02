@@ -8,24 +8,17 @@ from mongo import mongo
 utc = pytz.timezone("UTC")
 
 
-
-
-
-class DatesQuery:
-  def __init__(self, dates, flows, granularity=0):
-    self.query = None
+class MongoAggregateDateQuery:
+  def __init__(self, flow, dates, granularity):
+    super().__init__()
+    self.flow = flow
     self.coll = mongo.lobs()
-    self.metrics = []
-    self.dataPaths = []
-    self.dates = [util.resetDateTimeMidnight(d) for d in dates]
-    self.flows = flows
-    self.granularity = int(granularity)
-    self.createDataPathAndOutputs2()
-    self.metadata = {}
+    self.dates = dates
+    self.granularity = granularity
+    self.dataPath = "data." + self.flow["dataPath"]
+    self.metric = self.flow["name"]
 
-  def execute(self):
-    self.prepare()
-    all = list(self.coll.find())
+  def _executeMongoAggregateQuery(self):
     result = list(self.coll.aggregate(self.query))
     resultDict = {}
     from config import AppConfig
@@ -38,35 +31,23 @@ class DatesQuery:
       anyDate = i["anyDate"].astimezone(appTimezone)
       i["_id"] = date
       resultDict[date] = i
-    from mediation.data_query import LocalAggregateDateQuery
-    resultDict = LocalAggregateDateQuery(self.flows[0], self.dates, self.granularity).execute()
-    granularityDelta = datetime.timedelta(minutes=self.granularity)
-    nullObject = {}
-    for metric in self.metrics:
-      nullObject[metric] = 0
-    finalResultDict = {}
-    for date in self.dates:
-      d = date
-      counter = 0
-      until = util.resetDateTimeMidnight(date + datetime.timedelta(days=1))
-      while d < until:
-        if d not in resultDict:  # TODO: check if some results can have just few of the metrics.
-          finalResultDict[d] = {**nullObject, **{"_id": d}}
-        else:
-          finalResultDict[d]=resultDict[d]
-        # d = (d.astimezone(utc)+granularityDelta).astimezone(appTimezone)
-        d = util.getNextTic(d, self.granularity)
+    return resultDict
 
-    result = sorted(finalResultDict.values(), key=lambda x: x["_id"])
-    return result
-
-  def createDataPathAndOutputs2(self):
-    maxGran = 0
-    for flow in self.flows:
-      self.dataPaths.append(("$data." + flow["dataPath"], flow["name"]))
-      maxGran = max(maxGran, flow["options"]["granularity"])
-    if (self.granularity == 0):
-      self.granularity = maxGran
+  def execute(self):
+    self.prepare()
+    result = list(self.coll.aggregate(self.query))
+    resultDict = {}
+    from config import AppConfig
+    appTimezone = AppConfig.getTimezone()
+    for i in result:
+      group = i["_id"]
+      utcDate = datetime.datetime(group["year"], group["month"], group["dayOfMonth"], int(group["hour"]),
+                                  int(group["minute"]), 0, 0, utc)
+      date = utcDate.astimezone(appTimezone)
+      anyDate = i["anyDate"].astimezone(appTimezone)
+      i["_id"] = date
+      resultDict[date] = i
+    return resultDict
 
   def createTimeGroupAndProjection(self):
     groupCount = self.granularity
@@ -92,7 +73,6 @@ class DatesQuery:
       grouping = self.createDayGrouping(days)
     else:
       raise NotImplemented("")
-    self.metadata["granularity"] = minuteRange
     return grouping
 
   def createMinuteGrouping(self, groupByMinutes):
@@ -159,15 +139,12 @@ class DatesQuery:
   def createDataGroupAndProjection(self):
     group = {}
     project = {}
-    for dataPath in self.dataPaths:
-      validName = dataPath[1]
-      group[validName] = {"$sum": dataPath[0]}
-      project[validName] = "$" + validName
-      self.metrics.append(validName)
+    group[self.metric] = {"$sum": "$"+self.dataPath}
+    project[self.metric] = "$" + self.metric
     return group, project
 
   def _idTimezoneFix(self):
-    return {"$add": ["$_id", 0]}
+    return {"$add": ["$_id", 60*60*1000]}#uses utc timezone!
 
   def createMatchObject(self):
     orMatches = []

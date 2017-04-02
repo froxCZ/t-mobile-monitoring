@@ -44,6 +44,7 @@ class Cli:
       DataInsertor().insertFile(self.args.file, type, country)
 
 
-#Cli().parse(["--insert", "inputs", "--file", "/home/frox/tmobile/data/new_format_exports/in/EXP/exp.csv", "--country", "CZ"])
-Cli().parse(["--insert", "inputs", "--file", "/home/frox/tmobile/data/new_format_exports/in/EXP/exp2910.csv", "--country", "CZ"])
-#Cli().parse(["--insert", "inputs", "--dir", "/home/frox/tmobile/data/new_format_exports/in/AT", "--country", "AT"])
+# Cli().parse(["--insert", "inputs", "--file", "/home/frox/tmobile/data/new_format_exports/in/EXP/exp.csv", "--country", "CZ"])
+# Cli().parse(["--insert", "inputs", "--file", "/home/frox/tmobile/data/new_format_exports/in/EXP/exp.csv", "--country", "CZ"])
+# Cli().parse(["--insert", "inputs", "--file", "/home/frox/tmobile/data/new_format_exports/in/EXP/exp2910.csv", "--country", "CZ"])
+Cli().parse(["--insert", "inputs", "--dir", "/home/frox/tmobile/data/new_format_exports/in/EXP", "--country", "CZ"])

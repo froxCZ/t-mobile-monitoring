@@ -3,6 +3,7 @@ import datetime
 import logging
 import random
 import string
+import time
 
 import dateutil.parser
 import pytz
@@ -202,6 +203,14 @@ def getTicTime(time, granularity):
 def getNextDay(d):
   dayDelta = datetime.timedelta(days=1)
   return AppConfig.getTimezone().localize(d.replace(tzinfo=None) + dayDelta)
+
+
+def startTime():
+  return time.time()
+
+
+def timeDifference(startTime):
+  return (time.time() - startTime)
 
 
 if __name__ == "__main__":

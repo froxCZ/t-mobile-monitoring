@@ -47,7 +47,8 @@ class MediationConfig():
       "hardAlarmLevel": 0.5,
       "softAlarmLevel": 0.75,
       "difference": "day",
-      "enabled": countryEnabled
+      "enabled": countryEnabled,
+      "minimalExpectation":1
     }
     if country not in res["lobs"]:
       return {}
