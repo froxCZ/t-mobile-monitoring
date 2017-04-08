@@ -43,12 +43,12 @@ class Cli:
       DataInsertor().insertFile(self.args.file, type, country)
 
 
-Cli().parse(["--insert", "inputs", "--dir", "/home/frox/tmobile/data_mar12/preparation/input/csv/formatted/AT","--country", "AT"])
-Cli().parse(["--insert", "inputs", "--dir", "/home/frox/tmobile/data_mar12/preparation/input/csv/formatted/CZ", "--country", "CZ"])
-Cli().parse(["--insert", "inputs", "--dir", "/home/frox/tmobile/data_mar12/preparation/input/csv/formatted/DE", "--country", "DE"])
-Cli().parse(["--insert", "inputs", "--dir", "/home/frox/tmobile/data_mar12/preparation/input/csv/formatted/NL", "--country", "NL"])
+# Cli().parse(["--insert", "inputs", "--dir", "/home/frox/Downloads/tmobile/in/AT","--country", "AT"])
+# Cli().parse(["--insert", "inputs", "--dir", "/home/frox/Downloads/tmobile/in/CZ", "--country", "CZ"])
+# Cli().parse(["--insert", "inputs", "--dir", "/home/frox/Downloads/tmobile/in/DE", "--country", "DE"])
+# Cli().parse(["--insert", "inputs", "--dir", "/home/frox/Downloads/tmobile/in/NL", "--country", "NL"])
 
-Cli().parse(["--insert", "forwards", "--dir", "/home/frox/tmobile/data_mar12/preparation/output/AT/csv/formatted", "--country", "AT"])
-Cli().parse(["--insert", "forwards", "--dir", "/home/frox/tmobile/data_mar12/preparation/output/CZ/csv/formatted", "--country", "CZ"])
-Cli().parse(["--insert", "forwards", "--dir", "/home/frox/tmobile/data_mar12/preparation/output/DE/csv/formatted", "--country", "DE"])
-Cli().parse(["--insert", "forwards", "--dir", "/home/frox/tmobile/data_mar12/preparation/output/NL/csv/formatted", "--country", "NL"])
+Cli().parse(["--insert", "forwards", "--dir", "/home/frox/Downloads/tmobile/out/AT", "--country", "AT"])
+Cli().parse(["--insert", "forwards", "--dir", "/home/frox/Downloads/tmobile/out/CZ", "--country", "CZ"])
+Cli().parse(["--insert", "forwards", "--dir", "/home/frox/Downloads/tmobile/out/DE", "--country", "DE"])
+Cli().parse(["--insert", "forwards", "--dir", "/home/frox/Downloads/tmobile/out/NL", "--country", "NL"])

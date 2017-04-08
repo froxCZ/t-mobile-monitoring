@@ -6,7 +6,7 @@ from mediation.flow_analyzer.OutlierDetector import OutlierDetector
 
 
 class OutageDetector():
-  def __init__(self, flow,granularity=0):
+  def __init__(self, flow,granularity):
     super().__init__()
     self.flow = flow
     self.granularity = granularity
@@ -23,7 +23,7 @@ class OutageDetector():
       return status.OUTAGE
 
     ticTime = ticTraffic["_id"]
-    previousticTime = ticTime - datetime.timedelta(minutes=self.flow["options"]["granularity"])
+    previousticTime = ticTime - datetime.timedelta(minutes=self.granularity)
     previousticTraffic = self.getticTraffic(previousticTime)
     previousOutlierType = self.outlierDetector.getOutlierType(previousticTraffic)
     if previousOutlierType == status.OK:
