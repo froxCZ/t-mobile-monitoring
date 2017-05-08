@@ -14,8 +14,8 @@ class _Mongo:
   def users(self):
     return self.db()["users"]
 
-  def lobs(self):
-    return self.dataDb()["lobs"]
+  def traffic(self):
+    return self.dataDb()["traffic"]
 
   def statuses(self):
     return self.db()["statuses"]

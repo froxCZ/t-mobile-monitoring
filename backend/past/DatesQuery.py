@@ -7,7 +7,7 @@ from mongo import mongo
 class DatesQuery:
   def __init__(self, dates, flows, granularity=0):
     self.query = None
-    self.coll = mongo.lobs()
+    self.coll = mongo.traffic()
     self.metrics = []
     self.dataPaths = []
     self.dates = [util.resetDateTimeMidnight(d) for d in dates]

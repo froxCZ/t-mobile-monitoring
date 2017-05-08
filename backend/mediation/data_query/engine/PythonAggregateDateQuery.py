@@ -9,7 +9,7 @@ class PythonAggregateDateQuery:
   def __init__(self, flow, dates, granularity):
     super().__init__()
     self.flow = flow
-    self.coll = mongo.lobs()
+    self.coll = mongo.traffic()
     self.dates = dates
     self.granularity = granularity
     self.dataPath = "data." + self.flow["dataPath"]

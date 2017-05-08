@@ -9,7 +9,7 @@ print(dateTime)
 
 from mongo import mongo
 
-x = mongo.lobs().with_options(
+x = mongo.traffic().with_options(
   codec_options=CodecOptions(
   tz_aware=True,
   tzinfo=pytz.timezone('CET'))).find_one()

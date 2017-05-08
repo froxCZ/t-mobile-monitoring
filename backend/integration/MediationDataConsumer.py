@@ -76,7 +76,7 @@ class MediationDataConsumer(threading.Thread):
                     }
                  }
     try:
-      mongo.lobs().update({'_id': time}, updateObj, upsert=True)
+      mongo.traffic().update({'_id': time}, updateObj, upsert=True)
       logging.info(
         "Inserted row for " + row["lobName"] + " " + row["flowName"] + " at " + str(time) + " of size " + str(dataSize))
       return True

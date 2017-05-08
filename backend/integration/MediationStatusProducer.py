@@ -24,8 +24,8 @@ def jsonDictSerializer(dictToSend):
   return bytes(serialized, encoding='utf-8')
 
 
-class StatusProducer(threading.Thread):
-  name = "StatusProducer"
+class MediationStatusProducer(threading.Thread):
+  name = "MediationStatusProducer"
   _instance = None
   daemon = True
 
@@ -82,9 +82,9 @@ class StatusProducer(threading.Thread):
 
   @staticmethod
   def instance():
-    if StatusProducer._instance is None:
-      StatusProducer._instance = StatusProducer()
-    return StatusProducer._instance
+    if MediationStatusProducer._instance is None:
+      MediationStatusProducer._instance = MediationStatusProducer()
+    return MediationStatusProducer._instance
 
 
 if __name__ == "__main__":
@@ -104,6 +104,6 @@ if __name__ == "__main__":
   }
   i = 0
   while True:
-    StatusProducer.instance().send({"c": i})
+    MediationStatusProducer.instance().send({"c": i})
     time.sleep(3)
     i += 1

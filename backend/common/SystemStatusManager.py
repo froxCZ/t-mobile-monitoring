@@ -2,7 +2,7 @@ import datetime
 
 from config import AppConfig
 from integration import MediationDataConsumer
-from integration import StatusProducer
+from integration import MediationStatusProducer
 from mediation.flow_analyzer import DiscoverFlowsExecutor
 from mediation.flow_analyzer import MediationAnalyzerExecutor
 from mongo import mongo
@@ -20,7 +20,7 @@ class SystemStatusManager:
   def getStatus():
     from scheduler.ComponentMonitoring import ComponentMonitoring
     executors = [ComponentMonitoring, ZookeeperAnalyzerExecutor, MediationAnalyzerExecutor, DiscoverFlowsExecutor]
-    kafkaComponents = [StatusProducer.name, MediationDataConsumer.name]
+    kafkaComponents = [MediationStatusProducer.name, MediationDataConsumer.name]
     systemStatus = {"executors": {}, "kafka": {}}
     res = statusColl.find_one({"_id": "system"}, {"_id": 0})
     if res == None:

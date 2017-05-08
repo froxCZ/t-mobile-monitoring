@@ -11,7 +11,7 @@ utc = pytz.timezone("UTC")
 class DatesQuery:
   def __init__(self, dates, flows, granularity=0):
     self.query = None
-    self.coll = mongo.lobs()
+    self.coll = mongo.traffic()
     self.flow = flows[0]
     self.metrics = []
     self.dates = [util.resetDateTimeMidnight(d) for d in dates]

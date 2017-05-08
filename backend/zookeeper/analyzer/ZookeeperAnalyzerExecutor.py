@@ -1,7 +1,7 @@
 import logging
 
 import config
-from integration import MediationStateProducer
+from integration import MediationStatusProducer
 from scheduler.AbstractExecutor import AbstractExecutor
 from zookeeper.analyzer.Analyzer import Analyzer
 from zookeeper.analyzer.StatusManager import StatusManager
@@ -40,7 +40,7 @@ class ZookeeperAnalyzerExecutor(AbstractExecutor):
         statusChange["status"] = {"previousStatus": oldClusterStatus["status"], "newStatus": newClusterStatus["status"]}
         change = True
       if change:
-        MediationStateProducer.instance().send(statusChange)
+        MediationStatusProducer.instance().send(statusChange)
     except Exception as e:
       logging.exception("Exception while checking zookeeper status change.")
 

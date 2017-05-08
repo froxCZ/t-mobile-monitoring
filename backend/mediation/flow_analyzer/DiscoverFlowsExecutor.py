@@ -35,7 +35,7 @@ class DiscoverFlowsExecutor(AbstractExecutor):
 
   def _executeInternal(self):
     start = time.time()
-    cursor = mongo.lobs().find({"$and": [
+    cursor = mongo.traffic().find({"$and": [
       {"_id": {"$gte": self.fromDate}},
       {"_id": {"$lt": self.toDate}}
     ]})

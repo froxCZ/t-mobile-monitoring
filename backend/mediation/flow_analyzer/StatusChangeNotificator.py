@@ -1,10 +1,10 @@
-from integration import StatusProducer
+from integration import MediationStatusProducer
 from mediation.flow_analyzer import EventsManager
 
 
 class StatusChangeNotificator:
   def __init__(self):
-    self.statusProducer = StatusProducer.instance()
+    self.statusProducer = MediationStatusProducer.instance()
     pass
 
   def statusChanged(self, flow, previousStatus, newStatus, ticTime):

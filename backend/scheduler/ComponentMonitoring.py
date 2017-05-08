@@ -1,7 +1,7 @@
 
 from config import AppConfig
 from integration import MediationDataConsumer
-from integration import StatusProducer
+from integration import MediationStatusProducer
 from scheduler.AbstractExecutor import AbstractExecutor
 from scheduler.AbstractScheduler import AbstractScheduler
 
@@ -15,8 +15,8 @@ class ComponentMonitoring(AbstractExecutor):
 
   def _executeInternal(self):
     from common import SystemStatusManager
-    SystemStatusManager.setKafkaComponentStatus(StatusProducer.name,
-                                                StatusProducer.instance().status,
+    SystemStatusManager.setKafkaComponentStatus(MediationStatusProducer.name,
+                                                MediationStatusProducer.instance().status,
                                                 AppConfig.getCurrentTime())
     SystemStatusManager.setKafkaComponentStatus(MediationDataConsumer.name,
                                                 MediationDataConsumer.instance().status,

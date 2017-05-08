@@ -11,7 +11,7 @@ class DataInsertor():
     super().__init__()
 
   def insertRows(self, rowList):
-    coll = mongo.lobs()
+    coll = mongo.traffic()
     updates = _sumUpdates(list(map(_createRowUpdateDict, rowList)))
     print("Inserted " + str(len(rowList)) + " rows")
     for key, value in updates.items():
