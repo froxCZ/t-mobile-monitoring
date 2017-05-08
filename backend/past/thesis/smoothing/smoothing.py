@@ -6,7 +6,6 @@ import numpy
 import util
 from mediation import MediationConfig
 from mediation.data_query import DateRangeGroupQuery
-from past.smooth import smoothData
 
 
 def running_mean(l, N):
@@ -61,15 +60,12 @@ def cumulativeWeightedRunningMean(data, window_size):
 
 fromDate = util.stringToTime("02.03.2017 00:00:00")
 toDate = util.stringToTime("03.03.2017 00:00:00")
-granularity = 15
-q = DateRangeGroupQuery(fromDate, toDate, [MediationConfig.getLobWithCountry("CZ", "GSM")["flows"]["MSSBRN1A"]],
+granularity = 60
+x = MediationConfig.getLobWithCountry("CZ", "GSM")
+q = DateRangeGroupQuery(fromDate, toDate, [MediationConfig.getLobWithCountry("CZ", "DAR")["flows"]["DARE2FEE"]],
                         granularity)
 # q = DateRangeGroupQuery(fromDate, toDate, [MediationConfig.getLobWithCountry("CZ","ACI")["flows"]["GSM"]], granularity)
-lob1Data = util.dateDataListToList(q.execute(), "MSSBRN1A")
-lob1Data.append(0)
-lob1Data.append(0)
-lob1Data.append(0)
-lob1Data.append(0)
+lob1Data = util.dateDataListToList(q.execute(), "DARE2FEE")
 dates = list(
   map(lambda x: util.dateToTimeString(x).split("+")[0].split("T")[1].split(":")[0], util.dateDataListToList(q.execute(), "_id")))
 dataTicks = []
@@ -81,23 +77,24 @@ for i in range(0, len(dates)):
 
 # lob1Data=[100,0,0,100,0,0,100,0,0,100,0,0,100,0,0,100,0,0,100,0,0,100,0,0]
 plt.figure(figsize=(12, 6))
-plt.plot(lob1Data, linewidth=0.3, color="#ff009f", label="actual data")
+plt.plot(lob1Data, color="#ff009f", label="actual data")
 
-# Running mean lines
+# Running median lines
 # plt.plot(cumulativeRunningMedian(lob1Data, 9), label='Cumulative median (9)', color="red")
 # plt.plot(cumulativeRunningMedian(lob1Data, 7), label='Cumulative median (7)', color="green")
 # plt.plot(cumulativeRunningMedian(lob1Data, 3), label='Cumulative median (3)', color="blue")
 
 
-
+# Running mean
 # plt.plot(cumulativeRunningMean(lob1Data, 10), label='Cumulative mean (10)', color="red")
-plt.plot(cumulativeRunningMean(lob1Data, 7), label='Cumulative mean (7)', color="blue")
+# plt.plot(cumulativeRunningMean(lob1Data, 7), label='Cumulative mean (7)', color="blue")
 # plt.plot(cumulativeRunningMean(lob1Data, 4), label='Cumulative mean (4)', color="green")
 # plt.plot(cumulativeWeightedRunningMean(lob1Data, 7), label='Weighted cumulative mean (7)', color="black")
 # plt.plot(movingAverage(lob1Data, 10), label='Simple Running mean (10)', color="orange")
 
-# plt.plot(smoothData(granularity,lob1Data[:-20]))
-plt.plot(smoothData(granularity, lob1Data),color="brown",label="Savitzky–Golay filter",linewidth=2)
+#savitzky
+# plt.plot(smoothData(granularity, lob1Data),color="brown",label="Savitzky–Golay filter",linewidth=2)
+
 plt.xticks(dataTickPos, dataTicks, rotation='vertical')
 plt.title('CZ - GSM - MSSBRN1A')
 plt.legend(loc='upper left')

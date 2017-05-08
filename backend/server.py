@@ -6,7 +6,7 @@ from flask.json import JSONEncoder
 from flask_cors import CORS
 
 import util
-from common import SystemStatusManager
+from common import SystemStateManager
 from config import AppConfig
 
 app = Flask(__name__)
@@ -39,9 +39,9 @@ def hello():
 def currentTime():
   return jsonify({"currentTime": util.dateToTimeString(AppConfig.getCurrentTime())})
 
-@app.route('/status', methods=["GET"])
+@app.route('/state', methods=["GET"])
 def getSystemStatus():
-  return jsonify(SystemStatusManager.getStatus())
+  return jsonify(SystemStateManager.getStatus())
 
 
 @app.errorhandler(Exception)

@@ -20,7 +20,7 @@ const DAY_NR_TO_NAME = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 const COLORS = ["#FF0080", "#FF6600", "#028482"];
 const COLORS_MAP = {
   "dayDifference": "#FF0080",
-  "ticDifference": "#4b4c4c",
+  "ticDifference": "gray",
   "expected": "#648dbd"
 };
 export default class LobChart extends Component {
@@ -50,13 +50,13 @@ export default class LobChart extends Component {
     LobChart.adjustData(this.props.data);
     let referenceLines = [];
     if (this.props.difference) {
-      referenceLines.push(<ReferenceLine y={1} label="expected" stroke="gray"/>);
-      referenceLines.push(<ReferenceLine y={this.props.softAlarmLevel} label="expected" stroke="#bd8f1d"/>);
-      referenceLines.push(<ReferenceLine y={this.props.hardAlarmLevel} label="expected" stroke="#bd3e39"/>)
+      referenceLines.push(<ReferenceLine y={1} stroke="black"/>);
+      referenceLines.push(<ReferenceLine y={this.props.softAlarmLevel} stroke="#bd8f1d"/>);
+      referenceLines.push(<ReferenceLine y={this.props.hardAlarmLevel} stroke="#bd3e39"/>)
     }
     return (
-      <ResponsiveContainer height='100%' width='100%' aspect={4.0 / 1.7}>
-        <LineChart data={this.props.data} syncId="anyId">
+      <ResponsiveContainer height='100%' width='100%' aspect={4.0 / 1.7} >
+        <LineChart data={this.props.data} syncId="anyId"  margin={{right: 30, left: 30}}>
           <XAxis dataKey="tickValue"/>
           <YAxis/>
           <Tooltip /*wrapperStyle={{backgroundColor:'#ff000000'}}*//>

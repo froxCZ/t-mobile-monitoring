@@ -55,7 +55,7 @@ def dataQueryV2():
   #
   # if (len(data) > 10):
   #   validMetricName = metricsList[0]
-  #   smoothData(data, metadata["granularity"], validMetricName)
+  #   smoothData( metadata["granularity"], data)
   #   metricsList.append(validMetricName + "_smoothed")
 
   for metric in metricsList:

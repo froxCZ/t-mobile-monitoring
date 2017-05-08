@@ -28,3 +28,8 @@ def calculateFlowLevelDifference(flowValue, expected, dayAverage):
   resulttic["ticDifference"] = ticDifference
   resulttic["dayDifference"] = dayDifference
   return resulttic
+
+
+if __name__ == "__main__":
+  result = calculateFlowLevelDifference(13545666,11267818,140230789)
+  print(result)

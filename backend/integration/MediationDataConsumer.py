@@ -55,7 +55,7 @@ class MediationDataConsumer(threading.Thread):
     """
     :param data:
     dict{"country":"CZ",
-    "lob":"ACI",
+    "lobName":"ACI",
     "type":"inputs",
     "flowName":"GSM",
     "dataSize":497464,
@@ -63,7 +63,7 @@ class MediationDataConsumer(threading.Thread):
     :return:
     """
     time = util.stringToTime(row["time"]).replace(second=0)
-    updatePath = "data." + row["country"] + "." + row["lob"] + "." + row["type"] + "."
+    updatePath = "data." + row["country"] + "." + row["lobName"] + "." + row["type"] + "."
     try:
       dataSize = int(row["dataSize"])
     except ValueError:
@@ -78,7 +78,7 @@ class MediationDataConsumer(threading.Thread):
     try:
       mongo.lobs().update({'_id': time}, updateObj, upsert=True)
       logging.info(
-        "Inserted row for " + row["lob"] + " " + row["flowName"] + " at " + str(time) + " of size " + str(dataSize))
+        "Inserted row for " + row["lobName"] + " " + row["flowName"] + " at " + str(time) + " of size " + str(dataSize))
       return True
     except Exception as e:
       logging.error("Error while persisting data " + str(row) + " exception: " + str(e))
@@ -104,7 +104,7 @@ if __name__ == "__main__":
     t.start()
   """
   data = {"country": "CZ",
-          "lob": "ACI",
+          "lobName": "ACI",
           "type": "inputs",
           "flowName": "GSM",
           "dataSize": 497464,
