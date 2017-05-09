@@ -20,7 +20,7 @@ const DAY_NR_TO_NAME = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 const COLORS = ["#FF0080", "#FF6600", "#028482"];
 const COLORS_MAP = {
   "dayDifference": "#FF0080",
-  "ticDifference": "gray",
+  "tickDifference": "gray",
   "expected": "#648dbd"
 };
 export default class LobChart extends Component {

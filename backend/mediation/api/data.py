@@ -36,7 +36,7 @@ Response:
       "dayDifference": 1.023,
       "expected": 161627916,
       "status": "OK",
-      "ticDifference": 1.166
+      "tickDifference": 1.166
     },
     ...
   ],
@@ -59,7 +59,7 @@ Response:
       "status": {
         "type": "other"
       },
-      "ticDifference": {
+      "tickDifference": {
         "type": "difference"
       }
     }

@@ -17,7 +17,7 @@ class OutageDateRangeQuery():
     self.flow = flow
     self.granularity = granularity
     self.metric = "status"
-    self.ticDict = {}
+    self.tickDict = {}
     from mediation.flow_analyzer import FlowAnalyzer
     self.flowAnalyzer = FlowAnalyzer(self.flow, self.granularity)
 
@@ -25,12 +25,12 @@ class OutageDateRangeQuery():
     for tic in precomputedData:
       id = tic["_id"]
       if valueKey in tic:
-        self.ticDict[id] = {"_id": id,
+        self.tickDict[id] = {"_id": id,
                             "value": tic[valueKey],
                             "expected": tic["expected"],
                             "dayAverage": tic["dayAverage"]
                             }
-    self.flowAnalyzer.setPrecomputedData(self.ticDict)
+    self.flowAnalyzer.setPrecomputedData(self.tickDict)
 
   def execute(self):
     d = util.getNextTic(self.fromDate, self.granularity)

@@ -6,26 +6,26 @@ def calculateFlowLevelDifference(flowValue, expected, dayAverage):
   :param dayAverage:
   :return:
   """
-  ticDifference = 1
+  tickDifference = 1
   dayDifference = 1
   if flowValue != expected:
     diff = flowValue - expected
-    ticDifference = min(flowValue / max(expected, 0.1), 3)
+    tickDifference = min(flowValue / max(expected, 0.1), 3)
     if dayAverage != 0:
-      if ticDifference >= 0.1:
+      if tickDifference >= 0.1:
         scaledDiff = min((diff / dayAverage) + 1, 3)
-        if scaledDiff >= 1 and ticDifference >= 1:
-          dayDifference = min(scaledDiff, ticDifference)
+        if scaledDiff >= 1 and tickDifference >= 1:
+          dayDifference = min(scaledDiff, tickDifference)
         else:
-          dayDifference = max(scaledDiff, ticDifference)
+          dayDifference = max(scaledDiff, tickDifference)
       else:
-        dayDifference = ticDifference
+        dayDifference = tickDifference
     else:
       dayDifference = 1
   dayDifference = round(dayDifference, 3)
-  ticDifference = round(ticDifference, 3)
+  tickDifference = round(tickDifference, 3)
   resulttic = {}
-  resulttic["ticDifference"] = ticDifference
+  resulttic["tickDifference"] = tickDifference
   resulttic["dayDifference"] = dayDifference
   return resulttic
 

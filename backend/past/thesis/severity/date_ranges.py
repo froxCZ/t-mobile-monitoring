@@ -36,7 +36,7 @@ dates = list(
 data1 = util.dateDataListToList(data, flowName)
 expected = util.dateDataListToList(data, "expected")
 dayDifference = util.dateDataListToList(data, "dayDifference")
-ticDifference = util.dateDataListToList(data, "ticDifference")
+tickDifference = util.dateDataListToList(data, "tickDifference")
 dataTicks = []
 dataTickPos = []
 for i in range(0, len(dates)):
@@ -58,7 +58,7 @@ plt.subplot(212)
 plt.xticks(dataTickPos, dataTicks, rotation=25)
 plt.title(lobName + "-" + flowName + " difference")
 plt.plot(dayDifference, '#ff009f', linewidth=2, label="day difference")
-plt.plot(ticDifference, 'gray', label="tick difference")
+plt.plot(tickDifference, 'gray', label="tick difference")
 plt.plot([1 for x in range(0, len(dayDifference))], 'black')
 plt.plot([0.8 for x in range(0, len(dayDifference))], 'orange')
 plt.plot([0.5 for x in range(0, len(dayDifference))], 'red')
