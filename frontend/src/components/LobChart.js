@@ -58,7 +58,7 @@ export default class LobChart extends Component {
       <ResponsiveContainer height='100%' width='100%' aspect={4.0 / 1.7} >
         <LineChart data={this.props.data} syncId="anyId"  margin={{right: 30, left: 30}}>
           <XAxis dataKey="tickValue"/>
-          <YAxis/>
+          <YAxis tickFormatter={tick => tick + " " + this.state.unit}/>
           <Tooltip /*wrapperStyle={{backgroundColor:'#ff000000'}}*//>
           <Legend />
           {referenceLines}
