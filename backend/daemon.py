@@ -1,13 +1,13 @@
 import logging
 
 from integration import MediationDataConsumer
-from integration import MediationStateProducer
+from integration import MediationStatusProducer
 from mediation import MediationScheduler
 from scheduler.ComponentMonitoring import ComponentMonitoringScheduler
 from zookeeper import ZookeeperScheduler
 
 MediationDataConsumer.instance().start()
-MediationStateProducer.instance()
+MediationStatusProducer.instance()
 MediationScheduler().start()
 ZookeeperScheduler().start()
 ComponentMonitoringScheduler().start()

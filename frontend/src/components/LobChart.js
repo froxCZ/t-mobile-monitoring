@@ -26,7 +26,7 @@ const COLORS_MAP = {
 export default class LobChart extends Component {
   constructor() {
     super();
-    this.state = {}
+    this.state = {unit: ""}
   }
 
   componentWillMount() {
@@ -40,14 +40,14 @@ export default class LobChart extends Component {
   propChange(props) {
     let currentTimeLabel = LobChart.findCurrentTimeLabel(props.data);
     this.setState({currentTimeLabel: currentTimeLabel});
-    //this.setState({metrics: props.metrics, data: props.data})
+    this.adjustData(props);
   }
 
   render() {
     if (!this.props.data || !this.props.metrics) {
       return <p></p>
     }
-    LobChart.adjustData(this.props.data);
+
     let referenceLines = [];
     if (this.props.difference) {
       referenceLines.push(<ReferenceLine y={1} stroke="black"/>);
@@ -117,38 +117,66 @@ export default class LobChart extends Component {
   renderLines() {
     let lines = [];
     let iColor = 0;
-    for (let i in this.props.metrics) {
-      if (i.includes("smoothed") && !this.props.smooth) {
+    for (let metricName in this.props.metrics) {
+      let metricProp = this.props.metrics[metricName];
+      if (metricProp.type == "difference" && !this.props.difference) {
         continue;
       }
-      if (i.includes("Difference") && !this.props.difference) {
+      if (metricName.includes("outage")) {
         continue;
       }
-      if (i.includes("outage")) {
+      if (metricProp.type != "difference" && this.props.difference) {
         continue;
       }
-      if (this.props.difference && !i.includes("Difference")) {
-        continue;
-      }
-      let color = COLORS_MAP[i];
+      let color = COLORS_MAP[metricName];
       if (!color) {
         color = COLORS[iColor++]
       }
       let strokeWidth = 2;
-      if(i.includes("dayAverage"))strokeWidth = 1
-      lines.push(<Line type="linear" dataKey={i}
+      if (metricName.includes("dayAverage")) {
+        strokeWidth = 1;
+      }
+      let unit = metricProp.type == "traffic" ? this.state.unit : "";
+      lines.push(<Line type="linear" dataKey={metricName}
                        stroke={color} isAnimationActive={false}
+                       unit={unit}
                        dot={false} strokeWidth={strokeWidth}/>)
     }
     return lines
   }
 
-  static adjustData(data) {
-    for (let row of data) {
-      if (!row.tickValue) {
-        row.tickValue = LobChart.dateToTickValue(row._id)
+  adjustData(props) {
+    let flowName = props.flowName;
+    let maxValue = 0;
+    for (let row of props.data) {
+      row.tickValue = LobChart.dateToTickValue(row._id)
+      maxValue = Math.max(maxValue, row[flowName])
+    }
+    if (!props.difference) {
+      let scaleFactor = 1;
+      let unit;
+      if (maxValue > 10 * 1000 * 1000*1000) {
+        scaleFactor = 1.0 / (1000 * 1000 * 1000);
+        unit = " GB"
+      }else if (maxValue > 10 * 1000 * 1000) {
+        scaleFactor = 1.0 / (1000 * 1000);
+        unit = " MB"
+      } else if (maxValue > 10 * 1000) {
+        scaleFactor = 1.0 / (1000);
+        unit = " kB"
+      } else {
+        scaleFactor = 1;
+        unit = " B";
+      }
+      this.setState({unit: unit});
+      const roundTo = 100000;
+      for (let row of props.data) {
+        row[flowName] = Math.round(row[flowName] * scaleFactor * roundTo) / roundTo;
+        row.expected = Math.round(row.expected * scaleFactor * roundTo) / roundTo;
+        row.dayAverage = Math.round(row.dayAverage * scaleFactor * roundTo) / roundTo;
       }
     }
+
   }
 
   static findCurrentTimeLabel(data) {

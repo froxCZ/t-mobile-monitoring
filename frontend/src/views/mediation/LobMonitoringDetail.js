@@ -14,12 +14,10 @@ import {
   ModalBody,
   ModalFooter
 } from "reactstrap";
-import LobOverviewCharts from "../../components/LobOverviewCharts";
 import _ from "lodash";
 import StatusBadge from "../../components/StatusBadge";
 import {Link, browserHistory} from "react-router";
 const LIST_TAB = 'listTab'
-const CHART_TAB = 'chartTab'
 const CONFIG_TAB = 'configTab'
 class LobMonitoringDetail extends Component {
   constructor() {
@@ -85,16 +83,6 @@ class LobMonitoringDetail extends Component {
               </NavItem>
               <NavItem>
                 <NavLink
-                  className={classnames({active: this.state.activeTab === CHART_TAB})}
-                  onClick={() => {
-                    this.toggle(CHART_TAB);
-                  }}
-                >
-                  Charts Overview
-                </NavLink>
-              </NavItem>
-              <NavItem>
-                <NavLink
                   className={classnames({active: this.state.activeTab === CONFIG_TAB})}
                   onClick={() => {
                     this.toggle(CONFIG_TAB);
@@ -108,9 +96,6 @@ class LobMonitoringDetail extends Component {
               <TabPane tabId={LIST_TAB}>
                 {this.renderList()}
               </TabPane>
-              <TabPane tabId={CHART_TAB}>
-                {this.renderCharts()}
-              </TabPane>
               <TabPane tabId={CONFIG_TAB}>
                 {this.renderConfig()}
               </TabPane>
@@ -121,11 +106,6 @@ class LobMonitoringDetail extends Component {
     )
   }
 
-  renderCharts() {
-    return <div>
-      <LobOverviewCharts lobName={this.state.lobName} lob={this.state.lob}/>
-    </div>
-  }
 
   isValidJson(str) {
     try {

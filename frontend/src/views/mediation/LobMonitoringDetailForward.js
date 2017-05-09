@@ -112,7 +112,9 @@ class LobMonitoringDetailForward extends Component {
               <div className="card-header">
                 Traffic
               </div>
-              <LobChart data={this.state.data} metrics={this.state.metadata.metrics}/>
+              <LobChart data={this.state.data}
+                        metrics={this.state.metadata.metrics}
+                        flowName={this.state.metadata.flowName}/>
             </div>
           </div>
         </div>

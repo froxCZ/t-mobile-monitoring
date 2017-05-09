@@ -14,6 +14,57 @@ dataAPI = Blueprint('data_api', __name__)
 
 @dataAPI.route('/query', methods=["POST"])
 def dataQueryV2():
+  """
+Endpoint for getting traffic data.
+POST body:
+{
+  "from":"01.02.2017",
+  "to":"15.02.2017",
+  "lob":{"country":"CZ","name":"ACI"},
+  "neids":["GSM"],
+  "forwards":[],
+  "granularity":0
+}
+
+Response:
+{
+  "data": [
+    {
+      "GSM": 188385532,
+      "_id": "2017-02-01T00:00:00+01:00",
+      "dayAverage": 1162595297.6666667,
+      "dayDifference": 1.023,
+      "expected": 161627916,
+      "status": "OK",
+      "ticDifference": 1.166
+    },
+    ...
+  ],
+   "metadata": {
+    "flowName": "GSM",
+    "granularity": 480,
+    "metrics": {
+      "GSM": {
+        "type": "traffic"
+      },
+      "dayAverage": {
+        "type": "traffic"
+      },
+      "dayDifference": {
+        "type": "difference"
+      },
+      "expected": {
+        "type": "traffic"
+      },
+      "status": {
+        "type": "other"
+      },
+      "ticDifference": {
+        "type": "difference"
+      }
+    }
+  }
+"""
   searchParam = request.get_json()
   fromDate = util.stringToDate(searchParam["from"])
   toDate = util.stringToDate(searchParam["to"])
@@ -36,12 +87,18 @@ def dataQueryV2():
         break
       flows.append(lobConfig["flows"][forward])
   response = {}
+
+  # Query the traffic data and add to metric list
   mongoQuery = data_query.DateRangeGroupQuery(fromDate, toDate, flows, granularity=granularity)
   data = mongoQuery.execute()
   metrics = {}
-  metricsList = mongoQuery.metrics
+  metricsList = []
+  flowName = mongoQuery.metrics[0]
+  metricsList.append(flowName)
+
   metadata = mongoQuery.metadata
   if len(flows) == 1:
+    # Run outage detection analysis
     metric = metricsList[0]
     flowLevelQuery = data_query.FlowLevelDateRangeQuery(fromDate, toDate, flows, metadata["granularity"], data)
     flowLevelData = flowLevelQuery.execute()
@@ -52,22 +109,18 @@ def dataQueryV2():
     outageList = outageQuery.execute()
     data = util.merge2DateLists(outageList, [outageQuery.metric], data, None)
     metricsList.append(outageQuery.metric)
-  #
-  # if (len(data) > 10):
-  #   validMetricName = metricsList[0]
-  #   smoothData( metadata["granularity"], data)
-  #   metricsList.append(validMetricName + "_smoothed")
 
+  # Create metadata infor
   for metric in metricsList:
-    # maxx = 0
-    # minn = float('inf')
-    # for row in data:
-    #   if metric in row:
-    #     maxx = max(row[metric], maxx)
-    #     minn = min(row[metric], minn)
-    metrics[metric] = {}
+    if metric == flowName or metric == "dayAverage" or metric == "expected":
+      type = "traffic"
+    elif "Difference" in metric:
+      type = "difference"
+    else:
+      type = "other"
+    metrics[metric] = {"type": type}
   response["data"] = data
-  response["metadata"] = {**{"metrics": metrics}, **metadata}
+  response["metadata"] = {**{"metrics": metrics}, **metadata, "flowName": flowName}
   return jsonify(response)
 
 

@@ -16,6 +16,9 @@ const MINUTE_RANGES = [
   720,
   1440
 ]
+/**
+ * DEPRECATED - showing all inputs and forwards is not useful
+ */
 export default class LobOverviewCharts extends Component {
   constructor() {
     super()
