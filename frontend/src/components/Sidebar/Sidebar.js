@@ -13,10 +13,6 @@ class Sidebar extends Component {
     return this.props.location.pathname.indexOf(routeName) > -1 ? 'nav-item nav-dropdown open' : 'nav-item nav-dropdown';
   }
 
-  // secondLevelActive(routeName) {
-  //   return this.props.location.pathname.indexOf(routeName) > -1 ? "nav nav-second-level collapse in" : "nav nav-second-level collapse";
-  // }
-
   render() {
     return (
 
@@ -76,8 +72,12 @@ class Sidebar extends Component {
                 System
               </li>
               <li className="nav-item">
-                <Link to={'/settings/users'} className="nav-link" activeClassName="active">Users</Link>
+                <Link to={'/system/users'} className="nav-link" activeClassName="active">Users</Link>
               </li>
+              <li className="nav-item">
+                <Link to={'/system/status'} className="nav-link" activeClassName="active">Status</Link>
+              </li>
+
             </div>
             }
 

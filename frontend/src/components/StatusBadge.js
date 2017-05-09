@@ -13,6 +13,10 @@ const STATUS_MAP = {
     class: "badge-danger",
     label: "outage"
   },
+  "FAIL": {
+    class: "badge-danger",
+    label: "fail"
+  },
   "OFFLINE": {
     class: "badge-danger",
     label: "offline"
@@ -28,6 +32,10 @@ const STATUS_MAP = {
   "UNKNOWN": {
     class: "badge-default",
     label: "unknown"
+  },
+  "NOT_CONFIGURED": {
+    class: "badge-default",
+    label: "not configured"
   },
 }
 export default class StatusBadge extends Component {
