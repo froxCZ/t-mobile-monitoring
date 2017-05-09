@@ -135,6 +135,11 @@ class MediationConfig():
       return None
 
   @staticmethod
+  def getFlow(country, lobName, flowName):
+    lobs = MediationConfig.getLobs(country)
+    return lobs.get(lobName, {}).get("flows", {}).get(flowName, None)
+
+  @staticmethod
   def threadsCount():
     return AppConfig.getMediationConfig().get("threadsCount", 1)
 

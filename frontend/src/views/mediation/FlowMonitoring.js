@@ -184,10 +184,33 @@ class FlowMonitoring extends Component {
                       this.saveOptions()
                     }}>{buttonText}
           </button>
+          &nbsp;
+          <button type="button"
+                  className="btn btn-primary"
+                  onClick={
+                    () => {
+                      this.resetStatus()
+                    }}>Reset status
+          </button>
         </div>
         }
 
       </div>)
+  }
+
+  resetStatus() {
+    let myInit = {
+      method: 'PUT'
+    };
+    Api.fetch("/mediation/flows/" + this.state.country + "/" + this.state.lobName +
+      "/" + this.state.flow.name + "/resetStatus", myInit).then(response => {
+      this.setState({
+        options: response.options,
+        flow: response,
+        flowName: response.name,
+        optionsString: JSON.stringify(response.options, null, 2)
+      });
+    })
   }
 
   saveOptions() {

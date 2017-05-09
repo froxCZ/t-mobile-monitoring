@@ -8,6 +8,7 @@ from mongo import mongo
 
 
 class FlowStatusManager:
+  DOCUMENT_ID = "lobs"
   def __init__(self):
     self.notificator = StatusChangeNotificator()
 
@@ -92,7 +93,11 @@ class FlowStatusManager:
                   "ticTime": ticTime,
                   "difference": difference}
     setObj = {"$set": {flow["gName"]: statusDict}}
-    mongo.statuses().update_one({"_id": "lobs"}, setObj, upsert=True)
+    mongo.statuses().update_one({"_id": self.DOCUMENT_ID}, setObj, upsert=True)
+
+  def resetStatus(self, flow):
+    setObj = {"$unset": {flow["gName"]: ""}}
+    mongo.statuses().update_one({"_id": self.DOCUMENT_ID}, setObj, upsert=True)
     pass
 
   def _setStatusMetadata(self, flowStatus, flow):

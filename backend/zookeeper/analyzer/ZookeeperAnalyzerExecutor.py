@@ -29,7 +29,7 @@ class ZookeeperAnalyzerExecutor(AbstractExecutor):
         return
       for nodeName, node in newClusterStatus["nodes"].items():
         oldNode = oldClusterStatus["nodes"].get(nodeName, None)
-        if oldNode is None:
+        if oldNode is None or "status" not in oldNode:
           statusChange["nodes"][nodeName] = {"previousStatus": None, "newStatus": node["status"]}
           change = True
         else:

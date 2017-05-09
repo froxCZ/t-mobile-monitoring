@@ -79,6 +79,12 @@ def getCountriesOverview():
   return jsonify(countries)
 
 
+@flowsAPI.route('/<string:country>/<string:lobName>/<string:flowName>/resetStatus', methods=["PUT"])
+def resetFlowStatus(country, lobName, flowName):
+  flow = MediationConfig.getFlow(country, lobName, flowName)
+  FlowStatusManager().resetStatus(flow)
+  return flowGET(country, lobName, flowName)
+
 @flowsAPI.route('/<string:country>/<string:lobName>/<string:flowName>/enable', methods=["PUT"])
 def enableFlow(country, lobName, flowName):
   body = request.get_json()
