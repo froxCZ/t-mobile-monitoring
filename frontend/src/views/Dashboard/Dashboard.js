@@ -27,7 +27,7 @@ class Dashboard extends Component {
     if (offset == 0) {
       events = []
     }
-    Api.fetch("/mediation/events?offset=" + offset + "&omitOK=" + omitOK, req).then(response => {
+    Api.fetch("/app/events?offset=" + offset + "&omitOK=" + omitOK, req).then(response => {
       this.setState({events: events.concat(response)})
     })
   }

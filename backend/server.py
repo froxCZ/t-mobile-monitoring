@@ -5,8 +5,6 @@ from flask import Flask, jsonify
 from flask.json import JSONEncoder
 from flask_cors import CORS
 
-import util
-from common import SystemStatusManager
 from config import AppConfig
 
 app = Flask(__name__)
@@ -30,20 +28,6 @@ class CustomJSONEncoder(JSONEncoder):
 app.json_encoder = CustomJSONEncoder
 
 
-@app.route("/")
-def hello():
-  return "Helasdlo xWorld!"
-
-
-@app.route("/currentTime")
-def currentTime():
-  return jsonify({"currentTime": util.dateToTimeString(AppConfig.getCurrentTime())})
-
-@app.route('/status', methods=["GET"])
-def getSystemStatus():
-  return jsonify(SystemStatusManager.getStatus())
-
-
 @app.errorhandler(Exception)
 def handle_invalid_usage(error):
   if (type(error) == StatusException):
@@ -60,17 +44,15 @@ from mediation.api.data import dataAPI
 from mediation.api.config import configAPI
 from mediation.api.status import lobsStatus
 from mediation.api.flows import flowsAPI
-from mediation.api.mediation import mediation
-from common.api import common, StatusException
-from zookeeper.api import zookeeperApi
+from common.api import appAPI, StatusException
+from zookeeper.api import zookeeperAPI
 
 app.register_blueprint(dataAPI, url_prefix="/mediation/data")
 app.register_blueprint(configAPI, url_prefix="/mediation/config")
 app.register_blueprint(lobsStatus, url_prefix="/mediation/status")
 app.register_blueprint(flowsAPI, url_prefix="/mediation/flows")
-app.register_blueprint(mediation, url_prefix="/mediation")
-app.register_blueprint(common, url_prefix="/app")
-app.register_blueprint(zookeeperApi, url_prefix="/zookeeper")
+app.register_blueprint(appAPI, url_prefix="/app")
+app.register_blueprint(zookeeperAPI, url_prefix="/zookeeper")
 
 # SchedulerRunner().start()
 app.run(debug=AppConfig.getFlaskConfig().get("debug",False), host="0.0.0.0", port=5000, threaded=True)

@@ -48,7 +48,7 @@ class Header extends Component {
   }
 
   componentDidMount() {
-    Api.fetch("/currentTime", {method: "GET"}).then(response => {
+    Api.fetch("/app/currentTime", {method: "GET"}).then(response => {
       let serverTimeStr = response.currentTime
       let serverTime = Util.parseIsoDateString(serverTimeStr)
       let serverTimeDiff = Moment.duration(Moment().diff(serverTime))

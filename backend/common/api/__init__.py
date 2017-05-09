@@ -3,9 +3,13 @@ import hashlib
 from flask import Blueprint, jsonify
 from flask import request
 
+import util
+from common import SystemStatusManager
 from common import UserManager
+from config import AppConfig
+from mediation.flow_analyzer import EventsManager
 
-common = Blueprint('common', __name__)
+appAPI = Blueprint('common', __name__)
 
 
 class StatusException(Exception):
@@ -23,8 +27,15 @@ def _invalidLoginResponse():
 def _hashPassword(password):
   return hashlib.sha512(password.encode('utf-8')).hexdigest()
 
+@appAPI.route("/currentTime")
+def currentTime():
+  return jsonify({"currentTime": util.dateToTimeString(AppConfig.getCurrentTime())})
 
-@common.route('/login', methods=["POST"])
+@appAPI.route('/status', methods=["GET"])
+def getSystemStatus():
+  return jsonify(SystemStatusManager.getStatus())
+
+@appAPI.route('/login', methods=["POST"])
 def login():
   body = request.get_json()
   if body == None:
@@ -41,7 +52,7 @@ def login():
   return jsonify(user)
 
 
-@common.route('/visitorLogin', methods=["POST"])
+@appAPI.route('/visitorLogin', methods=["POST"])
 def visitorLogin():
   username = "visitor"
   password = "visitor"
@@ -53,12 +64,12 @@ def visitorLogin():
   return jsonify(user)
 
 
-@common.route('/users', methods=["GET"])
+@appAPI.route('/users', methods=["GET"])
 def usersGET():
   return jsonify(UserManager.getUsers())
 
 
-@common.route('/users', methods=["POST"])
+@appAPI.route('/users', methods=["POST"])
 def usersPOST():
   body = request.get_json()
   if "login" not in body or len(body["login"]) == 0:
@@ -66,7 +77,7 @@ def usersPOST():
   UserManager.addUser(body)
   return jsonify(UserManager.getUsers())
 
-@common.route('/user/<string:login>', methods=["PUT"])
+@appAPI.route('/user/<string:login>', methods=["PUT"])
 def userPUT(login):
   body = request.get_json()
   body["_id"] = login
@@ -76,7 +87,14 @@ def userPUT(login):
   return jsonify(UserManager.getUsers())
 
 
-@common.route('/user/<string:login>', methods=["DELETE"])
+@appAPI.route('/user/<string:login>', methods=["DELETE"])
 def userDELETE(login):
   UserManager.deleteUser(login)
   return jsonify(UserManager.getUsers())
+
+@appAPI.route('/events', methods=["GET"])
+def events():
+  offset = int(request.args.get('offset', 0))
+  omitOK = util.str2bool(request.args.get('omitOK', False))
+  events = EventsManager.getEvents(offset, omitOK)
+  return jsonify(events)
