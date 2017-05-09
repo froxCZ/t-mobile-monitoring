@@ -1,6 +1,9 @@
 from pymongo import MongoClient
 
 from config import AppConfig
+"""
+Classes for accessing MongoDB collections.
+"""
 
 _client = MongoClient("mongodb://localhost/", tz_aware=True)
 

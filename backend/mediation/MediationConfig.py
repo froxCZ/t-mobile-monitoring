@@ -1,6 +1,9 @@
 from config import AppConfig
 from mongo import mongo
 
+"""
+Class for configuration related to Mediation monitoring.
+"""
 configColl = mongo.config()
 
 MEDIATION_DOCUMENT = {"_id": "mediation"}

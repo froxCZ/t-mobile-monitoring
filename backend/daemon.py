@@ -6,6 +6,9 @@ from mediation import MediationScheduler
 from scheduler.ComponentMonitoring import ComponentMonitoringScheduler
 from zookeeper import ZookeeperScheduler
 
+"""
+Monitoring daemon running on background. Starts all necessary components and reports their status to database.
+"""
 MediationDataConsumer.instance().start()
 MediationStatusProducer.instance()
 MediationScheduler().start()

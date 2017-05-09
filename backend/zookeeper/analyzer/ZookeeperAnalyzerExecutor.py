@@ -1,6 +1,6 @@
 import logging
 
-import config
+from config import AppConfig
 from integration import MediationStatusProducer
 from scheduler.AbstractExecutor import AbstractExecutor
 from zookeeper.analyzer.Analyzer import Analyzer
@@ -19,7 +19,7 @@ class ZookeeperAnalyzerExecutor(AbstractExecutor):
   def _executeInternal(self):
     clusterStatus = self.analyzer.run()
     self.checkStatusChange(StatusManager.getClusterStatus(), clusterStatus)
-    StatusManager.saveClusterStatus(clusterStatus, config.getCurrentTime())
+    StatusManager.saveClusterStatus(clusterStatus, AppConfig.getCurrentTime())
 
   def checkStatusChange(self, oldClusterStatus, newClusterStatus):
     statusChange = {"nodes": {}, "system": "zookeeper"}

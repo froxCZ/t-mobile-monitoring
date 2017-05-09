@@ -137,7 +137,7 @@ def insertData():
 def bestCorrelations():
   lobName = request.args.get('lobName')
   granularity = int(request.args.get('granularity'))
-  from past.data_util import correlation
+  from support_development_packages.data_util import correlation
   bestCorrelations = correlation.getBestCorrelations(lobName, granularity=granularity)
   return jsonify(bestCorrelations)
 
@@ -145,7 +145,7 @@ def bestCorrelations():
 @dataAPI.route('/averages', methods=["GET"])
 def getDayAverages():
   lobName = request.args.get('lobName')
-  from past.data_util.moving_average import DayAverageExecutor
+  from support_development_packages.data_util.moving_average import DayAverageExecutor
   return jsonify(DayAverageExecutor.getDayAverages(lobName))
 
 

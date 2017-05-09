@@ -1,8 +1,29 @@
 {
   "flask": {
-    "debug": false
+    "debug": true
   },
   "system": {
-    "daysOffset": -60
+    "daysOffset": -90
+  },
+  "mediation": {
+    "threadsCount": 8
+  },
+  "mongo": {
+    "user": "r",
+    "password": "r"
+  },
+  "integration": {
+    "kafka": {
+      "servers": "127.0.0.2:9092",
+      "outputTopic": null,
+      "inputTopic": null
+    },
+    "email": {
+      "to": "mediation-monitoring@seznam.cz",
+      "from": "mediation-monitoring@seznam.cz",
+      "login": "mediation-monitoring@seznam.cz",
+      "password": "mediation1.",
+      "smtpHostname": "smtp.seznam.cz"
+    }
   }
 }

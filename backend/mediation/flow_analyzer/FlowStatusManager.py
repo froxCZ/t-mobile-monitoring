@@ -1,6 +1,6 @@
 import datetime
 
-import config
+from config import AppConfig
 from mediation import MediationConfig
 from mediation.flow_analyzer import status
 from mediation.flow_analyzer.StatusChangeNotificator import StatusChangeNotificator
@@ -101,7 +101,7 @@ class FlowStatusManager:
       return {"status": status.DISABLED}
     granDelta = datetime.timedelta(minutes=flow["options"]["granularity"]
                                            + 3)  # set as N_A after it has not been analyzed for more than 3 minutes than it should have
-    if ticTime + 2 * granDelta < config.getCurrentTime():
+    if ticTime + 2 * granDelta < AppConfig.getCurrentTime():
       return {"status": status.NA}
     return flowStatus
 

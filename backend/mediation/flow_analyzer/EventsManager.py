@@ -1,6 +1,6 @@
 import logging
 
-import config
+from config import AppConfig
 from mongo import mongo
 from .status import OK
 
@@ -8,7 +8,7 @@ from .status import OK
 class EventsManager:
   @staticmethod
   def logStatusChangeEvent(flow, message, ticTime, newStatus):
-    currentTime = config.getCurrentTime()
+    currentTime = AppConfig.getCurrentTime()
     obj = {"flowName": flow["name"],
            "lobName": flow["lobName"],
            "country": flow["country"],

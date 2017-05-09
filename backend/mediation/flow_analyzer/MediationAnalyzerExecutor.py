@@ -4,7 +4,7 @@ import threading
 import time
 from queue import Queue, Empty
 
-import config
+from config import AppConfig
 from mediation import MediationConfig
 from mediation.flow_analyzer import FlowAnalyzer
 from mediation.flow_analyzer import status
@@ -20,7 +20,7 @@ class Worker(threading.Thread):
 
   def _analyzeFlow(self, flow, lastExecution):
     analyzer = FlowAnalyzer(flow)
-    runResult = analyzer.run(config.getCurrentTime())
+    runResult = analyzer.run(AppConfig.getCurrentTime())
     previousStatus = lastExecution["status"]
     newStatus = analyzer.status
     self.statusManager.saveStatus(flow, previousStatus, newStatus, analyzer.difference, analyzer.ticTime)
@@ -88,7 +88,7 @@ class MediationAnalyzerExecutor(AbstractExecutor):
     if lastExecution["status"] == status.NA:
       return True
     lastTicTime = lastExecution["ticTime"]
-    if lastTicTime < config.getCurrentTime() - datetime.timedelta(minutes=2 * granularity):
+    if lastTicTime < AppConfig.getCurrentTime() - datetime.timedelta(minutes=2 * granularity):
       return True
     else:
       return False

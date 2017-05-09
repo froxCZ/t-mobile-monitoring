@@ -8,6 +8,9 @@ import time
 import dateutil.parser
 import pytz
 
+"""
+General util file for all application modules.
+"""
 utc = pytz.timezone("UTC")
 from config.AppConfig import TIMEZONE, AppConfig
 

@@ -10,7 +10,9 @@ class ParsingException(RuntimeError):
   def __init__(self, msg):
     self.msg = msg
 
-
+"""
+Class that implements CLI client. It can be used to insert large amount of mediation traffic records.
+"""
 class Cli:
   def __init__(self):
     parser = argparse.ArgumentParser(description='Mediation cli')
