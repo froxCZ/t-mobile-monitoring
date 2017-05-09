@@ -6,7 +6,7 @@ import classnames from "classnames";
 import {TabContent, TabPane, Nav, NavItem, NavLink} from "reactstrap";
 import "react-datepicker/dist/react-datepicker.css";
 const COUNTRIES = ["CZ", "AT", "DE", "NL"]
-class LobsSettings extends Component {
+class CountrySettingsView extends Component {
   constructor() {
     super();
     this.state = {countries: null, activeTab: "CZ"}
@@ -45,6 +45,7 @@ class LobsSettings extends Component {
     if (!this.state.countries) {
       return <p></p>
     }
+    console.log(this.state);
     let navs = []
     for (let c of COUNTRIES) {
       navs.push(<NavItem>
@@ -88,4 +89,4 @@ class LobsSettings extends Component {
 
   }
 }
-export default Util.injectUserProp(LobsSettings)
+export default Util.injectUserProp(CountrySettingsView)

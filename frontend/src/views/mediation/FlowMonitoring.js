@@ -20,7 +20,7 @@ const MINUTE_RANGES = [
   1440
 ]
 
-class LobMonitoringDetailForward extends Component {
+class FlowMonitoring extends Component {
   constructor() {
     super()
     this.state = {data: [], metadata: {}};
@@ -208,4 +208,4 @@ class LobMonitoringDetailForward extends Component {
   }
 }
 
-export default Util.injectUserProp(LobMonitoringDetailForward)
+export default Util.injectUserProp(FlowMonitoring)

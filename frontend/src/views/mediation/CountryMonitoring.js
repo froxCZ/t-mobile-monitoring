@@ -27,7 +27,7 @@ function mapDispatchToProps(dispatch) {
   var actions = {showLoading: showLoading, hideLoading: hideLoading};
   return bindActionCreators(actions, dispatch);
 }
-class LobsMonitoring extends Component {
+class CountryMonitoring extends Component {
   constructor() {
     super();
     this.state = {countryEnabled: null}
@@ -266,5 +266,5 @@ class LobsMonitoring extends Component {
   }
 }
 
-LobsMonitoring = connect(mapStateToProps, mapDispatchToProps)(LobsMonitoring)
-export default LobsMonitoring
+CountryMonitoring = connect(mapStateToProps, mapDispatchToProps)(CountryMonitoring)
+export default CountryMonitoring

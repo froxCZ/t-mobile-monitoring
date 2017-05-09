@@ -19,7 +19,7 @@ import StatusBadge from "../../components/StatusBadge";
 import {Link, browserHistory} from "react-router";
 const LIST_TAB = 'listTab'
 const CONFIG_TAB = 'configTab'
-class LobMonitoringDetail extends Component {
+class LobMonitoring extends Component {
   constructor() {
     super()
     this.state = {activeTab: LIST_TAB, optionsString: '', expand: false}
@@ -406,4 +406,4 @@ class LobMonitoringDetail extends Component {
     });
   }
 }
-export default Util.injectUserProp(LobMonitoringDetail)
+export default Util.injectUserProp(LobMonitoring)

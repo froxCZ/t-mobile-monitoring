@@ -22,7 +22,6 @@ class CountrySettings extends Component {
   }
 
   render() {
-    console.log(this.state)
     if (!this.state.country) {
       return <p></p>
     }
