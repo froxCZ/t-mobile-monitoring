@@ -26,7 +26,10 @@ export default class UsersList extends Component {
 
   fetchStatus() {
     Api.fetch("/app/status", {method: "GET"}).then(response => {
+      response = {...response, "api": {"API service": "ok"}};
       this.setState({status: response})
+    }).catch(e => {
+      this.setState({status: {"api": {"API service": "fail"}}})
     })
   }
 
@@ -37,6 +40,7 @@ export default class UsersList extends Component {
     if (this.state.status) {
       rows = [...rows,this.getComponentRows("executors")];
       rows = [...rows,this.getComponentRows("kafka")];
+      rows = [...rows, this.getComponentRows("api")];
     }
 
     return <div className="animated fadeIn">
