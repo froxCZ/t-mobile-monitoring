@@ -2,6 +2,7 @@ import React, {Component} from "react";
 import "react-datepicker/dist/react-datepicker.css";
 import Util from "../Util";
 import Moment from "moment";
+import LoadingIndicator from "react-loading-indicator";
 import {
   LineChart,
   Line,
@@ -45,7 +46,7 @@ export default class LobChart extends Component {
 
   render() {
     if (!this.props.data || !this.props.metrics) {
-      return <p></p>
+      return <h1><LoadingIndicator /></h1>
     }
 
     let referenceLines = [];
@@ -55,20 +56,22 @@ export default class LobChart extends Component {
       referenceLines.push(<ReferenceLine y={this.props.hardAlarmLevel} stroke="#bd3e39"/>)
     }
     return (
-      <ResponsiveContainer height='100%' width='100%' aspect={4.0 / 1.7} >
-        <LineChart data={this.props.data} syncId="anyId"  margin={{right: 30, left: 30}}>
-          <XAxis dataKey="tickValue"/>
-          <YAxis tickFormatter={tick => tick + " " + this.state.unit}/>
-          <Tooltip /*wrapperStyle={{backgroundColor:'#ff000000'}}*//>
-          <Legend />
-          {referenceLines}
-          {this.renderLines()}
-          {this.renderOutages()}
-          {this.state.currentTimeLabel &&
-          <ReferenceDot x={this.state.currentTimeLabel} y={0}  r={5} label="now" fill="blue" stroke="none"/>
-          }
-        </LineChart>
-      </ResponsiveContainer>
+      <div>
+        <ResponsiveContainer height='100%' width='100%' aspect={4.0 / 1.7} >
+          <LineChart data={this.props.data} syncId="anyId" margin={{right: 30, left: 30}}>
+            <XAxis dataKey="tickValue"/>
+            <YAxis tickFormatter={tick => tick + " " + this.state.unit}/>
+            <Tooltip /*wrapperStyle={{backgroundColor:'#ff000000'}}*//>
+            <Legend />
+            {referenceLines}
+            {this.renderLines()}
+            {this.renderOutages()}
+            {this.state.currentTimeLabel &&
+            <ReferenceDot x={this.state.currentTimeLabel} y={0} r={5} label="now" fill="blue" stroke="none"/>
+            }
+          </LineChart>
+        </ResponsiveContainer>
+      </div>
     )
   }
 
