@@ -34,14 +34,14 @@ from mediation import data_query
 # plt.show()
 
 
-fromDate = util.stringToDate("30.01.2017")
-toDate = util.stringToDate("12.02.2017")
-lobName = "GGS"
-flowName = "BIEL5"
-lob = MediationConfig.getLobWithCountry("DE", lobName)
+fromDate = util.stringToDate("02.03.2017")
+toDate = util.stringToDate("03.03.2017")
+lobName = "GSM"
+flowName = "MSSBRN1A"
+lob = MediationConfig.getLobWithCountry("CZ", lobName)
 flow = lob["flows"][flowName]
 flows = [flow]
-granularity = 240
+granularity = 5
 
 response = {}
 mongoQuery = data_query.DateRangeGroupQuery(fromDate, toDate, flows, granularity=granularity)
@@ -68,14 +68,15 @@ expected = util.dateDataListToList(data, "expected")
 dataTicks = []
 dataTickPos = []
 for i in range(0, len(dates)):
-  if i % 7 == 0:
+  if i % 24 == 0:
     dataTicks.append(dates[i])
     dataTickPos.append(i)
 
-plt.figure(figsize=(12, 6))
+plt.figure(figsize=(12, 5))
 plt.plot(data1, color="red", label=lobName+"-" +flowName)
 plt.plot(expected, color="blue", label="expected")
-plt.xticks(dataTickPos, dataTicks, rotation=25)
+plt.plot(util.dateDataListToList(data, "dayAverage"), color="orange", label="day average")
+plt.xticks(dataTickPos, dataTicks, rotation=15)
 plt.title(lobName+"-" +flowName+"")
 plt.legend(loc='lower right')
 plt.show()
