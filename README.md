@@ -1,4 +1,5 @@
 # Mediation Monitoring #
+### [Video Demo](https://goo.gl/Wg5sQQ) ###
 work in progress
 
 ### Tech stack ###
@@ -21,5 +22,5 @@ Data about traffic on each channel is sent to this monitoring application. The a
  * Monitoring daemon runs in the background and periodically analyses flows.
  * MongoDB stores traffic data as well as configuration of the flows and application in general.
  * Frontend service only provides JS application to the client
- 
- 
+
+![mon_architecture.png](https://bitbucket.org/repo/bGypxq/images/1211732785-mon_architecture.png)
