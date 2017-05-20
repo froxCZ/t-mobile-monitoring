@@ -18,8 +18,8 @@ class ExpectedTrafficQuery:
     country = MediationConfig.getCountryByName(self.flow["country"])
     self.options = self.flow["options"]
     self.adjustment = None
-    lazyDayDifference = self.flow["options"].get("lazyDayDifference", 1)
-    if lazyDayDifference != 1:
+    lazyDayDifference = self.flow["options"].get("lazyDayDifference", None)
+    if lazyDayDifference != None:
       for lazyDayStr in country["lazyDays"]:
         lazyDay = util.stringToDate(lazyDayStr)
         if lazyDay.date() == date.date():

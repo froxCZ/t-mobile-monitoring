@@ -13,6 +13,9 @@ app.config['MAX_CONTENT_LENGTH'] = 40 * 1024 * 1024
 
 
 class CustomJSONEncoder(JSONEncoder):
+  """
+  JSON encoder to send datetime in iso format
+  """
   def default(self, obj):
     try:
       if isinstance(obj, datetime):
@@ -27,9 +30,11 @@ class CustomJSONEncoder(JSONEncoder):
 
 app.json_encoder = CustomJSONEncoder
 
-
 @app.errorhandler(Exception)
 def handle_invalid_usage(error):
+  """
+  Exceptions handler which returns json with message and status code.
+  """
   if (type(error) == StatusException):
     response = jsonify({"message": error.message})
     response.status_code = error.status
@@ -47,6 +52,7 @@ from mediation.api.flows import flowsAPI
 from common.api import appAPI, StatusException
 from zookeeper.api import zookeeperAPI
 
+#Registration of all endpoints
 app.register_blueprint(dataAPI, url_prefix="/mediation/data")
 app.register_blueprint(configAPI, url_prefix="/mediation/config")
 app.register_blueprint(lobsStatus, url_prefix="/mediation/status")
@@ -54,5 +60,4 @@ app.register_blueprint(flowsAPI, url_prefix="/mediation/flows")
 app.register_blueprint(appAPI, url_prefix="/app")
 app.register_blueprint(zookeeperAPI, url_prefix="/zookeeper")
 
-# SchedulerRunner().start()
 app.run(debug=AppConfig.getFlaskConfig().get("debug",False), host="0.0.0.0", port=5000, threaded=True)

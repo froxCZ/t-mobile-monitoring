@@ -2,6 +2,8 @@ from flask import Blueprint, jsonify
 from flask import request
 
 from common.api import StatusException
+from common.api import require_root
+from common.api import require_user
 from mediation import MediationConfig
 from mediation.MediationConfig import MEDIATION_DOCUMENT
 from mediation.flow_analyzer import FlowStatusManager
@@ -25,6 +27,7 @@ def addStatus(res, status):
 
 
 @flowsAPI.route('/<string:country>', methods=["GET"])
+@require_user
 def getCountry(country):
   res = MediationConfig.getLobs(country)
   for lob in res.values():
@@ -38,11 +41,13 @@ def getCountry(country):
 
 
 @flowsAPI.route('/<string:country>/enable', methods=["GET"])
+@require_user
 def getEnabledCountry(country):
   return jsonify({"enabled": MediationConfig.getCountryByName(country)["enabled"]})
 
 
 @flowsAPI.route('/<string:country>/enable', methods=["PUT"])
+@require_root
 def enableCountry(country):
   body = request.get_json()
   enable = body["enable"]
@@ -52,6 +57,7 @@ def enableCountry(country):
 
 
 @flowsAPI.route('/<string:country>/<string:lobName>', methods=["GET"])
+@require_user
 def getLob(country, lobName):
   res = MediationConfig.getLobWithCountry(country, lobName)
   if shouldIncludeStatus():
@@ -65,6 +71,7 @@ def getLob(country, lobName):
 
 @flowsAPI.route(
   '/<string:country>/<string:lobName>/<string:flowName>', methods=["GET"])
+@require_user
 def flowGET(country, lobName, flowName):
   flow = MediationConfig.getLobWithCountry(country, lobName)["flows"][flowName]
   if shouldIncludeStatus():
@@ -74,18 +81,21 @@ def flowGET(country, lobName, flowName):
 
 
 @flowsAPI.route('', methods=["GET"])
+@require_user
 def getCountriesOverview():
   countries = FlowStatusManager().getCountriesOverview()
   return jsonify(countries)
 
 
 @flowsAPI.route('/<string:country>/<string:lobName>/<string:flowName>/resetStatus', methods=["PUT"])
+@require_root
 def resetFlowStatus(country, lobName, flowName):
   flow = MediationConfig.getFlow(country, lobName, flowName)
   FlowStatusManager().resetStatus(flow)
   return flowGET(country, lobName, flowName)
 
 @flowsAPI.route('/<string:country>/<string:lobName>/<string:flowName>/enable', methods=["PUT"])
+@require_root
 def enableFlow(country, lobName, flowName):
   body = request.get_json()
   enable = body["enable"]
@@ -96,6 +106,7 @@ def enableFlow(country, lobName, flowName):
 
 
 @flowsAPI.route('/<string:country>/<string:lobName>/options', methods=["PUT"])
+@require_root
 def lobOptionsPUT(country, lobName):
   body = request.get_json()
   optionsPath = "lobs." + country + "." + lobName + ".options"
@@ -104,6 +115,7 @@ def lobOptionsPUT(country, lobName):
 
 
 @flowsAPI.route('/<string:country>/<string:lobName>/enable', methods=["PUT"])
+@require_root
 def enableLob(country, lobName):
   enable = request.get_json()["enable"]
   optionsPath = "lobs." + country + "." + lobName + ".options.enabled"
@@ -112,6 +124,7 @@ def enableLob(country, lobName):
 
 
 @flowsAPI.route('/<string:country>/<string:lobName>/<string:flowName>/options', methods=["GET"])
+@require_user
 def getFlowOptions(country, lobName, flowName):
   lobConfig = MediationConfig.getLobWithCountry(country, lobName)
   flowConfig = lobConfig["flows"][flowName]
@@ -119,6 +132,7 @@ def getFlowOptions(country, lobName, flowName):
 
 
 @flowsAPI.route('/<string:country>/<string:lobName>/<string:flowName>/options', methods=["PUT"])
+@require_root
 def putFlowOptions(country, lobName, flowName):
   body = request.get_json()
   flow = MediationConfig.getLobWithCountry(country, lobName)["flows"][flowName]
@@ -127,6 +141,7 @@ def putFlowOptions(country, lobName, flowName):
 
 
 @flowsAPI.route('/', methods=["POST"])
+@require_root
 def addLob():
   """put under /lobs"""
   addLobRequest = request.get_json()
@@ -139,6 +154,7 @@ def addLob():
 
 
 @flowsAPI.route('/<string:country>/<string:lobName>', methods=["DELETE"])
+@require_root
 def deleteLob(country, lobName):
   lob = MediationConfig.getLobWithCountry(country, lobName)
   if lob is not None:
@@ -149,6 +165,7 @@ def deleteLob(country, lobName):
 
 
 @flowsAPI.route('/<string:country>/<string:lobName>', methods=["POST"])
+@require_root
 def addFlow(country, lobName):
   lob = MediationConfig.getLobWithCountry(country, lobName)
   addFlowRequest = request.get_json()
@@ -162,6 +179,7 @@ def addFlow(country, lobName):
 
 
 @flowsAPI.route('/<string:country>/<string:lobName>/<string:flowName>', methods=["DELETE"])
+@require_root
 def deleteFlow(country, lobName, flowName):
   lob = MediationConfig.getLobWithCountry(country, lobName)
   if flowName in lob["flows"]:

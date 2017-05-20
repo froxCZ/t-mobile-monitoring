@@ -1,6 +1,8 @@
 from flask import Blueprint, jsonify
 from flask import request
 
+from common.api import require_root
+from common.api import require_user
 from mediation import MediationConfig
 from mediation.MediationConfig import MEDIATION_DOCUMENT
 
@@ -8,11 +10,13 @@ configAPI = Blueprint('lobs', __name__)
 
 
 @configAPI.route('/countries', methods=["GET"])
+@require_user
 def getCountriesConfig():
   return jsonify(MediationConfig.getCountries())
 
 
 @configAPI.route('/countries', methods=["PUT"])
+@require_root
 def putCountriesConfig():
   body = request.get_json()
   MediationConfig.configColl.update_one(MEDIATION_DOCUMENT, {"$set": {"countries": body}})

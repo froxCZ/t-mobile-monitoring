@@ -1,10 +1,11 @@
-import datetime
 import io
 
 from flask import Blueprint, jsonify
 from flask import request
 
 import util
+from common.api import require_root
+from common.api import require_user
 from mediation import MediationConfig
 from mediation import data_query
 from mediation.data_receiver import DataInsertor
@@ -13,6 +14,7 @@ dataAPI = Blueprint('data_api', __name__)
 
 
 @dataAPI.route('/query', methods=["POST"])
+@require_user
 def dataQueryV2():
   """
 Endpoint for getting traffic data.
@@ -125,6 +127,7 @@ Response:
 
 
 @dataAPI.route('/insert', methods=["POST"])
+@require_root
 def insertData():
   f = request.files['file']
   stream = io.StringIO(f.stream.read().decode("UTF8"), newline=None)
@@ -133,51 +136,51 @@ def insertData():
   return jsonify({})
 
 
-@dataAPI.route('/best_correlations', methods=["GET"])
-def bestCorrelations():
-  lobName = request.args.get('lobName')
-  granularity = int(request.args.get('granularity'))
-  from support_development_packages.data_util import correlation
-  bestCorrelations = correlation.getBestCorrelations(lobName, granularity=granularity)
-  return jsonify(bestCorrelations)
-
-
-@dataAPI.route('/averages', methods=["GET"])
-def getDayAverages():
-  lobName = request.args.get('lobName')
-  from support_development_packages.data_util.moving_average import DayAverageExecutor
-  return jsonify(DayAverageExecutor.getDayAverages(lobName))
-
-
-@dataAPI.route('/day_medians', methods=["GET"])
-def getDayMedians():
-  """deprecated"""
-  lobName = request.args.get('lobName')
-  requestDate = request.args.get('date')
-  if requestDate is None:
-    requestDate = datetime.datetime.now()
-  else:
-    requestDate = util.jsStringToDate(requestDate)
-  requestDate = util.resetDateTimeMidnight(requestDate)
-  medianQuery = data_query.ExpectedTrafficQuery(lobName, requestDate)
-  medians = medianQuery.execute()
-  dataList = util.dateDictToList(data_query.minuteDictToDateDict(requestDate, medians, "median"))
-  response = {}
-  response["data"] = dataList
-  response["granularity"] = medianQuery.metadata["granularity"]
-  response["metrics"] = ["median"]
-  return jsonify(response)
-
-def createMergedFlowsObject(country, lobName, flowType):
-  flow = {}
-  flow["name"] = lobName + "-" + flowType
-  flow["type"] = "all_forwards"
-  flow["lobName"] = lobName
-  flow["dataPath"] = country + "." + lobName + "." + flowType + ".sum"
-  flow["gName"] = lobName + "_" + flowType
-  flow["country"] = country
-  flow["options"] = MediationConfig.getLobWithCountry(country, lobName)["options"]
-  return flow
+# @dataAPI.route('/best_correlations', methods=["GET"])
+# def bestCorrelations():
+#   lobName = request.args.get('lobName')
+#   granularity = int(request.args.get('granularity'))
+#   from support_development_packages.data_util import correlation
+#   bestCorrelations = correlation.getBestCorrelations(lobName, granularity=granularity)
+#   return jsonify(bestCorrelations)
+#
+#
+# @dataAPI.route('/averages', methods=["GET"])
+# def getDayAverages():
+#   lobName = request.args.get('lobName')
+#   from support_development_packages.data_util.moving_average import DayAverageExecutor
+#   return jsonify(DayAverageExecutor.getDayAverages(lobName))
+#
+#
+# @dataAPI.route('/day_medians', methods=["GET"])
+# def getDayMedians():
+#   """deprecated"""
+#   lobName = request.args.get('lobName')
+#   requestDate = request.args.get('date')
+#   if requestDate is None:
+#     requestDate = datetime.datetime.now()
+#   else:
+#     requestDate = util.jsStringToDate(requestDate)
+#   requestDate = util.resetDateTimeMidnight(requestDate)
+#   medianQuery = data_query.ExpectedTrafficQuery(lobName, requestDate)
+#   medians = medianQuery.execute()
+#   dataList = util.dateDictToList(data_query.minuteDictToDateDict(requestDate, medians, "median"))
+#   response = {}
+#   response["data"] = dataList
+#   response["granularity"] = medianQuery.metadata["granularity"]
+#   response["metrics"] = ["median"]
+#   return jsonify(response)
+#
+# def createMergedFlowsObject(country, lobName, flowType):
+#   flow = {}
+#   flow["name"] = lobName + "-" + flowType
+#   flow["type"] = "all_forwards"
+#   flow["lobName"] = lobName
+#   flow["dataPath"] = country + "." + lobName + "." + flowType + ".sum"
+#   flow["gName"] = lobName + "_" + flowType
+#   flow["country"] = country
+#   flow["options"] = MediationConfig.getLobWithCountry(country, lobName)["options"]
+#   return flow
 # def smoothData(data, granularity, validMetricName):
 #   dataList = []
 #   for row in data:

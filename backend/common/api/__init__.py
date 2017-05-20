@@ -6,6 +6,7 @@ from flask import request
 import util
 from common import SystemStatusManager
 from common import UserManager
+from common.api.auth import require_root, require_user
 from config import AppConfig
 from mediation.flow_analyzer import EventsManager
 
@@ -65,11 +66,13 @@ def visitorLogin():
 
 
 @appAPI.route('/users', methods=["GET"])
+@require_root
 def usersGET():
   return jsonify(UserManager.getUsers())
 
 
 @appAPI.route('/users', methods=["POST"])
+@require_root
 def usersPOST():
   body = request.get_json()
   if "login" not in body or len(body["login"]) == 0:
@@ -78,6 +81,7 @@ def usersPOST():
   return jsonify(UserManager.getUsers())
 
 @appAPI.route('/user/<string:login>', methods=["PUT"])
+@require_root
 def userPUT(login):
   body = request.get_json()
   body["_id"] = login
@@ -88,11 +92,13 @@ def userPUT(login):
 
 
 @appAPI.route('/user/<string:login>', methods=["DELETE"])
+@require_root
 def userDELETE(login):
   UserManager.deleteUser(login)
   return jsonify(UserManager.getUsers())
 
 @appAPI.route('/events', methods=["GET"])
+@require_user
 def events():
   offset = int(request.args.get('offset', 0))
   omitOK = util.str2bool(request.args.get('omitOK', False))
