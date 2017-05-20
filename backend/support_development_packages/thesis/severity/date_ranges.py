@@ -4,10 +4,10 @@ import util
 from mediation import MediationConfig
 from mediation import data_query
 
-fromDate = util.stringToDate("19.01.2017")
-toDate = util.stringToDate("30.01.2017")
-lobName = "SMS"
-flowName = "SMSCCTX"
+fromDate = util.stringToDate("21.12.2016")
+toDate = util.stringToDate("30.12.2016")
+lobName = "GSM"
+flowName = "MSSBRN1A"
 lob = MediationConfig.getLobWithCountry("CZ", lobName)
 flow = lob["flows"][flowName]
 flows = [flow]

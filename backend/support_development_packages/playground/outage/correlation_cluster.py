@@ -1,7 +1,7 @@
 from numpy.matlib import corrcoef
 from scipy.stats import linregress
 
-from config import config
+from mediation import MediationConfig
 from mediation import data_query
 from mediation.api import util
 
@@ -227,7 +227,7 @@ lobsData = [
                               0.8680083180866294, 0.9732343917814772, 0.9873704480552615, 0.9832499869540516,
                               0.9831210955086642, 1]}]
 
-CZ_LOBS = config.getLobsConfig()["lobs"]["CZ"]
+CZ_LOBS = MediationConfig.getCountryByName("CZ")
 # CZ_LOBS = ["SMS", "GSM", "MMS"]
 
 
