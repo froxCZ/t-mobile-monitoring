@@ -69,13 +69,12 @@ class FlowMonitoring extends Component {
     this.setState({controlSettings: controlSettings});
     let flowObj = {inputs: [], forwards: []};
     flowObj[this.state.flow.type].push(this.state.flow.name);
-    let lobReq = {country: this.state.country, name: this.state.lobName}
     Api.lobData(
       controlSettings.fromDate,
       controlSettings.toDate,
-      lobReq,
-      flowObj.inputs,
-      flowObj.forwards,
+      this.state.country,
+      this.state.lobName,
+      this.state.flowName,
       controlSettings.granularity)
       .then(response => {
         this.setState({data: response.data, metadata: response.metadata})

@@ -22,8 +22,9 @@ POST body:
 {
   "from":"01.02.2017",
   "to":"15.02.2017",
-  "lob":{"country":"CZ","name":"ACI"},
-  "neids":["GSM"],
+  "country":"CZ",
+  "lobName":"ACI",
+  "flowName":["GSM"],
   "forwards":[],
   "granularity":0
 }
@@ -70,24 +71,12 @@ Response:
   searchParam = request.get_json()
   fromDate = util.stringToDate(searchParam["from"])
   toDate = util.stringToDate(searchParam["to"])
-  lobRequest = searchParam["lob"]
-  country = lobRequest["country"]
-  lobName = lobRequest["name"]
+  country = searchParam["country"]
+  lobName = searchParam["lobName"]
   lobConfig = MediationConfig.getLobWithCountry(country, lobName)
   flows = []
   granularity = searchParam.get("granularity", 0)
-  if "neids" in searchParam:
-    for neid in searchParam["neids"]:
-      if neid == "*":
-        flows.append(createMergedFlowsObject(country, lobName, "inputs"))
-        break
-      flows.append(lobConfig["flows"][neid])
-  if "forwards" in searchParam:
-    for forward in searchParam["forwards"]:
-      if forward == "*":
-        flows.append(createMergedFlowsObject(country, lobName, "forwards"))
-        break
-      flows.append(lobConfig["flows"][forward])
+  flows.append(lobConfig["flows"][searchParam["flowName"]])
   response = {}
 
   # Query the traffic data and add to metric list

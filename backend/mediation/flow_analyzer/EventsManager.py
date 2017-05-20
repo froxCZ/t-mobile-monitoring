@@ -2,7 +2,7 @@ import logging
 
 from config import AppConfig
 from mongo import mongo
-from .status import OK
+from .status import OUTAGE
 
 
 class EventsManager:
@@ -20,9 +20,9 @@ class EventsManager:
     mongo.events().insert_one(obj)
 
   @staticmethod
-  def getEvents(offset=0, omitOK=False, limit=30):
+  def getEvents(offset=0, onlyOutage=False, limit=30):
     filter = {}
-    if omitOK is True:
-      filter["newStatus"] = {"$ne": OK}
+    if onlyOutage is True:
+      filter["newStatus"] = {"$eq": OUTAGE}
     events = list(mongo.events().find(filter, {"_id": 0}).limit(limit).skip(offset).sort("_id", -1))
     return events

@@ -101,6 +101,6 @@ def userDELETE(login):
 @require_user
 def events():
   offset = int(request.args.get('offset', 0))
-  omitOK = util.str2bool(request.args.get('omitOK', False))
-  events = EventsManager.getEvents(offset, omitOK)
+  onlyOutage = util.str2bool(request.args.get('onlyOutage', False))
+  events = EventsManager.getEvents(offset, onlyOutage)
   return jsonify(events)

@@ -7,11 +7,11 @@ import StatusCounterBadge from "../../components/StatusCounterBadge";
 class Dashboard extends Component {
   constructor() {
     super();
-    this.state = {events: [], omitOK: true, countries: {}}
+    this.state = {events: [], onlyOutage: true, countries: {}}
   }
 
   componentDidMount() {
-    this.loadEvents(0, this.state.omitOK)
+    this.loadEvents(0, this.state.onlyOutage)
     this.loadCountriesOverview()
   }
 
@@ -21,24 +21,24 @@ class Dashboard extends Component {
     })
   }
 
-  loadEvents(offset, omitOK) {
+  loadEvents(offset, onlyOutage) {
     let req = {method: "GET"};
     let events = this.state.events;
     if (offset == 0) {
       events = []
     }
-    Api.fetch("/app/events?offset=" + offset + "&omitOK=" + omitOK, req).then(response => {
+    Api.fetch("/app/events?offset=" + offset + "&onlyOutage=" + onlyOutage, req).then(response => {
       this.setState({events: events.concat(response)})
     })
   }
 
   loadMore() {
-    this.loadEvents(this.state.events.length, this.state.omitOK)
+    this.loadEvents(this.state.events.length, this.state.onlyOutage)
   }
 
-  omitOKChanged(omitOK) {
-    this.loadEvents(0, omitOK);
-    this.setState({omitOK: omitOK})
+  onlyOutageChanged(onlyOutage) {
+    this.loadEvents(0, onlyOutage);
+    this.setState({onlyOutage: onlyOutage})
   }
 
   goToFlowDetail(country, lobName, flowName) {
@@ -86,8 +86,8 @@ class Dashboard extends Component {
                   <input type="checkbox"
                          id="checkbox3"
                          name="checkbox3"
-                         checked={this.state.omitOK}
-                         onChange={(e) => this.omitOKChanged(e.target.checked)}/>Omit OK
+                         checked={this.state.onlyOutage}
+                         onChange={(e) => this.onlyOutageChanged(e.target.checked)}/>Only Outage
                 </th>
               </tr>
               </thead>
