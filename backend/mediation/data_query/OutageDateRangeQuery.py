@@ -1,6 +1,6 @@
 import pytz
 
-import util
+from common import util
 
 utc = pytz.timezone("UTC")
 

@@ -1,6 +1,6 @@
 import unittest
 
-import util
+from common import util
 from mediation.flow_analyzer import FlowAnalyzer
 
 """

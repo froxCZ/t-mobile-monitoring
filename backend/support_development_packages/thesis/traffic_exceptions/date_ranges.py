@@ -1,6 +1,6 @@
 import matplotlib.pyplot as plt
 
-import util
+from common import util
 from mediation import MediationConfig
 from mediation import data_query
 

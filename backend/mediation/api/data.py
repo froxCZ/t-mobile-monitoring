@@ -3,7 +3,7 @@ import io
 from flask import Blueprint, jsonify
 from flask import request
 
-import util
+from common import util
 from common.api import require_root
 from common.api import require_user
 from mediation import MediationConfig

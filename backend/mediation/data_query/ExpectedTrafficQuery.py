@@ -1,6 +1,6 @@
 from statistics import median
 
-import util
+from common import util
 from mediation import MediationConfig
 from .SimilarPastDaysFinder import SimilarPastDaysFinder
 

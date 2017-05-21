@@ -5,9 +5,9 @@ import time
 
 from kafka import KafkaConsumer
 
-import util
-from integration import IntegrationConfig
+from common import util
 from mongo import mongo
+from .IntegrationConfig import IntegrationConfig
 
 
 class MediationDataConsumer(threading.Thread):

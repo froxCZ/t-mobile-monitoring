@@ -4,7 +4,7 @@ import pytz
 
 import mediation.data_receiver.DataReceiverConfig as config
 import mediation.data_receiver.DataReceiverUtil as util
-from config import AppConfig
+from common import AppConfig
 from .data_insertor import DataInsertor
 
 LATEST_DATE = util.stringToDate("20.02.16 00:00:00").replace(tzinfo=AppConfig.getTimezone())

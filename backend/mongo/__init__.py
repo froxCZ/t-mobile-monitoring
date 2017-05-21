@@ -1,6 +1,6 @@
 from pymongo import MongoClient
 
-from config import AppConfig
+from common import AppConfig
 """
 Classes for accessing MongoDB collections.
 The mongo client is created in lazy way, so some parts of the app (tests) can be executed without mongo database running.

@@ -7,8 +7,9 @@ import pytz
 
 TIMEZONE = pytz.timezone('Europe/Prague')
 
-configColl = None
-
+"""
+Config of the application loaded from common file.
+"""
 
 
 class AppConfig:
@@ -46,7 +47,7 @@ class AppConfig:
 
   @staticmethod
   def loadConfigFile():
-    for configFile in ["/config/backend.json", os.path.join(os.path.dirname(__file__), "..", "config.json")]:
+    for configFile in ["/monitoring-app/backend_config.json", os.path.join(os.path.dirname(__file__), "..", "config.json")]:
       if os.path.exists(configFile):
         with open(configFile) as json_data_file:
           AppConfig.configDict = json.load(json_data_file)

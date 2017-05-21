@@ -1,4 +1,4 @@
-from config import AppConfig
+from common import AppConfig
 
 
 class IntegrationConfig:

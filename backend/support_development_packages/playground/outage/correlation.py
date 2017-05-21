@@ -1,9 +1,10 @@
 import matplotlib.pyplot as plt
 from numpy.matlib import corrcoef, arange
 
-from config import config
+from common import config
+from common import util
 from mediation import data_query
-from mediation.api import util
+from mediation.api
 
 lobsData = [
   {"lobName": 'LTP',

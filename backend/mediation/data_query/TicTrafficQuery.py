@@ -1,6 +1,6 @@
 import logging
 
-import util
+from common import util
 from mediation import data_query
 
 

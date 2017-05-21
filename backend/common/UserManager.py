@@ -81,6 +81,6 @@ class UserManager():
     return mongo.users().delete_one({"_id": login})
 
 
-if len(UserManager.getUsers()) == 0:#if there is no user in db, insert root/root and visitor
-  UserManager.addUser(DEFAULT_USER)
-  UserManager.addUser(VISITOR_USER)
+# if len(UserManager.getUsers()) == 0:#if there is no user in db, insert root/root and visitor
+#   UserManager.addUser(DEFAULT_USER)
+#   UserManager.addUser(VISITOR_USER)

@@ -3,7 +3,7 @@ import statistics as s
 import matplotlib.pyplot as plt
 import numpy
 
-import util
+from common import util
 from mediation import MediationConfig
 from mediation.data_query import DateRangeGroupQuery
 

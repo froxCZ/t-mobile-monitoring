@@ -12,19 +12,19 @@ import pytz
 General util file for all application modules.
 """
 utc = pytz.timezone("UTC")
-from config.AppConfig import TIMEZONE, AppConfig
+from .AppConfig import AppConfig
 
 
 def jsStringToDate(string):
-  return TIMEZONE.localize(dateutil.parser.parse(string))
+  return AppConfig.getTimezone().localize(dateutil.parser.parse(string))
 
 
 def stringToDate(dateString):
-  return TIMEZONE.localize(datetime.datetime.strptime(dateString, "%d.%m.%Y"))
+  return AppConfig.getTimezone().localize(datetime.datetime.strptime(dateString, "%d.%m.%Y"))
 
 
 def stringToTime(dateTimeString):
-  return TIMEZONE.localize(datetime.datetime.strptime(dateTimeString, "%d.%m.%Y %H:%M:%S"))
+  return AppConfig.getTimezone().localize(datetime.datetime.strptime(dateTimeString, "%d.%m.%Y %H:%M:%S"))
 
 
 def dateToTimeString(date):
@@ -51,7 +51,7 @@ def listToDayMinutes(dataList, value="value"):
 
 def resetDateTimeMidnight(dateTime):
   # return dateTime.replace(hour=0, minute=0, second=0, microsecond=0)
-  return TIMEZONE.localize(datetime.datetime.combine(dateTime.date(), datetime.datetime.min.time()))
+  return AppConfig.getTimezone().localize(datetime.datetime.combine(dateTime.date(), datetime.datetime.min.time()))
 
 
 def str2bool(value):
@@ -167,7 +167,7 @@ def getNextTic(d, granularity):
   :return:
   """
   prevOffsetSeconds = d.tzinfo._utcoffset.total_seconds()
-  from config import AppConfig
+  from common import AppConfig
   newTic = (d + datetime.timedelta(minutes=granularity)).astimezone(AppConfig.getTimezone())
   newOffsetSeconds = newTic.tzinfo._utcoffset.total_seconds()
   if prevOffsetSeconds != newOffsetSeconds:

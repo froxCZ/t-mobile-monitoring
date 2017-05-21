@@ -1,5 +1,6 @@
-from config import config
-from mediation.api import util
+from common import config
+from common import util
+from mediation.api
 
 
 class OutlierDetector:

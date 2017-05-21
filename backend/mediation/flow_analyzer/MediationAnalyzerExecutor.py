@@ -4,7 +4,7 @@ import threading
 import time
 from queue import Queue, Empty
 
-from config import AppConfig
+from common import AppConfig
 from mediation import MediationConfig
 from mediation.flow_analyzer import FlowAnalyzer
 from mediation.flow_analyzer import status

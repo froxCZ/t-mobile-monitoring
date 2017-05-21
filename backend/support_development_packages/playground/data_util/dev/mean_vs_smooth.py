@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 import numpy
 from support_development_packages.smooth import smoothData
 
-import util
+from common import util
 from mediation import MediationConfig
 from mediation.data_query import DateRangeGroupQuery
 

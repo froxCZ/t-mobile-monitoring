@@ -2,8 +2,8 @@ import datetime
 import smtplib
 from email.mime.text import MIMEText
 
-import util
-from config import AppConfig
+from common import AppConfig
+from common import util
 from integration import IntegrationConfig
 
 MIN_DELAY = datetime.timedelta(minutes=5)

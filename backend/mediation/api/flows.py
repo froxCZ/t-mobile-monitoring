@@ -51,7 +51,7 @@ def getEnabledCountry(country):
 def enableCountry(country):
   body = request.get_json()
   enable = body["enable"]
-  MediationConfig.configColl.update_one(
+  MediationConfig.getCollection().update_one(
     MEDIATION_DOCUMENT, {"$set": {"countries." + country + ".enabled": enable}})
   return getEnabledCountry(country)
 
@@ -100,7 +100,7 @@ def enableFlow(country, lobName, flowName):
   body = request.get_json()
   enable = body["enable"]
   flow = MediationConfig.getLobWithCountry(country, lobName)["flows"][flowName]
-  MediationConfig.configColl.update_one(
+  MediationConfig.getCollection().update_one(
     MEDIATION_DOCUMENT, {"$set": {"lobs." + flow["dataPath"] + ".enabled": enable}})
   return jsonify(MediationConfig.getLobWithCountry(country, lobName)["flows"][flowName]["options"])
 
@@ -110,7 +110,7 @@ def enableFlow(country, lobName, flowName):
 def lobOptionsPUT(country, lobName):
   body = request.get_json()
   optionsPath = "lobs." + country + "." + lobName + ".options"
-  MediationConfig.configColl.update_one(MEDIATION_DOCUMENT, {"$set": {optionsPath: body}})
+  MediationConfig.getCollection().update_one(MEDIATION_DOCUMENT, {"$set": {optionsPath: body}})
   return jsonify(MediationConfig.getLobWithCountry(country, lobName)["options"])
 
 
@@ -119,7 +119,7 @@ def lobOptionsPUT(country, lobName):
 def enableLob(country, lobName):
   enable = request.get_json()["enable"]
   optionsPath = "lobs." + country + "." + lobName + ".options.enabled"
-  MediationConfig.configColl.update_one(MEDIATION_DOCUMENT, {"$set": {optionsPath: enable}})
+  MediationConfig.getCollection().update_one(MEDIATION_DOCUMENT, {"$set": {optionsPath: enable}})
   return jsonify(MediationConfig.getLobWithCountry(country, lobName)["options"])
 
 
@@ -136,7 +136,7 @@ def getFlowOptions(country, lobName, flowName):
 def putFlowOptions(country, lobName, flowName):
   body = request.get_json()
   flow = MediationConfig.getLobWithCountry(country, lobName)["flows"][flowName]
-  res = MediationConfig.configColl.update_one(MEDIATION_DOCUMENT, {"$set": {"lobs." + flow["dataPath"]: body}})
+  res = MediationConfig.getCollection().update_one(MEDIATION_DOCUMENT, {"$set": {"lobs." + flow["dataPath"]: body}})
   return jsonify(MediationConfig.getLobWithCountry(country, lobName)["flows"][flowName]["options"])
 
 

@@ -3,7 +3,7 @@ import datetime
 import pytz
 from dateutil import tz
 
-import util
+from common import util
 prg = pytz.timezone('Europe/Prague')
 dateutilPrg = tz.gettz('Europe/Prague')
 utc = pytz.timezone('UTC')

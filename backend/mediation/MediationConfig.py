@@ -1,4 +1,4 @@
-from config import AppConfig
+from common import AppConfig
 from mongo import mongo
 
 """
@@ -9,6 +9,9 @@ MEDIATION_DOCUMENT = {"_id": "mediation"}
 
 
 class MediationConfig():
+  @staticmethod
+  def getCollection():
+    return mongo.config()
 
   @staticmethod
   def getLob(lobName):

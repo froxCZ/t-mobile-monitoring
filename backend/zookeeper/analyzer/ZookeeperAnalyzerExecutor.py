@@ -1,6 +1,6 @@
 import logging
 
-from config import AppConfig
+from common import AppConfig
 from integration import MediationStatusProducer
 from scheduler.AbstractExecutor import AbstractExecutor
 from zookeeper.analyzer.Analyzer import Analyzer

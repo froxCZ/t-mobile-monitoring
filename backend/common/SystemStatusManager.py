@@ -1,15 +1,9 @@
 import datetime
 
-from config import AppConfig
+from common import AppConfig
 from integration import MediationDataConsumer
 from integration import MediationStatusProducer
-from mediation.flow_analyzer import DiscoverFlowsExecutor
-from mediation.flow_analyzer import MediationAnalyzerExecutor
 from mongo import mongo
-from zookeeper.analyzer import ZookeeperAnalyzerExecutor
-
-statusColl = mongo.statuses()
-
 
 def _statusIsExpired(time, maxSeconds=60 * 5):
   return AppConfig.getCurrentTime() - time > datetime.timedelta(seconds=maxSeconds)
@@ -19,10 +13,13 @@ class SystemStatusManager:
   @staticmethod
   def getStatus():
     from scheduler.ComponentMonitoring import ComponentMonitoring
+    from mediation.flow_analyzer import DiscoverFlowsExecutor
+    from mediation.flow_analyzer import MediationAnalyzerExecutor
+    from zookeeper.analyzer import ZookeeperAnalyzerExecutor
     executors = [ComponentMonitoring, ZookeeperAnalyzerExecutor, MediationAnalyzerExecutor, DiscoverFlowsExecutor]
     kafkaComponents = [MediationStatusProducer.name, MediationDataConsumer.name]
     systemStatus = {"executors": {}, "kafka": {}}
-    res = statusColl.find_one({"_id": "system"}, {"_id": 0})
+    res = mongo.statuses().find_one({"_id": "system"}, {"_id": 0})
     if res == None:
       res = {}
     for executor in executors:
@@ -55,10 +52,10 @@ class SystemStatusManager:
 
   @staticmethod
   def setKafkaComponentStatus(name, status, time):
-    statusColl.update_one({"_id": "system"},
+    mongo.statuses().update_one({"_id": "system"},
                           {"$set": {"kafka." + name: {"time": time, "status": status}}}, upsert=True)
 
   @staticmethod
   def saveExecutorSuccessfulExecution(executorName, time):
-    statusColl.update_one({"_id": "system"},
+    mongo.statuses().update_one({"_id": "system"},
                           {"$set": {"executors." + executorName: {"time": time, "status": "OK"}}}, upsert=True)

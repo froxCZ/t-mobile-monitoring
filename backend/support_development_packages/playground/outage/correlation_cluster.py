@@ -1,9 +1,10 @@
 from numpy.matlib import corrcoef
 from scipy.stats import linregress
 
+from common import util
 from mediation import MediationConfig
 from mediation import data_query
-from mediation.api import util
+from mediation.api
 
 lobsData = [
   {"lobName": 'LTP',

@@ -2,7 +2,7 @@ import datetime
 
 import pytz
 
-import util
+from common import util
 from mongo import mongo
 
 utc = pytz.timezone("UTC")
@@ -22,7 +22,7 @@ class MongoAggregateDateQuery:
   def _executeMongoAggregateQuery(self):
     result = list(self.coll.aggregate(self.query))
     resultDict = {}
-    from config import AppConfig
+    from common import AppConfig
     appTimezone = AppConfig.getTimezone()
     for i in result:
       group = i["_id"]
@@ -38,7 +38,7 @@ class MongoAggregateDateQuery:
     self.prepare()
     result = list(self.coll.aggregate(self.query))
     resultDict = {}
-    from config import AppConfig
+    from common import AppConfig
     appTimezone = AppConfig.getTimezone()
     for i in result:
       group = i["_id"]

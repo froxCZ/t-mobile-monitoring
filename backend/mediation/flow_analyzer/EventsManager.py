@@ -1,6 +1,6 @@
 import logging
 
-from config import AppConfig
+from common import AppConfig
 from mongo import mongo
 from .status import OUTAGE
 

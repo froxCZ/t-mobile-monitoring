@@ -3,7 +3,7 @@ import traceback
 from mediation.api.data_query import DateRangeGroupQuery
 from scipy.stats import linregress
 
-from config import config
+from common import config
 
 
 def _correlate2Lobs(lobName1, lobName2,granularity=0):

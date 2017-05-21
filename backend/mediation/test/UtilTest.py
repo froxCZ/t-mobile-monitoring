@@ -3,7 +3,7 @@ import unittest
 
 import pytz
 
-import util
+from common import util
 
 PRAGUE_TIMEZONE = pytz.timezone("Europe/Prague")
 

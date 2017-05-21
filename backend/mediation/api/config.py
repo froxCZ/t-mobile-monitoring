@@ -19,7 +19,7 @@ def getCountriesConfig():
 @require_root
 def putCountriesConfig():
   body = request.get_json()
-  MediationConfig.configColl.update_one(MEDIATION_DOCUMENT, {"$set": {"countries": body}})
+  MediationConfig.getCollection().update_one(MEDIATION_DOCUMENT, {"$set": {"countries": body}})
   return jsonify(MediationConfig.getCountries())
 
 # @lobsConfig.route('/lobs/<string:countryName>', methods=["GET"])

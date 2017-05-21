@@ -1,4 +1,4 @@
-import util
+from common import util
 from mediation.data_query.engine.DatesQuery import DatesQuery
 
 

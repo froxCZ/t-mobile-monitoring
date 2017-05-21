@@ -1,7 +1,7 @@
 import datetime
 
-import util
-from config import AppConfig
+from common import AppConfig
+from common import util
 from mongo import mongo
 
 

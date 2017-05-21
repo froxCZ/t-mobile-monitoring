@@ -7,10 +7,10 @@ from queue import Queue
 
 from kafka import KafkaProducer
 
-import util
-from config import AppConfig
-from integration import EmailSender
-from integration import IntegrationConfig
+from common import AppConfig
+from common import util
+from .EmailSender import EmailSender
+from .IntegrationConfig import IntegrationConfig
 
 
 def jsonDictSerializer(dictToSend):

@@ -6,7 +6,7 @@ from numpy import sum, arange
 from pylab import pcolor, show, colorbar, xticks, yticks
 from scipy.stats import linregress
 
-from config import config
+from common import config
 from mediation.data_query import DateRangeGroupQuery
 
 # CZ_LOBS = config.getLobsConfig()["lobs"]["CZ"]

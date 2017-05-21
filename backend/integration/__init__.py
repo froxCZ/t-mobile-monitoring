@@ -1,6 +1,8 @@
-from integration.EmailSender import EmailSender
-from integration.IntegrationConfig import IntegrationConfig
-from integration.MediationDataConsumer import MediationDataConsumer
-from integration.MediationStatusProducer import MediationStatusProducer
+from .EmailSender import EmailSender
+from .IntegrationConfig import IntegrationConfig
+from .MediationDataConsumer import MediationDataConsumer
+from .MediationStatusProducer import MediationStatusProducer
+
+
 
 

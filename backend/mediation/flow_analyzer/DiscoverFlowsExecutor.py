@@ -2,7 +2,7 @@ import datetime
 import logging
 import time
 
-from config import AppConfig
+from common import AppConfig
 from mediation import MediationConfig
 from mongo import mongo
 from scheduler.AbstractExecutor import AbstractExecutor

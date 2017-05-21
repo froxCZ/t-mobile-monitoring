@@ -9,7 +9,7 @@
 import threading
 from queue import Queue
 
-from config import AppConfig
+from common import AppConfig
 from mediation import MediationConfig
 from mediation.flow_analyzer import FlowAnalyzer
 

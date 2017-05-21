@@ -1,6 +1,6 @@
 import unittest
 
-import util
+from common import util
 from mediation.flow_analyzer import FlowAnalyzer
 from mediation.flow_analyzer.status import OK, OUTAGE, WARNING
 

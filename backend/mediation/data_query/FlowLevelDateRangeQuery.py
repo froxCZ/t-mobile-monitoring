@@ -2,8 +2,8 @@ import datetime
 
 import pytz
 
-import util
-from config import AppConfig
+from common import AppConfig
+from common import util
 from mediation.data_query import ExpectedTrafficQuery
 from .flow_level_difference import calculateFlowLevelDifference
 

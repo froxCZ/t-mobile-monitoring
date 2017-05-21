@@ -3,8 +3,8 @@ import logging
 
 import pytz
 
-import util
-from config import AppConfig
+from common import AppConfig
+from common import util
 from mediation import MediationConfig
 from mediation.flow_analyzer.OutageDetector import OutageDetector
 from mediation.flow_analyzer.OutlierDetector import OutlierDetector

@@ -3,7 +3,7 @@ import pickle
 from datetime import datetime
 from datetime import timedelta
 
-from config import AppConfig
+from common import AppConfig
 
 
 def dateToBucket(startDate,date,granularity):

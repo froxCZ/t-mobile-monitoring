@@ -1,5 +1,5 @@
 
-from config import AppConfig
+from common import AppConfig
 from integration import MediationDataConsumer
 from integration import MediationStatusProducer
 from scheduler.AbstractExecutor import AbstractExecutor

@@ -1,6 +1,6 @@
 import datetime
 
-import util
+from common import util
 from mongo import mongo
 
 
@@ -24,7 +24,7 @@ class DatesQuery:
       group = i["_id"]
       date = datetime.datetime(group["year"], group["month"], group["dayOfMonth"], int(group["hour"]),
                                int(group["minute"]))
-      from config import AppConfig
+      from common import AppConfig
       date = AppConfig.getTimezone().localize(date)
       i["_id"] = date
       resultDict[date] = i

@@ -1,6 +1,6 @@
 import datetime
 
-import util
+from common import util
 
 HOLIDAYS = [(1, 1),  # day, month
             (1, 1),

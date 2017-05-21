@@ -2,7 +2,7 @@ import abc
 import logging
 import threading
 
-from config import AppConfig
+from common import AppConfig
 
 
 class AbstractExecutor:

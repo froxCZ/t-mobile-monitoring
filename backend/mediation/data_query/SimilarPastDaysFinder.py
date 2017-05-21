@@ -1,6 +1,6 @@
 import datetime
 
-import util
+from common import util
 from mediation import MediationConfig
 
 INITIAL_DATE = util.stringToDate("01.08.2016")

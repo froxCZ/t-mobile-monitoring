@@ -3,11 +3,11 @@ import hashlib
 from flask import Blueprint, jsonify
 from flask import request
 
-import util
+from common import AppConfig
 from common import SystemStatusManager
 from common import UserManager
+from common import util
 from common.api.auth import require_root, require_user
-from config import AppConfig
 from mediation.flow_analyzer import EventsManager
 
 appAPI = Blueprint('common', __name__)

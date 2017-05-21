@@ -1,6 +1,6 @@
 import dateutil.parser
 
-from config import AppConfig
+from common import AppConfig
 
 
 def jsStringToDate(string):

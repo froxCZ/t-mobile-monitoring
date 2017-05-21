@@ -1,6 +1,6 @@
 import datetime
 
-from config import AppConfig
+from common import AppConfig
 from mediation import MediationConfig
 from mediation.flow_analyzer import status
 from mediation.flow_analyzer.StatusChangeNotificator import StatusChangeNotificator
