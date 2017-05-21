@@ -7,10 +7,13 @@ from flask_cors import CORS
 
 from common import AppConfig
 
+"""
+API service for communication with frontend.
+"""
+
 app = Flask(__name__)
 CORS(app)
 app.config['MAX_CONTENT_LENGTH'] = 40 * 1024 * 1024
-
 
 class CustomJSONEncoder(JSONEncoder):
   """

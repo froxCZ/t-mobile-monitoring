@@ -3,6 +3,9 @@ from mediation.flow_analyzer import status
 
 
 class OutlierDetector():
+  """
+  Detects whether the traffic is significantly lower than expected value.
+  """
   def __init__(self, flow, granularity=0):
     super().__init__()
     self.flow = flow

@@ -4,9 +4,13 @@ from flask import request
 from common.api import require_root
 from common.api import require_user
 from zookeeper.analyzer import StatusManager
-from zookeeper.config import ZookeeperConfig
+from ..ZookeeperConfig import ZookeeperConfig
 
 zookeeperAPI = Blueprint('zookeeper', __name__)
+
+"""
+API endpoints related to ZooKeeper monitoring
+"""
 
 
 @zookeeperAPI.route('/cluster', methods=["GET"])

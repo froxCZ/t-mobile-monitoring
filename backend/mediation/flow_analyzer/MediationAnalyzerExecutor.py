@@ -13,6 +13,9 @@ from scheduler.AbstractExecutor import AbstractExecutor
 
 
 class Worker(threading.Thread):
+  """
+  Worker instance processing queue of flows to analyze.
+  """
   def __init__(self, queue, statusManager):
     super().__init__()
     self.queue = queue
@@ -40,6 +43,9 @@ class Worker(threading.Thread):
 
 
 class MediationAnalyzerExecutor(AbstractExecutor):
+  """
+  Periodically ran in monitoring daemon.
+  """
   name = "MediationAnalyzerExecutor"
   interval = 15
   maxRunningTime = 5 * 60

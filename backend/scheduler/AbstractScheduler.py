@@ -5,6 +5,9 @@ import schedule
 
 
 class AbstractScheduler(threading.Thread):
+  """
+  Abstract class, which each monitoring module implements and the implementation is started from monitoring dameon.
+  """
   name = ""
 
   def __init__(self, executors):

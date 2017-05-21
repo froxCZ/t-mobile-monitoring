@@ -12,6 +12,9 @@ from mediation.flow_analyzer import EventsManager
 
 appAPI = Blueprint('common', __name__)
 
+"""
+General API endpoints
+"""
 
 class StatusException(Exception):
   def __init__(self, message, status):

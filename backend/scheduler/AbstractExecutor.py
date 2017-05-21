@@ -6,6 +6,9 @@ from common import AppConfig
 
 
 class AbstractExecutor:
+  """
+  Class which is implemented by executors performing certain task. Executed by Abstract Scheduler.
+  """
   def __init__(self, name, interval):
     self.name = name
     self.interval = interval

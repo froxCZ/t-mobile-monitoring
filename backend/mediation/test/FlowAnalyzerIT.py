@@ -11,7 +11,7 @@ FLOW = {'lobName': 'GSM', 'type': 'inputs', 'dataPath': 'CZ.GSM.inputs.MSSCEB1B'
 CURRENT_TIME = util.stringToTime("17.01.2017 15:03:00")
 
 """
-Class for testing result statuses of flow analyzer
+Class for testing flow analyzer and its results
 """
 
 

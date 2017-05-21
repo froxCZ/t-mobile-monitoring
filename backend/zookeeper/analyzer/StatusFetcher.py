@@ -2,7 +2,10 @@ import re
 import socket
 
 
-class Communicator():
+class StatsFetcher():
+  """
+  Fetches data from zookeeper node.
+  """
   offline = {"status": "OFFLINE", "mode":None}
   notServing = {"status": "OK","mode":None}
 
@@ -11,7 +14,7 @@ class Communicator():
     try:
       statResult = send_cmd(host, port, b"stat")
     except Exception:
-      return Communicator.offline
+      return StatsFetcher.offline
     return parseStatResult(statResult)
 
 
@@ -28,7 +31,7 @@ def parseStatResult(statCmdResult):
   stat = {}
   stat["status"] = "OK"
   if "This ZooKeeper instance is not currently serving requests" in statCmdResult:
-    return Communicator.notServing
+    return StatsFetcher.notServing
   stat["mode"] = getFinderValue(modeFinder, statCmdResult)
   stat["latency"] = getFinderValue(latencyFinder, statCmdResult)
   stat["latency"] = getFinderValue(latencyFinder, statCmdResult)

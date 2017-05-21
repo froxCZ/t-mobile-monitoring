@@ -8,6 +8,9 @@ from mongo import mongo
 
 
 class FlowStatusManager:
+  """
+  Stores and retrieves status of a flow, lob or whole country.
+  """
   DOCUMENT_ID = "lobs"
   def __init__(self):
     self.notificator = StatusChangeNotificator()

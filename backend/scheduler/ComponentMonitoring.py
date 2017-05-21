@@ -7,6 +7,9 @@ from scheduler.AbstractScheduler import AbstractScheduler
 
 
 class ComponentMonitoring(AbstractExecutor):
+  """
+  Executor which saves status of kafka consumer and producer to the database.
+  """
   name = "ComponentMonitoring"
   interval = 10
   maxRunningTime = 5

@@ -9,6 +9,9 @@ from scheduler.AbstractExecutor import AbstractExecutor
 
 SEPARATOR = "-+-"
 
+"""
+This class discovers flows used in past day and adds them to database.
+"""
 
 def createGlobalName(country, lob, flow, type):
   strArr = [country, lob, flow, type]

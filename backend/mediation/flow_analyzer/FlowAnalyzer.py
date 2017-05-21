@@ -13,6 +13,9 @@ utc = pytz.timezone("UTC")
 
 
 class FlowAnalyzer:
+  """
+  Uses Outlier and Outage detector to get status of flow. Can be provided traffic data via setPrecomputedData method.
+  """
   def __init__(self, flow, granularity=None):
     super().__init__()
     self.flow = flow

@@ -7,6 +7,9 @@ from mongo import mongo
 
 
 class DataInsertor():
+  """
+  Inserts traffic data from csv file into database in batches.
+  """
   def __init__(self, version=-1):
     super().__init__()
     self.version = version

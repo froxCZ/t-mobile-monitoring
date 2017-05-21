@@ -4,8 +4,10 @@ from common import AppConfig
 from mongo import mongo
 from .status import OUTAGE
 
-
 class EventsManager:
+  """
+  Creates records in events collection when status of flow changes.
+  """
   @staticmethod
   def logStatusChangeEvent(flow, message, ticTime, newStatus):
     currentTime = AppConfig.getCurrentTime()

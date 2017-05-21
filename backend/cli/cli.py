@@ -12,6 +12,7 @@ class ParsingException(RuntimeError):
 
 """
 Class that implements CLI client. It can be used to insert large amount of mediation traffic records.
+Not finished, as the final csv format might still change.
 """
 class Cli:
   def __init__(self):
@@ -45,12 +46,14 @@ class Cli:
       DataInsertor().insertFile(self.args.file, type, country)
 
 
+Cli().parse()
+
 # Cli().parse(["--insert", "inputs", "--dir", "/home/frox/Downloads/tmobile/in/AT","--country", "AT"])
 # Cli().parse(["--insert", "inputs", "--dir", "/home/frox/Downloads/tmobile/in/CZ", "--country", "CZ"])
 # Cli().parse(["--insert", "inputs", "--dir", "/home/frox/Downloads/tmobile/in/DE", "--country", "DE"])
 # Cli().parse(["--insert", "inputs", "--dir", "/home/frox/Downloads/tmobile/in/NL", "--country", "NL"])
 
-Cli().parse(["--insert", "forwards", "--dir", "/home/frox/Downloads/tmobile/out/AT", "--country", "AT"])
-Cli().parse(["--insert", "forwards", "--dir", "/home/frox/Downloads/tmobile/out/CZ", "--country", "CZ"])
-Cli().parse(["--insert", "forwards", "--dir", "/home/frox/Downloads/tmobile/out/DE", "--country", "DE"])
-Cli().parse(["--insert", "forwards", "--dir", "/home/frox/Downloads/tmobile/out/NL", "--country", "NL"])
+# Cli().parse(["--insert", "forwards", "--dir", "/home/frox/Downloads/tmobile/out/AT", "--country", "AT"])
+# Cli().parse(["--insert", "forwards", "--dir", "/home/frox/Downloads/tmobile/out/CZ", "--country", "CZ"])
+# Cli().parse(["--insert", "forwards", "--dir", "/home/frox/Downloads/tmobile/out/DE", "--country", "DE"])
+# Cli().parse(["--insert", "forwards", "--dir", "/home/frox/Downloads/tmobile/out/NL", "--country", "NL"])

@@ -1,3 +1,6 @@
+"""
+Statuses flow can have.
+"""
 OK = "OK"
 WARNING = "WARNING"
 OUTAGE = "OUTAGE"

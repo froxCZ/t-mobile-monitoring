@@ -5,7 +5,9 @@ from datetime import timedelta
 
 from common import AppConfig
 
-
+"""
+Util functions needed for inserting data form csv files.
+"""
 def dateToBucket(startDate,date,granularity):
     d = date - startDate
     diffMinutes = d.total_seconds() / 60

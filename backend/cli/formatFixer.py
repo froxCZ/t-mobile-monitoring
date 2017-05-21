@@ -5,6 +5,10 @@ from mediation.data_receiver import DataReceiverUtil
 
 
 class InputFormatFixer:
+  """
+  During the development the format of csv files from the provider changes multiple times.
+  This scripts converts old format to new format.
+  """
   def __init__(self, dirPath):
     super().__init__()
     self.dirPath = dirPath

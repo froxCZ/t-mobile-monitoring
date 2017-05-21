@@ -3,6 +3,9 @@ from mediation.flow_analyzer import EventsManager
 
 
 class StatusChangeNotificator:
+  """
+  Informs event manager and kafka producer about a change on flow.
+  """
   def __init__(self):
     self.statusProducer = MediationStatusProducer.instance()
     pass

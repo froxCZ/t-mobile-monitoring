@@ -2,7 +2,7 @@ from common import AppConfig
 from mongo import mongo
 
 """
-Class for configuration related to Mediation monitoring.
+Configuration class related to Mediation monitoring.
 """
 
 MEDIATION_DOCUMENT = {"_id": "mediation"}

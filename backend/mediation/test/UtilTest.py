@@ -7,6 +7,9 @@ from common import util
 
 PRAGUE_TIMEZONE = pytz.timezone("Europe/Prague")
 
+"""
+Class for testing util functions.
+"""
 
 class UtilTest(unittest.TestCase):
   def setUp(self):

@@ -6,6 +6,9 @@ from mediation.flow_analyzer.OutlierDetector import OutlierDetector
 
 
 class OutageDetector():
+  """
+  Determinates whether there is an outage on the flow.
+  """
   def __init__(self, flow,granularity):
     super().__init__()
     self.flow = flow

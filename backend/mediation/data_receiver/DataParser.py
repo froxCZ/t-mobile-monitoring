@@ -21,6 +21,9 @@ LATEST_VERSION = 1
 
 
 class DataParser:
+  """
+  Parses csv file and allows called to iterate over a lists of 10000 records.
+  """
   def __init__(self, stream, type, country, version):
     self.batchSize = 10000
     self.reader = csv.reader(stream, delimiter=';', quotechar='"')
