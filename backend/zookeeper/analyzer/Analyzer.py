@@ -1,5 +1,5 @@
 from zookeeper import ZooUtil
-from .Communicator import StatsFetcher
+from .StatusFetcher import StatusFetcher
 from ..ZookeeperConfig import ZookeeperConfig
 
 
@@ -22,7 +22,7 @@ class Analyzer():
     nodeStatus = {}
     for socketAddress, node in cluster["nodes"].items():
       host, port = ZooUtil.socketAddressToHostAndPort(socketAddress)
-      res = StatsFetcher.getStatus(host, port)
+      res = StatusFetcher.getStatus(host, port)
       nodeStatus[socketAddress] = res
       if res["status"] == "OK" and res["mode"] is not None:
         onlineNodes += 1
