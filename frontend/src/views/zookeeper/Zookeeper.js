@@ -102,7 +102,6 @@ class Zookeeper extends Component {
           mode = "disabled";
           status = "disabled"
         } else if (this.state.status) {
-          console.log(this.state.status)
           let nodeStatus = this.state.status.nodes[socket]
           if (nodeStatus) {
             status = nodeStatus.status

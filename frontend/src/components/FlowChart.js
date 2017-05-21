@@ -24,7 +24,7 @@ const COLORS_MAP = {
   "tickDifference": "gray",
   "expected": "#648dbd"
 };
-export default class LobChart extends Component {
+export default class FlowChart extends Component {
   constructor() {
     super();
     this.state = {unit: ""}
@@ -39,7 +39,7 @@ export default class LobChart extends Component {
   }
 
   propChange(props) {
-    let currentTimeLabel = LobChart.findCurrentTimeLabel(props.data);
+    let currentTimeLabel = FlowChart.findCurrentTimeLabel(props.data);
     this.setState({currentTimeLabel: currentTimeLabel});
     this.adjustData(props);
   }
@@ -152,7 +152,7 @@ export default class LobChart extends Component {
     let flowName = props.flowName;
     let maxValue = 0;
     for (let row of props.data) {
-      row.tickValue = LobChart.dateToTickValue(row._id)
+      row.tickValue = FlowChart.dateToTickValue(row._id)
       maxValue = Math.max(maxValue, row[flowName])
     }
     if (!props.difference) {
@@ -194,7 +194,7 @@ export default class LobChart extends Component {
       let row = data[i];
       let tickDate = Util.parseIsoDateString(row._id);
       if (tickDate.isBefore(currentTime) && tickDate.add(granularityDiff).add(granularityDiff).isAfter(currentTime)) {
-        return LobChart.dateToTickValue(row._id)
+        return FlowChart.dateToTickValue(row._id)
       }
     }
     return null;

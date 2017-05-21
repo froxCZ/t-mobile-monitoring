@@ -7,7 +7,6 @@ Moment.locale('cs')
 
 
 export default class Util {
-  loggedUser = null;
 
   static formatIsoDateString(isoDateString, format) {
     return Moment(isoDateString, "YYYY-MM-DDThh:mm:ssTZD").format(format)

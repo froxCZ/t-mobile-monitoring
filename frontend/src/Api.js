@@ -25,7 +25,7 @@ class Api {
 
 
   updateLobConfig(lobName, updateObj) {
-    var myInit = {
+    let myInit = {
       method: 'POST',
       body: updateObj
     };
@@ -33,7 +33,7 @@ class Api {
   }
 
   lobData(fromDate, toDate, country,lobName,flowName, granularity) {
-    var myInit = {
+    let myInit = {
       method: 'POST',
       body: {
         "from": fromDate,
@@ -69,12 +69,9 @@ class Api {
         error.json = response.json()
         return Promise.reject(error)
       }
-    })
-      .then(x => {
-        return x
-      }).finally(x => {
+    }).finally(x => {
         Store.dispatch(hideLoading())
-      });
+    });
   }
 }
 export default Api = new Api();

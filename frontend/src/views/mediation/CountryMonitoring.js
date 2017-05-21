@@ -24,7 +24,7 @@ function mapStateToProps(state) {
   return {user: state.auth.user};
 }
 function mapDispatchToProps(dispatch) {
-  var actions = {showLoading: showLoading, hideLoading: hideLoading};
+  let actions = {showLoading: showLoading, hideLoading: hideLoading};
   return bindActionCreators(actions, dispatch);
 }
 class CountryMonitoring extends Component {

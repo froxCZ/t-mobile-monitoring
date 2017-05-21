@@ -28,7 +28,6 @@ class CountrySettingsView extends Component {
       body: this.state.countries
     };
     Api.fetch("/mediation/config/countries", req).then(response => {
-      console.log(response)
       this.setState({countries: response});
     })
   }
@@ -45,7 +44,6 @@ class CountrySettingsView extends Component {
     if (!this.state.countries) {
       return <p></p>
     }
-    console.log(this.state);
     let navs = []
     for (let c of COUNTRIES) {
       navs.push(<NavItem>

@@ -1,8 +1,8 @@
 import React, {Component} from "react";
 import Api from "../Api";
-import ChatControl from "./ChartControl";
+import ChatControl from "./FlowChartControl";
 import "react-datepicker/dist/react-datepicker.css";
-import LobChart from "./LobChart";
+import LobChart from "./FlowChart";
 const MINUTE_RANGES = [
   5,
   10,
@@ -63,7 +63,6 @@ export default class LobOverviewCharts extends Component {
   }
 
   render() {
-    console.log(this.state.lob)
     return (
       <div className="animated fadeIn">
         <div className="row">

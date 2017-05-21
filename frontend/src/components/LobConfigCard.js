@@ -66,7 +66,6 @@ export default class LobConfigCard extends Component {
 
   renderConfig() {
     let lobInfo = null;
-    console.log(this.flow)
     if (this.state.flow) {
 
       lobInfo =

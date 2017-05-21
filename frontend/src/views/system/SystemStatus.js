@@ -36,7 +36,6 @@ export default class UsersList extends Component {
 
   render() {
     let rows = []
-    console.log(this.state);
     if (this.state.status) {
       rows = [...rows,this.getComponentRows("executors")];
       rows = [...rows,this.getComponentRows("kafka")];
@@ -89,7 +88,6 @@ export default class UsersList extends Component {
           <td><h5><StatusBadge status={status}/></h5></td>
         </tr>)
     }
-    console.log(rows)
     return rows;
   }
 }

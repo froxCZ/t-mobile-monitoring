@@ -1,9 +1,9 @@
 import React, {Component} from "react";
 import Api from "../../Api";
 import Util from "../../Util";
-import ChatControl from "../../components/ChartControl";
+import ChatControl from "../../components/FlowChartControl";
 import "react-datepicker/dist/react-datepicker.css";
-import LobChart from "../../components/LobChart";
+import FlowChart from "../../components/FlowChart";
 import StatusBadge from "../../components/StatusBadge";
 const MINUTE_RANGES = [
   5,
@@ -99,10 +99,10 @@ class FlowMonitoring extends Component {
                 Traffic difference
               </div>
               {this.state.options &&
-              <LobChart data={this.state.data} metrics={this.state.metadata.metrics}
-                        difference={true}
-                        softAlarmLevel={this.state.options.softAlarmLevel}
-                        hardAlarmLevel={this.state.options.hardAlarmLevel}/>
+              <FlowChart data={this.state.data} metrics={this.state.metadata.metrics}
+                         difference={true}
+                         softAlarmLevel={this.state.options.softAlarmLevel}
+                         hardAlarmLevel={this.state.options.hardAlarmLevel}/>
               }
             </div>
           </div>
@@ -111,9 +111,9 @@ class FlowMonitoring extends Component {
               <div className="card-header">
                 Traffic
               </div>
-              <LobChart data={this.state.data}
-                        metrics={this.state.metadata.metrics}
-                        flowName={this.state.metadata.flowName}/>
+              <FlowChart data={this.state.data}
+                         metrics={this.state.metadata.metrics}
+                         flowName={this.state.metadata.flowName}/>
             </div>
           </div>
         </div>
@@ -154,7 +154,6 @@ class FlowMonitoring extends Component {
   }
 
   renderOptions() {
-    console.log(this.props)
     let isValidJson = this.isValidJson(this.state.optionsString)
     let buttonText = isValidJson ? "Save" : "Invalid JSON"
     return (

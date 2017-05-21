@@ -81,7 +81,7 @@ class Dashboard extends Component {
                 <th>Flow</th>
                 <th>Message</th>
                 <th>Time</th>
-                <th>Tic time</th>
+                <th>Tick time</th>
                 <th>Status&nbsp;&nbsp;<br/>
                   <input type="checkbox"
                          id="checkbox3"
