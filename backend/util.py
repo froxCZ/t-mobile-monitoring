@@ -80,25 +80,12 @@ def minuteDictToDateDict(baseDate, dict, valueName):
   until = resetDateTimeMidnight(baseDate + datetime.timedelta(days=1))
   while d < until:
     minuteOfDay = d.hour * 60 + d.minute
-    minuteVal = dict[minuteOfDay]
+    if minuteOfDay in dict:
+      minuteVal = dict[minuteOfDay]
+    else:
+      minuteVal = 0
     dateDict[d] = {"_id": d, valueName: minuteVal}
     d = getNextTic(d, granularity)
-    # d = (d + granularityDelta).astimezone(TIMEZONE)  # dst to winter, winter -> summer
-  # while d < until:
-  #   minuteOfDay = d.hour * 60 + d.minute
-  #   minuteVal = None
-  #   if minuteOfDay in dict:
-  #     minuteVal = dict[minuteOfDay]
-  #   elif minuteOfDay + 60 in dict:
-  #     minuteVal = dict[minuteOfDay + 60]
-  #     d += hourDelta
-  #   else:
-  #     minuteVal = dict[minuteOfDay - 60]
-  #     d -= hourDelta
-  #   dateDict[d] = {"_id": d, valueName: minuteVal}
-  #   d = TIMEZONE.localize(d.replace(tzinfo=None) + granularityDelta).astimezone(TIMEZONE)  # winter -> summer
-  #   # d = (d + granularityDelta).astimezone(TIMEZONE)  # dst to winter, winter -> summer
-
   return dateDict
 
 
@@ -106,9 +93,9 @@ def merge2DateLists(list1, val1, list2, val2):
   """
   merges two dicts into one by _id. If value is missing, it sets it to 0
   :param list1:
-  :param val1:
+  :param val1: list of values in list 1
   :param list2:
-  :param val2:
+  :param val2: list of values in list 2
   :return:
   """
   d = {}
@@ -140,10 +127,10 @@ def merge2DateLists(list1, val1, list2, val2):
       if list1NullObject is not None:
         i.update(list1NullObject)
       d[key] = i
-  return dateDictToList(d)
+  return dictToSortedList(d)
 
 
-def dateDictToList(dateDict):
+def dictToSortedList(dateDict):
   """
   converts dict with date attributes to a list
   :param dateDict:
@@ -173,6 +160,12 @@ def randomHash(size):
 
 
 def getNextTic(d, granularity):
+  """
+  returns next tick
+  :param d:
+  :param granularity:
+  :return:
+  """
   prevOffsetSeconds = d.tzinfo._utcoffset.total_seconds()
   from config import AppConfig
   newTic = (d + datetime.timedelta(minutes=granularity)).astimezone(AppConfig.getTimezone())

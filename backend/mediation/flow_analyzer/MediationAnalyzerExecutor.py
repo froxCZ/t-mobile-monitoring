@@ -20,7 +20,7 @@ class Worker(threading.Thread):
 
   def _analyzeFlow(self, flow, lastExecution):
     analyzer = FlowAnalyzer(flow)
-    runResult = analyzer.run(AppConfig.getCurrentTime())
+    analyzer.run(AppConfig.getCurrentTime())
     previousStatus = lastExecution["status"]
     newStatus = analyzer.status
     self.statusManager.saveStatus(flow, previousStatus, newStatus, analyzer.difference, analyzer.ticTime)

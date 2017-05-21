@@ -3,54 +3,65 @@ from pymongo import MongoClient
 from config import AppConfig
 """
 Classes for accessing MongoDB collections.
+The mongo client is created in lazy way, so some parts of the app (tests) can be executed without mongo database running.
 """
+db = None
+dataDb = None
+_client = None
 
-_client = MongoClient("mongodb://localhost/", tz_aware=True)
+def init():
+  global db, dataDb, _client
+  _client = MongoClient("mongodb://localhost/", tz_aware=True)
+  mongoConfig = AppConfig.getMongoConfig()
+  _client.admin.authenticate(mongoConfig["user"], mongoConfig["password"], mechanism='SCRAM-SHA-1')
+  dataDb = _client["mediation_data"]
+  db = _client["mediation"]
 
-mongoConfig = AppConfig.getMongoConfig()
-_client.admin.authenticate(mongoConfig["user"], mongoConfig["password"], mechanism='SCRAM-SHA-1')
-dataDb = _client["mediation_data"]
-db = _client["mediation"]
+
+def getDb():
+  if db is None:
+    init()
+  return db
+
+
+def getDataDb():
+  if dataDb is None:
+    init()
+  return dataDb
 
 
 class _Mongo:
   def users(self):
-    return self.db()["users"]
+    return getDb()["users"]
 
   def traffic(self):
-    return self.dataDb()["traffic"]
+    return getDataDb()["traffic"]
 
   def statuses(self):
-    return self.db()["statuses"]
+    return getDb()["statuses"]
 
   def events(self):
-    return self.db()["events"]
+    return getDb()["events"]
 
   def config(self):
-    return self.db()["config"]
+    return getDb()["config"]
 
   def outages(self):
-    return self.db()["outages"]
+    return getDb()["outages"]
 
   def dataDb(self):
-    return dataDb
-
-  def db(self):
-    return db
+    return getDataDb()
 
 
 class _ZookeeperMongo:
   def config(self):
-    return self.db()["zookeeper_config"]
+    return getDb()["zookeeper_config"]
 
   def statuses(self):
-    return self.db()["statuses"]
+    return getDb()["statuses"]
 
   def dataDb(self):
-    return dataDb
-
-  def db(self):
-    return db
+    return getDataDb()
 
 
 mongo = _Mongo()

@@ -4,13 +4,11 @@ from mongo import mongo
 """
 Class for configuration related to Mediation monitoring.
 """
-configColl = mongo.config()
 
 MEDIATION_DOCUMENT = {"_id": "mediation"}
 
 
 class MediationConfig():
-  configColl = configColl
 
   @staticmethod
   def getLob(lobName):
@@ -23,7 +21,7 @@ class MediationConfig():
   @staticmethod
   def getCountries():
     defaultParam = {"lazyDays": [], "holidays": [], "enabled": True}
-    res = configColl.find_one(MEDIATION_DOCUMENT)["countries"]
+    res = mongo.config().find_one(MEDIATION_DOCUMENT)["countries"]
     countries = {}
     for countryName, country in res.items():
       countries[countryName] = {**defaultParam, **country}
@@ -43,7 +41,7 @@ class MediationConfig():
     returns config for all inputs and forwards. Config is derived from parent object.
     :return:
     """
-    res = configColl.find_one(MEDIATION_DOCUMENT)
+    res = mongo.config().find_one(MEDIATION_DOCUMENT)
     countryEnabled = MediationConfig.getCountryByName(country)["enabled"]
     defaultConfig = {
       "granularity": 240,
@@ -109,23 +107,23 @@ class MediationConfig():
   @staticmethod
   def addFlow(flow):
     dataPath = "lobs." + flow["country"] + "." + flow["lobName"] + "." + flow["type"] + "." + flow["name"]
-    configColl.update_one(MEDIATION_DOCUMENT, {"$set": {dataPath: {}}})
+    mongo.config().update_one(MEDIATION_DOCUMENT, {"$set": {dataPath: {}}})
     pass
 
   @staticmethod
   def deleteFlow(flow):
     dataPath = "lobs." + flow["country"] + "." + flow["lobName"] + "." + flow["type"] + "." + flow["name"]
-    return configColl.update_one(MEDIATION_DOCUMENT, {"$unset": {dataPath: {}}})
+    return mongo.config().update_one(MEDIATION_DOCUMENT, {"$unset": {dataPath: {}}})
 
   @staticmethod
   def addLob(country, name):
     dataPath = "lobs." + country + "." + name
-    return configColl.update_one(MEDIATION_DOCUMENT, {"$set": {dataPath: {}}})
+    return mongo.config().update_one(MEDIATION_DOCUMENT, {"$set": {dataPath: {}}})
 
   @staticmethod
   def deleteLob(lob):
     dataPath = "lobs." + lob["country"] + "." + lob["name"]
-    return configColl.update_one(MEDIATION_DOCUMENT, {"$unset": {dataPath: {}}})
+    return mongo.config().update_one(MEDIATION_DOCUMENT, {"$unset": {dataPath: {}}})
 
   @staticmethod
   def getLobWithCountry(country, lobName):

@@ -21,10 +21,6 @@ class AppConfig:
     return datetime.datetime.now(tz=TIMEZONE) + AppConfig.DATE_DIFF
 
   @staticmethod
-  def getColletion():
-    return configColl
-
-  @staticmethod
   def getTimezone():
     return TIMEZONE
 
@@ -61,6 +57,3 @@ class AppConfig:
         logging.info("Loaded config: " + str(AppConfig.configDict))
         logging.info("App time: " + str(AppConfig.getCurrentTime()))
         break
-    from mongo import mongo
-    global configColl
-    configColl = mongo.config()
