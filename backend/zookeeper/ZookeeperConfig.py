@@ -1,6 +1,9 @@
 from mongo import zookeeperMongo
 
 class ZookeeperConfig():
+  """
+  Config related to ZooKeeper
+  """
 
   @staticmethod
   def getCollection():
@@ -32,9 +35,3 @@ class ZookeeperConfig():
   def isMonitoringEnabled():
     return ZookeeperConfig.getCluster()["enabled"]
 
-
-if __name__ == '__main__':
-  servers = {}
-  servers["a"] = {"ip": "127.0.0.1"}
-  ZookeeperConfig.upsertNode(servers)
-  print(ZookeeperConfig.getCluster())

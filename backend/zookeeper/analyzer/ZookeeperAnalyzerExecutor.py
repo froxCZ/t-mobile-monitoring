@@ -8,6 +8,9 @@ from zookeeper.analyzer.StatusManager import StatusManager
 
 
 class ZookeeperAnalyzerExecutor(AbstractExecutor):
+  """
+  Runs analyzer of ZooKeeper cluster, saves the status to database and sends message via producer if it changed.
+  """
   name = "ZookeeperAnalyzerExecutor"
   interval = 5
   maxRunningTime = 5

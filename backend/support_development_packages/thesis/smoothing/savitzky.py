@@ -1,7 +1,10 @@
 import numpy
 import numpy as np
 
-
+"""
+The savitzky algorithm code was taken from scipy library.
+https://docs.scipy.org/doc/scipy-0.16.1/reference/generated/scipy.signal.savgol_filter.html
+"""
 def smooth(x,window_len=11,window='hanning'):
     """smooth the data using a window with requested size.
 
@@ -155,7 +158,7 @@ def _granularityToWindowSizeAndOrder(granularity):
 # import itertools
 #
 # import numpy
-#
+# import matplotlib.pyplot as plt
 #
 # def running_mean(x, N):
 #     cumsum = numpy.cumsum(numpy.insert(x, 0, 0))
@@ -170,7 +173,7 @@ def _granularityToWindowSizeAndOrder(granularity):
 # plt.show()
 # import numpy as np
 #
-#a = np.random.random(100)
+# a = np.random.random(100)
 # a = numpy.array([100,5,120,8,130,12,100])
 # plt.plot(a)
 # b = smooth(a,window_len=7).tolist()[:len(a)]

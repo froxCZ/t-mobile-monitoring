@@ -1,6 +1,5 @@
 {
-  "name": "Monitoring application",
-  "version": "1.0",
+  "name": "MonitoringApplication",
   "private": true,
   "homepage": "/",
   "devDependencies": {

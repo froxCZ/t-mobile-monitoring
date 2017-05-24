@@ -6,6 +6,7 @@ import numpy
 from common import util
 from mediation import MediationConfig
 from mediation.data_query import DateRangeGroupQuery
+from support_development_packages.thesis.smoothing.savitzky import smoothData
 
 
 def running_mean(l, N):
@@ -93,7 +94,7 @@ plt.plot(lob1Data, color="#ff009f", label="actual data")
 # plt.plot(movingAverage(lob1Data, 10), label='Simple Running mean (10)', color="orange")
 
 #savitzky
-# plt.plot(smoothData(granularity, lob1Data),color="brown",label="Savitzky–Golay filter",linewidth=2)
+plt.plot(smoothData(granularity, lob1Data),color="brown",label="Savitzky–Golay filter",linewidth=2)
 
 plt.xticks(dataTickPos, dataTicks, rotation='vertical')
 plt.title('CZ - GSM - MSSBRN1A')
