@@ -47,9 +47,9 @@ class MediationConfig():
     res = mongo.config().find_one(MEDIATION_DOCUMENT)
     countryEnabled = MediationConfig.getCountryByName(country)["enabled"]
     defaultConfig = {
-      "granularity": 240,
+      "granularity": 480,
       "hardAlarmLevel": 0.5,
-      "softAlarmLevel": 0.75,
+      "softAlarmLevel": 0.7,
       "difference": "day",
       "enabled": countryEnabled,
       "minimalExpectation":1,
@@ -151,6 +151,6 @@ def _getCountryFromLob(lobName):
 
 
 def setFlowDefaultOptions(obj, parentObj):
-  options = {**parentObj, **{"minimalExpectation": 1}, **obj}
+  options = {**parentObj, **obj}
   options["enabled"] = obj.get("enabled", True) and parentObj["enabled"]
   return options
