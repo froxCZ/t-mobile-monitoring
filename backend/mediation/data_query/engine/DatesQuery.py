@@ -1,14 +1,13 @@
 import datetime
 
-import pytz
-
 from common import util
 from mongo import mongo
 
-utc = pytz.timezone("UTC")
-
 
 class DatesQuery:
+  """
+  Returns traffic for specified dates.
+  """
   def __init__(self, dates, flows, granularity=0):
     self.query = None
     self.coll = mongo.traffic()
@@ -40,7 +39,7 @@ class DatesQuery:
       d = date
       until = util.resetDateTimeMidnight(date + datetime.timedelta(days=1))
       while d < until:
-        if d not in resultDict:  # TODO: check if some results can have just few of the metrics.
+        if d not in resultDict:
           finalResultDict[d] = {**nullObject, **{"_id": d}}
         else:
           finalResultDict[d] = resultDict[d]

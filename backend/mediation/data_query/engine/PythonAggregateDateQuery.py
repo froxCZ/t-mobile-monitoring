@@ -6,6 +6,10 @@ from mongo import mongo
 
 
 class PythonAggregateDateQuery:
+  """
+  Aggregate query that works across dates with different timezones (DST time change). Max aggregation in Mongo is
+  60 minutes, rest is aggregated in Python in this class.
+  """
   def __init__(self, flow, dates, granularity):
     super().__init__()
     self.flow = flow

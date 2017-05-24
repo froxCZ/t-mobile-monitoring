@@ -4,6 +4,9 @@ import string
 
 from mongo import mongo
 
+"""
+Classes for managing users.
+"""
 
 def modifyUsers(x):
   if "passwordHash" in x:

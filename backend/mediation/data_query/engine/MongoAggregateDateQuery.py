@@ -10,6 +10,9 @@ cet = pytz.timezone("CET")
 
 
 class MongoAggregateDateQuery:
+  """
+  Dost not work over DST change. Not used anymore - deprecated in favor of PythonAggregateDateQuery.
+  """
   def __init__(self, flow, dates, granularity):
     super().__init__()
     self.flow = flow

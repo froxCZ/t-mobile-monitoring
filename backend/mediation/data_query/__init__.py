@@ -1,7 +1,6 @@
 from mediation.data_query.engine.DatesQuery import DatesQuery
 from mediation.data_query.engine.PythonAggregateDateQuery import PythonAggregateDateQuery
 from .DateRangeGroupQuery import DateRangeGroupQuery
-from .DiscoverQuery_old import DiscoverQuery_old
 from .ExpectedTrafficQuery import ExpectedTrafficQuery
 from .FlowLevelDateRangeQuery import FlowLevelDateRangeQuery
 from .OutageDateRangeQuery import OutageDateRangeQuery

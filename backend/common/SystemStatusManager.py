@@ -10,6 +10,10 @@ def _statusIsExpired(time, maxSeconds=60 * 5):
 
 
 class SystemStatusManager:
+  """
+  Class that reports status of various application's components. Their status is periodically saved to database together
+   with time. If the time is older than certain interval, the component's status is determined to be FAIL
+  """
   @staticmethod
   def getStatus():
     from scheduler.ComponentMonitoring import ComponentMonitoring

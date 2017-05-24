@@ -3,6 +3,9 @@ from mediation.data_query.engine.DatesQuery import DatesQuery
 
 
 class DateRangeGroupQuery(DatesQuery):
+  """
+  Returns traffic of dates in the range.
+  """
   def __init__(self, fromDate, toDate, flows, granularity=0):
     self.fromDate = fromDate
     self.toDate = toDate

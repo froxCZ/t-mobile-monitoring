@@ -7,6 +7,9 @@ from flask import request
 
 from common import UserManager
 
+"""
+Decorators, which wrap decorated flask HTTP methods and check permissions assigned to API key.
+"""
 
 def _getUserByApiKey():
   apiKey = request.headers.get("X-API-KEY")
