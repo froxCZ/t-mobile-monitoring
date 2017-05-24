@@ -45,6 +45,6 @@ Data about traffic of each mediation channel is sent to this monitoring applicat
 - build frontend with `npm run build`
 
 ## Running app ##
-- in `deployment/supervisor.conf` set paths to your `backend` and `frontend/build` directories and set log paths
+- in `deployment/supervisor.conf` set paths to your `backend`, `frontend/build` and MongoDB directories and set log paths
 - start by `supervisord -c deployment/supervisor.conf`. It will start MongoDB, monitoring daemon, API service and frontend server
 - Monitoring app will be available at port 8080 and Supervisor console at port 9001
