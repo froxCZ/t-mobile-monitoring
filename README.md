@@ -1,8 +1,6 @@
 # Mediation Monitoring #
 
 
-In `frontend` directory run `npm run build`.
-
 ### [Video Demo](https://goo.gl/Wg5sQQ) ###
 
 ### Tech stack ###
