@@ -1,6 +1,9 @@
 # Mediation Monitoring #
+
+
+In `frontend` directory run `npm run build`.
+
 ### [Video Demo](https://goo.gl/Wg5sQQ) ###
-work in progress
 
 ### Tech stack ###
 
@@ -24,3 +27,26 @@ Data about traffic of each mediation channel is sent to this monitoring applicat
  * Frontend service only provides JS application to the client
 
 ![mon_architecture.png](https://bitbucket.org/repo/bGypxq/images/1574827955-mon_architecture.png)
+
+
+# Manual #
+## Requirements ##
+
+- Python3 
+- npm
+- installed Supervisor 3.2.0 [supervisord.org](supervisord.org)
+- globally installed node module `pushstate-server` (or any other server configured for hosting single page apps)
+- MongoDB 
+
+## Installing backend ##
+- install Python modules `pip3 install -r backend/requirements.txt`
+- set database credentials in `config.json`  (you can use `config.json.template`)
+
+## Building frontend ##
+- in `frontend` directory run `npm install`
+- build frontend with `npm run build`
+
+## Running app ##
+- in `deployment/supervisor.conf` set paths to your `backend` and `frontend/build` directories and set log paths
+- start by `supervisord -c deployment/supervisor.conf`. It will start MongoDB, monitoring daemon, API service and frontend server
+- Monitoring app will be available at port 8080 and Supervisor console at port 9001

@@ -1,6 +1,6 @@
 {
-  "name": "CoreUI",
-  "version": "1.0.0-alpha.4",
+  "name": "Monitoring application",
+  "version": "1.0",
   "private": true,
   "homepage": "/",
   "devDependencies": {
