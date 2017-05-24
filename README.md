@@ -14,7 +14,7 @@ In `frontend` directory run `npm run build`.
 * Apache Kafka for messaging
 
 ## Mediation system ##
-Mediation is a core system of T-Mobile where metadata about any activity on any service (SMS, call, internet, ...) are periodically collected, encoded, transformed and sent to other subsequent systems such as billing, fraud detection etc. in appropriate formats. Think Apache Kamel but for telecommunication. If the data are not sent to billing, the services' usages will not get accounted and clients won't be billed (for text messages, calls, ...). It is therefore crucial that the system is working correctly. The mediation system processes data from Germany, Austria, the Netherlands and the Czech Republic. There are over 4500 channels (flows) in the system that must be monitored. 
+Mediation is a core system of telecommunication provider, where metadata about any activity on any service (SMS, call, internet, ...) are periodically collected, encoded, transformed and sent to other subsequent systems such as billing, fraud detection etc. in appropriate formats. Think Apache Kamel but for telecommunication. If the data are not sent to billing, the services' usages will not get accounted and clients won't be billed (for text messages, calls, ...). It is therefore crucial that the system is working correctly. The mediation system processes data from Germany, Austria, the Netherlands and the Czech Republic. There are over 4500 channels (flows) in the system that must be monitored. 
   
 ## Monitoring application ##
 Data about traffic of each mediation channel is sent to this monitoring application. The application analyses and learns past traffic, detects anomalies and triggers outage alarms in real-time.
